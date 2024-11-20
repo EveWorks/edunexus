@@ -1,7 +1,7 @@
 import Dashboard from "@/views/dashboard"
 
-const Home = () => {
+const HomePage = () => {
     return <Dashboard />
 }
 
-export default Home
+export default HomePage

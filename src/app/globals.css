@@ -8,7 +8,6 @@
     --foreground: 255 255 255; /* #484848 */
     --muted: 20, 20, 20; /* #e3e3e3 */
     --muted-foreground: 82 82 82; /* #525252 */
-    
 
     /*
     * primary colors
@@ -169,6 +168,32 @@ h6 {
 
 input::placeholder {
   color: #868686;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 7px;
+  transition: all 0.3s ease-in-out;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b18e8e;
+}
+
+@media (max-width: 1600px) {
+  html,
+  body {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 560px) {
