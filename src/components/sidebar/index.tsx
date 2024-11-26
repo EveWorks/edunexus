@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./index.module.css";
 import { Button } from "rizzui";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 import { GoArrowUpRight } from "react-icons/go";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -74,7 +74,7 @@ const Sidebar = ({
     //   refreshToken: tokens.refresh.token,
     // };
     // await axios.post("/auth/logout", payload);
-    await signOut();
+    // await signOut();
   };
 
   const CloseMenu = () => {
