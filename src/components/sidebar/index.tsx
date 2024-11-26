@@ -72,12 +72,12 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`h-[calc(100dvh-2.5rem)] py-[1.875rem] fixed top-[1.25rem] left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-full md:w-[calc(30%-1.25rem)]`}
+      className={`h-[calc(100vh-40px)] py-[1.875rem] fixed top-[1.25rem] left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-full md:w-[calc(30%-1.25rem)]`}
     >
       <div className="px-[1.25rem] flex items-center justify-between mb-[1.0219rem]">
         <Image className="w-[2.5rem]" src={Logo} alt="logo" />
         <span
-          className={`transition-all duration-400 pl-[0.625rem] text-[1.25rem] leading-[1.25rem]`}
+          className={`text-[3.125rem] leading-[3.3781rem] font-medium transition-all duration-400 pl-[0.625r`}
         >
           Alinda
         </span>
@@ -109,7 +109,7 @@ const Sidebar = ({
         >
           <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
         </Button>
-        <ul className="h-[calc(100dvh-30.0625rem)] overflow-y-auto custom-scrollbar">
+        <ul className="h-[calc(100vh-440px)] overflow-y-auto custom-scrollbar">
           {menu.map((item) => (
             <li
               key={item.name}

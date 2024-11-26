@@ -162,6 +162,19 @@ h6 {
   animation: rotate-reverse 26s linear infinite;
 }
 
+.rotate-audio {
+  animation: rotate 4s linear infinite;
+}
+
+.rotate-audio-reverse {
+  animation: rotate-reverse 4s linear infinite;
+  transform: scale(1.5) !important;
+}
+
+.rotate-audio-reverse.scale-custom {
+  transform: scale(0.8) !important;
+}
+
 .dark\:hover\:bg-primary\/90:hover {
   background-color: rgb(var(--primary-dark)) !important;
 }
@@ -186,7 +199,53 @@ input::placeholder {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #b18e8e;
+  background: rgb(var(--primary-default));
+}
+
+.fadeBox::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 80px;
+  /* background: linear-gradient(
+    180deg,
+    #141414 12%,
+    rgba(20, 20, 20, 0) 100%,
+    #141414 100%
+  ); */
+  background: linear-gradient(180deg, #141414 0%, #14141410 70%, rgba(20, 20, 20, 0) 0%)
+}
+
+.fadeBox::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3rem;
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, #141414 72%);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: transparent;
 }
 
 @media (max-width: 1600px) {
