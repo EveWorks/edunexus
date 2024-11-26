@@ -84,9 +84,9 @@ const Header = ({
                   <Dropdown.Item>Support</Dropdown.Item>
                   <Dropdown.Item>License</Dropdown.Item>
                 </div>
-                <div className="mt-2 pt-2" onClick={() => signOut()}>
+                {/* <div className="mt-2 pt-2" onClick={() => signOut()}>
                   <Dropdown.Item>Sign Out</Dropdown.Item>
-                </div>
+                </div> */}
               </Dropdown.Menu>
             </Dropdown>
           </>
@@ -113,7 +113,7 @@ const Header = ({
                     {item?.name === "Logout" ? (
                       <Button
                         variant="text"
-                        onClick={() => signOut()}
+                        // onClick={() => signOut()}
                         className="flex items-center p-0"
                       >
                         {item.icon}
