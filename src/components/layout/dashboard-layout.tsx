@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-import Header from "../header";
 import Sidebar from "../sidebar";
-import Footer from "../footer";
 import useDevice from "@/hooks/use-device";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -11,13 +9,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const { isMobile } = useDevice();
 
     return (
-        <div className="p-[1.25rem]">
+        <div className="md:p-[1.25rem]">
             <Sidebar open={open} setOpen={setOpen} />
             <main
-                className={`relative ml-auto transition-all duration-300 w-[70%] h-[calc(100dvh-2.5rem)]`}
+                className={`relative ml-auto transition-all duration-300 md:w-[70%] h-screen md:h-[calc(100dvh-2.5rem)]`}
             >
-                <div className="content h-full md:pb-0 pb-[8.25rem] bg-[#141414] rounded-[3.125rem]">
-                    {/* <Header open={openDrawer} setOpen={setOpenDrawer} /> */}
+                <div className="content h-full pb-0 bg-[#0C0C0C] md:bg-[#141414] md:rounded-[3.125rem]">
                     {children}
                 </div>
             </main>

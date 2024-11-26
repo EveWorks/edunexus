@@ -13,10 +13,12 @@ const AudioPreview = ({ audioUrl, deleteAudio }: { audioUrl: string, deleteAudio
     }
 
     const onPlayPause = () => {
-        wavesurfer && wavesurfer.playPause()
+        if (wavesurfer) {
+            wavesurfer.playPause()
+        }
     }
 
-    const clearAudi = () => {
+    const clearAudio = () => {
         deleteAudio()
         setIsPlaying(false)
     }

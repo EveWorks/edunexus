@@ -22,7 +22,7 @@ const PreviewOne = ({ chats }: { chats: any }) => {
             {chats?.length > 0 ? (
                 <div className="h-full" >
                     <div className="h-[calc(100%-244px)] flex items-center justify-center" >
-                        <div className={`relative transition-all duration-400 scale-[1] h-[315px] w-[315px]`}>
+                        <div className={`relative transition-all duration-400 scale-[1] h-[200px] md:h-[315px] w-[200px] md:w-[315px]`}>
                             <Image src={BgVector2} alt="vector" className="w-full h-auto absolute bottom-0 right-0 z-[2] mix-blend-overlay rotate-audio" priority />
                             <Image src={BgVectorShadow} alt="vector" className="w-full h-auto absolute bottom-0 right-0 z-[1] rotate-audio-reverse" priority />
                         </div>

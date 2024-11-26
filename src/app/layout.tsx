@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import StoreProvider from "@/store/provider";
 
 const grebaviRegular = localFont({
   src: "./fonts/grebavi-regular.otf",
@@ -38,7 +39,9 @@ export default function RootLayout({
       <body
         className={`${grebaviRegular.variable} ${grebaviMedium.variable} ${grebaviBold.variable} ${grebaviExtraBold.variable} antialiased`}
       >
-        {children}
+        <StoreProvider initialState={{}}>
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

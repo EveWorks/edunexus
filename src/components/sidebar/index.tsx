@@ -7,6 +7,10 @@ import { Button } from "rizzui";
 import { signOut } from "next-auth/react";
 import { GoArrowUpRight } from "react-icons/go";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateMenu } from "@/store/features/settings";
+import { IoClose } from "react-icons/io5";
+import useDevice from "@/hooks/use-device";
 
 const Sidebar = ({
   open,
@@ -59,6 +63,9 @@ const Sidebar = ({
   ];
 
   const pathname = usePathname();
+  const { isMobile } = useDevice()
+  const dispatch = useAppDispatch();
+  const settings = useAppSelector((state: any) => state.Settings);
 
   const selected = menu.find((item) => item?.id === pathname);
 
@@ -70,9 +77,14 @@ const Sidebar = ({
     await signOut();
   };
 
+  const CloseMenu = () => {
+    dispatch(updateMenu(false))
+  }
+
+
   return (
     <aside
-      className={`h-[calc(100vh-40px)] py-[1.875rem] fixed top-[1.25rem] left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-full md:w-[calc(30%-1.25rem)]`}
+      className={`h-screen md:h-[calc(100vh-40px)] py-[1.875rem] fixed top-0 md:top-[1.25rem] ${settings?.menu ? "left-0" : "left-[-100%]"} md:left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-screen md:w-[calc(30%-1.25rem)] bg-[#0C0C0C] md:bg-transparent`}
     >
       <div className="px-[1.25rem] flex items-center justify-between mb-[1.0219rem]">
         <Image className="w-[2.5rem]" src={Logo} alt="logo" />
@@ -80,6 +92,12 @@ const Sidebar = ({
           className={`text-[3.125rem] leading-[3.3781rem] font-medium transition-all duration-400 pl-[0.625r`}
         >
           Alinda
+
+          {isMobile && (
+            <Button className="bg-[#ffffff] w-[30px] h-[30px] rounded-[30px] p-0 ml-3 mb-3" variant="text" color="primary" onClick={CloseMenu}>
+              <IoClose className="w-[20px] h-[20px] text-[#0c0c0c]" />
+            </Button>
+          )}
         </span>
       </div>
 

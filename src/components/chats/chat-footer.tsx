@@ -8,9 +8,12 @@ import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { FaStop } from "react-icons/fa6"
 import AudioLoader from "./audio-loader"
 import AudioPreview from "./audio-preview"
+import useDevice from "@/hooks/use-device"
 
 const ChatFooter = ({ setChats, preview }: { setChats: any, preview: boolean }) => {
     const textareaRef = useRef(null);
+    const { isMobile } = useDevice()
+
     const { register, watch, handleSubmit, setValue, formState: { errors } } = useForm({
         defaultValues: {
             message: ""
@@ -54,15 +57,15 @@ const ChatFooter = ({ setChats, preview }: { setChats: any, preview: boolean }) 
     return (
         <div className="flex items-end p-[1.25rem]">
             {isRecording ? (
-                <Button onClick={() => stopRecording()} variant="text" className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[3.125rem] md:h-[5.125rem] md:w-[5.9375rem]">
+                <Button onClick={() => stopRecording()} variant="text" className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]">
                     <FaStop className="w-[1.875rem] h-[1.875rem]" />
                 </Button>
             ) : (
-                <Button onClick={() => startRecording()} variant="text" className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[3.125rem] md:h-[5.125rem] md:w-[5.9375rem]">
+                <Button onClick={() => startRecording()} variant="text" className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]">
                     <MdMicNone className="w-[1.875rem] h-[1.875rem]" />
                 </Button>
             )}
-            <form onSubmit={handleSubmit(sendMessage)} className={`${preview ? 'w-[calc(100%-10rem)]' : 'w-full'} transition-all duration-400`}>
+            <form onSubmit={handleSubmit(sendMessage)} className={`${preview && !isMobile ? 'w-[calc(100%-10rem)]' : 'w-full'} transition-all duration-400`}>
                 {/* {audioUrl && <div className="bg-[#0C0C0C] rounded-[1.5625rem] py-[2.125rem] px-[1.25rem] ml-3 flex items-center">
                     <AudioPreview audioUrl={audioUrl} deleteAudio={deleteAudio} />
                     <Button type="submit" disabled={!audioUrl} variant="text" className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] ms-5">
@@ -83,9 +86,9 @@ const ChatFooter = ({ setChats, preview }: { setChats: any, preview: boolean }) 
                             // maxHeight: '250px',
                             resize: 'none',
                         }}
-                        textareaClassName="ml-[0.625rem] border-0 bg-[#0C0C0C] text-[1.25rem] leading-[0.9375rem] rounded-[1.5625rem] h-[5.125rem] !py-[2.125rem] pl-[1.25rem] pr-[2.5rem]"
+                        textareaClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
                     ></Textarea>
-                    <Button type="submit" disabled={watch('message')?.length < 1} variant="text" className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] absolute bottom-[1.3125rem] right-[0.625rem]">
+                    <Button type="submit" disabled={watch('message')?.length < 1} variant="text" className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] absolute bottom-[10px] md:bottom-[1.3125rem] right-[0.625rem]">
                         {watch('message')?.length < 1
                             ? <FiSend className="w-[1.25rem] h-[1.25rem]" />
                             : <BsFillSendFill className="text-primary  w-[1.25rem] h-[1.25rem]" />
@@ -96,7 +99,7 @@ const ChatFooter = ({ setChats, preview }: { setChats: any, preview: boolean }) 
                     )}
                 </div>}
             </form>
-            <AudioLoader show={preview} size="5.9375rem" />
+            <AudioLoader show={preview && !isMobile} size="5.9375rem" />
         </div>
     )
 }

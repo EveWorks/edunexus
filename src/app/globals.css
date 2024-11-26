@@ -216,7 +216,12 @@ input::placeholder {
     rgba(20, 20, 20, 0) 100%,
     #141414 100%
   ); */
-  background: linear-gradient(180deg, #141414 0%, #14141410 70%, rgba(20, 20, 20, 0) 0%)
+  background: linear-gradient(
+    180deg,
+    #141414 0%,
+    #14141410 70%,
+    rgba(20, 20, 20, 0) 0%
+  );
 }
 
 .fadeBox::after {
@@ -259,5 +264,19 @@ input::placeholder {
   html,
   body {
     font-size: 13px;
+  }
+
+  .fadeBox::before {
+    top: -3px;
+    background: linear-gradient(
+      180deg,
+      #0c0c0c 0%,
+      #0c0c0c10 70%,
+      rgba(20, 20, 20, 0) 0%
+    );
+  }
+
+  .fadeBox::after {
+    background: linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, #0c0c0c 72%);
   }
 }
