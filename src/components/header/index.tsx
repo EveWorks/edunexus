@@ -9,7 +9,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { HiMiniMagnifyingGlass } from "react-icons/hi2";
 import { PiBellSimple, PiGear } from "react-icons/pi";
 import { TbLogout } from "react-icons/tb";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 
 const Header = ({
   open,
