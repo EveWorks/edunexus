@@ -1,95 +1,23 @@
-import Image from "next/image";
-import Logo from "@/public/logo.svg";
 import Link from "next/link";
-import { TiFlowMerge } from "react-icons/ti";
-import { PiGear } from "react-icons/pi";
-import { TbLogout } from "react-icons/tb";
-import { usePathname } from "next/navigation";
-import { Avatar } from "rizzui";
 
-const Footer = ({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
-  const menu = [
-    {
-      name: "Dashboard",
-      icon: <TiFlowMerge className="w-[1.875rem] h-[1.25rem]" />,
-      path: "/",
-    },
-    {
-      name: "Dashboard",
-      icon: <TiFlowMerge className="w-[1.875rem] h-[1.25rem]" />,
-      path: "/as",
-    },
-    {
-      name: "Dashboard",
-      icon: <Image className="w-[2.5rem]" src={Logo} alt="logo" />,
-      path: "/dasd",
-    },
-    {
-      name: "Dashboard",
-      icon: <TiFlowMerge className="w-[1.875rem] h-[1.25rem]" />,
-      path: "/dasd",
-    },
-  ];
-
-  const menu2 = [
-    {
-      name: "Settings",
-      icon: <PiGear className="w-[1.875rem] h-[1.25rem]" />,
-      path: "/settings",
-    },
-    {
-      name: "Logout",
-      icon: <TbLogout className="w-[1.875rem] h-[1.25rem]" />,
-      path: "/logout",
-    },
-  ];
-
-  const pathname = usePathname();
-
-  const selected = [...menu, ...menu2].find((item) => item?.path === pathname);
-
+const Footer = () => {
   return (
     <footer
-      className={`w-[calc(100%-2.5rem)] p-[1.25rem] bg-[#000000] rounded-[3.125rem] fixed bottom-[1.25rem] left-[1.25rem] z-20 transition-all duration-300 overflow-hidden`}
+      data-scroll-section
+      className="w-full h-[34.9375rem] bg-[#FFFFFF] text-[#0c0c0c] p-[3.125rem]"
     >
-      <nav className="h-full">
-        <ul className="flex overflow-y-auto overflow-x-hidden">
-          {menu.map((item) => (
-            <li key={item.name} className={`w-[20%]`}>
-              <Link
-                href={item.path}
-                className={`flex items-center rounded-tl-[3.125rem] rounded-bl-[3.125rem]`}
-              >
-                <div
-                  className={`w-[3.31rem] h-[3.31rem] mx-auto rounded-[3.125rem] flex justify-center items-center ${
-                    selected?.path === item.path
-                      ? "bg-[#FFFFFF] text-[#0B0B0B]"
-                      : " bg-[#0B0B0B]  text-[#FFFFFF]"
-                  }`}
-                >
-                  {item.icon}
-                </div>
-              </Link>
-            </li>
-          ))}
-          <li
-            className={`w-[20%] flex justify-center`}
-            onClick={() => setOpen(!open)}
-          >
-            <Avatar
-              name="John Doe"
-              src="https://randomuser.me/api/portraits/women/40.jpg"
-              className="cursor-pointer w-[2.5rem] h-[2.5rem] mx-auto"
-            />
-          </li>
-        </ul>
-      </nav>
+      <div className="flex flex-wrap items-end justify-between h-full w-full text-[1.875rem] leading-[2.8125rem] tracking-[-1px]">
+        <div>©️ ALINDA®️ 2024</div>
+        <div className="text-[1.5625rem] leading-[1.5625rem] tracking-[-1px]">
+          <div className="flex items-center justify-center">
+            <div className="md:mr-[1.0625rem]">INSTAGRAM</div>
+            <div className="md:mr-[1.6875rem]">TWITTER</div>
+            <div>LINKEDIN</div>
+          </div>
+          <div className="text-center mt-[1.25rem]">Designed by EveWorks</div>
+        </div>
+        <div>Alinda@alinda.com</div>
+      </div>
     </footer>
   );
 };

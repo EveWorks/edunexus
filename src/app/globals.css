@@ -93,6 +93,10 @@ body {
   font-family: var(--font-druk-super);
 }
 
+.font-borel {
+  font-family: var(--font-borel);
+}
+
 h1,
 h2,
 h3,

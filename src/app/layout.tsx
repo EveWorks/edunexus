@@ -33,6 +33,11 @@ const drukSuper = localFont({
   variable: "--font-druk-super",
   weight: "800",
 });
+const borel = localFont({
+  src: "./fonts/borel-regular.ttf",
+  variable: "--font-borel",
+  weight: "800",
+});
 
 export const metadata: Metadata = {
   title: "Alinda",
@@ -47,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${grebaviRegular.variable} ${grebaviMedium.variable} ${grebaviBold.variable} ${grebaviExtraBold.variable} ${drukHeavy.variable} ${drukSuper.variable} antialiased`}
+        className={`${grebaviRegular.variable} ${grebaviMedium.variable} ${grebaviBold.variable} ${grebaviExtraBold.variable} ${drukHeavy.variable} ${drukSuper.variable} ${borel.variable} antialiased`}
       >
         <StoreProvider initialState={{}}>{children}</StoreProvider>
       </body>
