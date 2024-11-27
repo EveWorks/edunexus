@@ -1,7 +1,7 @@
-import Dashboard from "@/views/dashboard"
+import HomeView from "@/views/home"
 
 const HomePage = () => {
-    return <Dashboard />
+    return <HomeView />
 }
 
 export default HomePage

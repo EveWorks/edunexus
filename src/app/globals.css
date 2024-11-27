@@ -85,6 +85,14 @@ body {
   font-family: var(--font-grebavi-extrabold);
 }
 
+.font-druk-heavy {
+  font-family: var(--font-druk-heavy);
+}
+
+.font-druk-super {
+  font-family: var(--font-druk-super);
+}
+
 h1,
 h2,
 h3,
