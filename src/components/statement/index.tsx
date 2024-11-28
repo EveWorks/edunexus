@@ -7,43 +7,43 @@ import { GoArrowDownLeft } from "react-icons/go";
 const Statement = () => {
   return (
     <div
-      className="min-h-screen flex flex-col justify-center items-center px-[3.125rem] py-[5rem]"
+      className="min-h-screen flex flex-col justify-center items-center px-[1.875rem] md:px-[3.125rem] py-[5rem]"
       data-scroll-section
     >
-      <div className="mb-[4.125rem] w-full">
-        <span className="text-[1.5625rem] leading-[1.875rem] tracking-[-1px] font-medium flex items-center">
-          <GoArrowDownLeft className="w-[2.5rem] h-[2.5rem] mr-[1.25rem]" />{" "}
+      <div className="mb-[3.125rem] md:mb-[4.125rem] w-full">
+        <span className="text-[15px] leading-[20px] md:text-[1.5625rem] md:leading-[1.875rem] tracking-[-1px] font-medium flex items-center">
+          <GoArrowDownLeft className="w-[2rem] h-[2rem] md:w-[2.5rem] md:h-[2.5rem] mr-[10px] md:mr-[1.25rem]" />{" "}
           PROBLEM STATEMENT
         </span>
       </div>
       <div className="h-full flex flex-wrap justify-between gap-[1.5rem]">
-        <div className="md:w-[calc(33.33%-1.5rem)] self-start md:mb-[11.875rem]">
+        <div className="md:w-[calc(33.33%-1.5rem)] md:self-start md:mb-[11.875rem]" data-scroll data-scroll-speed="1">
           <Image
             className="w-full mb-[3.125rem]"
             src={StatementOne}
             alt="img1"
           />
-          <div className="text-[2.5rem] leading-[2.5rem] tracking-[-1px] font-medium">
+          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium">
             Education is the foundation of progress, but millions of students
             don’t receive the personalised support they need.
           </div>
         </div>
-        <div className="md:w-[calc(33.33%-1.5rem)] self-center">
+        <div className="md:w-[calc(33.33%-1.5rem)] md:self-center" data-scroll data-scroll-speed="4">
           <Image
             className="w-full mb-[3.125rem]"
             src={StatementTwo}
             alt="img1"
           />
-          <div className="text-[2.5rem] leading-[2.5rem] tracking-[-1px] font-medium text-center">
+          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-center">
             Educators are overwhelmed by large classrooms and responsibilities.
           </div>
         </div>
-        <div className="md:w-[calc(33.33%-1.5rem)] self-end">
-          <div className="text-[2.5rem] leading-[2.5rem] tracking-[-1px] font-medium text-right mb-[3.125rem]">
+        <div className="md:w-[calc(33.33%-1.5rem)] md:self-end flex flex-col" data-scroll data-scroll-speed="8">
+          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-right md:mb-[3.125rem] order-2 md:order-1">
             Institutions struggle with maintaining academic integrity and
             adapting to digital changes.
           </div>
-          <Image className="w-full" src={StatementThree} alt="img1" />
+          <Image className="w-full order-1 md:order-2 mb-[3.125rem] md:m-0" src={StatementThree} alt="img1" />
         </div>
       </div>
     </div>
