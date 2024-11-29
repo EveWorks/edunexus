@@ -8,6 +8,7 @@ import { Button } from "rizzui";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import "swiper/css";
 import "swiper/css/controller";
+import FadeUpComponent from "../fadeInComponent";
 
 const Product = () => {
   const [swiper1, setSwiper1] = useState(null) as any;
@@ -85,16 +86,16 @@ const Product = () => {
             className="h-full"
           >
             <SwiperSlide className="">
-              <div className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
+              <FadeUpComponent className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
                 Tailored virtual tutoring using AI, offering the personalised
                 help students need.
-              </div>
+              </FadeUpComponent>
             </SwiperSlide>
             <SwiperSlide className="">
-              <div className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
+              <FadeUpComponent className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
                 Tailored virtual tutoring using AI, offering the personalised
                 help students need. 2
-              </div>
+              </FadeUpComponent>
             </SwiperSlide>
           </Swiper>
           <div className="mt-[-54px] flex items-center justify-center md:justify-end z-[2] relative">

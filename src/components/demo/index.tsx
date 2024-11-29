@@ -1,6 +1,7 @@
 import Image from "next/image";
 import dashboard from "@/public/dashboard.png";
 import { GoArrowDownLeft } from "react-icons/go";
+import FadeUpComponent from "../fadeInComponent";
 
 const Demo = () => {
   return (
@@ -21,10 +22,10 @@ const Demo = () => {
           alt="img1"
         />
       </div>
-      <div className="text-[20px] leading-[20px] text-[2.5rem] leading-[2.5rem] tracking-[-1px] font-medium text-center">
+      <FadeUpComponent className="text-[20px] leading-[20px] text-[2.5rem] leading-[2.5rem] tracking-[-1px] font-medium text-center">
         Alinda aims to make personalised academic support scalable, learning
         management seamless, and academic integrity non-negotiable.
-      </div>
+      </FadeUpComponent>
     </div>
   );
 };

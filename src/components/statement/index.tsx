@@ -3,6 +3,7 @@ import StatementOne from "@/public/statement1.png";
 import StatementTwo from "@/public/statement2.png";
 import StatementThree from "@/public/statement3.png";
 import { GoArrowDownLeft } from "react-icons/go";
+import FadeUpComponent from "../fadeInComponent";
 
 const Statement = () => {
   return (
@@ -23,10 +24,10 @@ const Statement = () => {
             src={StatementOne}
             alt="img1"
           />
-          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium">
+          <FadeUpComponent className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium">
             Education is the foundation of progress, but millions of students
             don’t receive the personalised support they need.
-          </div>
+          </FadeUpComponent>
         </div>
         <div className="md:w-[calc(33.33%-1.5rem)] md:self-center" data-scroll data-scroll-speed="4">
           <Image
@@ -34,15 +35,15 @@ const Statement = () => {
             src={StatementTwo}
             alt="img1"
           />
-          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-center">
+          <FadeUpComponent delay={100} className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-center">
             Educators are overwhelmed by large classrooms and responsibilities.
-          </div>
+          </FadeUpComponent>
         </div>
         <div className="md:w-[calc(33.33%-1.5rem)] md:self-end flex flex-col" data-scroll data-scroll-speed="8">
-          <div className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-right md:mb-[3.125rem] order-2 md:order-1">
+          <FadeUpComponent delay={200} className="text-[20px] leading-[20px] md:text-[2.5rem] md:leading-[2.5rem] tracking-[-1px] font-medium text-right md:mb-[3.125rem] order-2 md:order-1">
             Institutions struggle with maintaining academic integrity and
             adapting to digital changes.
-          </div>
+          </FadeUpComponent>
           <Image className="w-full order-1 md:order-2 mb-[3.125rem] md:m-0" src={StatementThree} alt="img1" />
         </div>
       </div>
