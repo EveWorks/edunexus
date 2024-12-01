@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import StoreProvider from "@/store/provider";
+import AuthProvider from "./api/auth/[...nextauth]/auth-provider";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/auth-options";
+import { Toaster } from "react-hot-toast";
 
 const grebaviRegular = localFont({
   src: "./fonts/grebavi-regular.otf",
@@ -44,17 +48,24 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${grebaviRegular.variable} ${grebaviMedium.variable} ${grebaviBold.variable} ${grebaviExtraBold.variable} ${drukHeavy.variable} ${drukSuper.variable} ${borel.variable} antialiased`}
       >
-        <StoreProvider initialState={{}}>{children}</StoreProvider>
+        <AuthProvider session={session}>
+          <StoreProvider initialState={{}}>
+            {children}
+            <Toaster />
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   );
