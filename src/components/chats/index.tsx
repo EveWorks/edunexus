@@ -1,41 +1,134 @@
-import { useEffect, useState } from "react"
-import ChatContent from "@/components/chats/chat-content"
-import ChatFooter from "@/components/chats/chat-footer"
-import ChatHeader from "@/components/chats/chat-header"
+import { useEffect, useRef, useState } from "react";
+import ChatContent from "@/components/chats/chat-content";
+import ChatFooter from "@/components/chats/chat-footer";
+import ChatHeader from "@/components/chats/chat-header";
+import {
+  LiveConnectionState,
+  LiveTranscriptionEvent,
+  LiveTranscriptionEvents,
+  useDeepgram,
+} from "@/context/DeepgramContextProvider";
+import {
+  MicrophoneEvents,
+  MicrophoneState,
+  useMicrophone,
+} from "@/context/MicrophoneContextProvider";
 
-const data = [
-    {
-        id: 1,
-        alinda: true,
-        data: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor tellus, laoreet eu sodales vel, fringilla sit amet ante. Aenean aliquam ipsum libero, sit amet tincidunt libero porta ut. Cras ut ligula dui. Morbi eu aliquam quam. Proin pellentesque in lorem eu ornare. Ut ullamcorper massa urna, a maximus lorem pellentesque sit amet. Nulla auctor euismod mattis. Sed mattis eros eget massa efficitur suscipit. Morbi nisl nisi, vehicula non diam vel, rhoncus lacinia diam. Donec non luctus neque, a gravida felis. Fusce nec ante at nisl finibus imperdiet. Sed dignissim, massa eget blandit luctus, nisi massa feugiat mauris, nec euismod ligula ex a mi. Cras ut tristique sem. Integer eu ex molestie, pellentesque magna ac, efficitur lectus. Suspendisse potenti. Nullam nec scelerisque odio, et posuere turpis. Fusce at tempor nulla. Pellentesque facilisis bibendum dolor, in euismod nunc semper eleifend. Maecenas lacinia lobortis tortor sit amet cursus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas a tristique elit. Phasellus lorem eros, fringilla ut condimentum et, maximus vitae tellus. Nam fringilla lacus risus, eu fermentum nulla tempor a. Ut pulvinar viverra orci, non aliquam quam molestie vitae. In eget felis diam. Quisque dolor ligula, ornare vel vestibulum non, posuere ut turpis. Etiam ut felis neque. Quisque sed mollis augue, sit amet vestibulum sem. Ut commodo mi vitae leo viverra tincidunt."
-    },
-    {
-        id: 2,
-        alinda: false,
-        data: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor tellus, laoreet eu sodales vel, fringilla sit amet ante. Aenean aliquam ipsum libero, sit amet tincidunt libero porta ut. Cras ut ligula dui. Morbi eu aliquam quam."
-    },
-    {
-        id: 3,
-        alinda: true,
-        data: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor tellus, laoreet eu sodales vel, fringilla sit amet ante. Aenean aliquam ipsum libero, sit amet tincidunt libero porta ut. Cras ut ligula dui. Morbi eu aliquam quam. Proin pellentesque in lorem eu ornare. Ut ullamcorper massa urna, a maximus lorem pellentesque sit amet."
-    }
-]
+const data: any = [
+  {
+    data: "dasda",
+  },
+];
 
 const Chat = () => {
-    const [chats, setChats] = useState<any>([])
-    const [preview, setPreview] = useState<any>(false)
+  const [chats, setChats] = useState<any>([]);
+  const [preview, setPreview] = useState<any>(false);
 
-    useEffect(() => {
-        setChats(data);
-    }, [])
+  const { connection, connectToDeepgram, connectionState } = useDeepgram();
+  const { setupMicrophone, microphone, startMicrophone, microphoneState } =
+    useMicrophone();
+  const captionTimeout = useRef<any>();
+  const keepAliveInterval = useRef<any>();
 
-    return (
-        <div className="flex flex-col h-full" >
-            <ChatHeader setPreview={setPreview} />
-            <ChatContent chats={chats} preview={preview} />
-            <ChatFooter setChats={setChats} preview={preview} />
-        </div>
-    )
-}
+  useEffect(() => {
+    setupMicrophone();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (microphoneState === MicrophoneState.Ready) {
+      connectToDeepgram({
+        model: "nova-2",
+        interim_results: true,
+        smart_format: true,
+        filler_words: true,
+        // utterance_end_ms: 3000,
+        endpointing: 3000,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [microphoneState]);
+
+  useEffect(() => {
+    if (!microphone) return;
+    if (!connection) return;
+
+    const onData = (e: BlobEvent) => {
+      // iOS SAFARI FIX:
+      // Prevent packetZero from being sent. If sent at size 0, the connection will close.
+      if (e.data.size > 0) {
+        connection?.send(e.data);
+      }
+    };
+
+    const onTranscript = (data: LiveTranscriptionEvent) => {
+      const { is_final: isFinal, speech_final: speechFinal } = data;
+      console.log("data123", data);
+      let thisCaption = data.channel.alternatives[0].transcript;
+
+      if (thisCaption !== "") {
+        console.log('thisCaption !== ""', thisCaption);
+        setChats((prev: any) => [...prev, { data: thisCaption }]);
+      }
+
+      if (isFinal && speechFinal) {
+        console.log(isFinal, "is final");
+        clearTimeout(captionTimeout.current);
+        captionTimeout.current = setTimeout(() => {
+          clearTimeout(captionTimeout.current);
+        }, 3000);
+      }
+    };
+
+    if (connectionState === LiveConnectionState.OPEN) {
+      connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
+      microphone.addEventListener(MicrophoneEvents.DataAvailable, onData);
+
+      startMicrophone();
+    }
+
+    return () => {
+      // prettier-ignore
+      connection.removeListener(LiveTranscriptionEvents.Transcript, onTranscript);
+      microphone.removeEventListener(MicrophoneEvents.DataAvailable, onData);
+      clearTimeout(captionTimeout.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectionState]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    if (
+      microphoneState !== MicrophoneState.Open &&
+      connectionState === LiveConnectionState.OPEN
+    ) {
+      connection.keepAlive();
+
+      keepAliveInterval.current = setInterval(() => {
+        connection.keepAlive();
+      }, 10000);
+    } else {
+      clearInterval(keepAliveInterval.current);
+    }
+
+    return () => {
+      clearInterval(keepAliveInterval.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [microphoneState, connectionState]);
+
+  useEffect(() => {
+    setChats(data);
+  }, []);
+
+  return (
+    <div className="flex flex-col h-full">
+      <ChatHeader setPreview={setPreview} />
+      <ChatContent chats={chats} preview={preview} />
+      <ChatFooter setChats={setChats} preview={preview} />
+    </div>
+  );
+};
 
 export default Chat;

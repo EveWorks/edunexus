@@ -1,14 +1,20 @@
-"use client"
+"use client";
 
-import DashboardLayout from "@/components/layout/dashboard-layout"
-import Chat from "@/components/chats"
+import DashboardLayout from "@/components/layout/dashboard-layout";
+import Chat from "@/components/chats";
+import { MicrophoneContextProvider } from "@/context/MicrophoneContextProvider";
+import { DeepgramContextProvider } from "@/context/DeepgramContextProvider";
 
 const Dashboard = () => {
-    return (
-        <DashboardLayout>
-            <Chat />
-        </DashboardLayout>
-    )
-}
+  return (
+    <DashboardLayout>
+      <MicrophoneContextProvider>
+        <DeepgramContextProvider>
+          <Chat />
+        </DeepgramContextProvider>
+      </MicrophoneContextProvider>
+    </DashboardLayout>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

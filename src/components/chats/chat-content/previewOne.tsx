@@ -31,7 +31,7 @@ const PreviewOne = ({ chats }: { chats: any }) => {
                         <ul className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]">
                             {chats?.map((item: any) => {
                                 return (
-                                    <li className="flex justify-center mb-[2rem]" key={item.id}>
+                                    <li className="flex justify-center mb-[2rem]" key={item.data}>
                                         <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">{item?.data}</div>
                                     </li>
                                 )
