@@ -39,17 +39,19 @@ const Chat = () => {
     if (microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
-        interim_results: true,
         smart_format: true,
         filler_words: true,
-        // utterance_end_ms: 3000,
-        endpointing: 3000,
+        utterance_end_ms: 3000,
+        interim_results: true,
+        vad_events: true,
+        endpointing: 300
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState]);
 
   useEffect(() => {
+    console.log(connectionState, "connectionState")
     if (!microphone) return;
     if (!connection) return;
 
@@ -63,16 +65,12 @@ const Chat = () => {
 
     const onTranscript = (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
-      console.log("data123", data);
       let thisCaption = data.channel.alternatives[0].transcript;
-
-      if (thisCaption !== "") {
-        console.log('thisCaption !== ""', thisCaption);
-        setChats((prev: any) => [...prev, { data: thisCaption }]);
-      }
-
+      
       if (isFinal && speechFinal) {
-        console.log(isFinal, "is final");
+        if (thisCaption !== "") {
+          setChats((prev: any) => [...prev, { data: thisCaption }]);
+        }
         clearTimeout(captionTimeout.current);
         captionTimeout.current = setTimeout(() => {
           clearTimeout(captionTimeout.current);
