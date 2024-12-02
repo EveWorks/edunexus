@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import Settings from "./features/settings";
+import Chat from "./features/chat";
 
 export const makeStore = (preloadedState = {}) => {
   return configureStore({
     reducer: {
-        Settings,
+      Settings,
+      Chat,
     },
     preloadedState,
   });

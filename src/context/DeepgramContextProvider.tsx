@@ -5,6 +5,9 @@ import {
   LiveClient,
   LiveConnectionState,
   LiveTranscriptionEvents,
+  LiveTTSEvents,
+  SpeakLiveClient,
+  type SpeakSchema,
   type LiveSchema,
   type LiveTranscriptionEvent,
 } from "@deepgram/sdk";
@@ -35,7 +38,7 @@ interface DeepgramContextProviderProps {
 const getApiKey = async (): Promise<string> => {
   const response = await fetch("/api/authenticate", { cache: "no-store" });
   const result = await response.json();
-  console.log(result)
+  console.log(result);
   return result.key;
 };
 
@@ -43,6 +46,10 @@ const DeepgramContextProvider: FunctionComponent<
   DeepgramContextProviderProps
 > = ({ children }) => {
   const [connection, setConnection] = useState<LiveClient | null>(null);
+  // const [speakingConnection, setSpeakingConnection] =
+  //   useState<SpeakLiveClient | null>(null);
+  // const [speakingConnectionState, setSpeakingConnectionState] =
+  //   useState<LiveConnectionState>(LiveConnectionState.CLOSED);
   const [connectionState, setConnectionState] = useState<LiveConnectionState>(
     LiveConnectionState.CLOSED
   );
@@ -56,8 +63,8 @@ const DeepgramContextProvider: FunctionComponent<
    */
   const connectToDeepgram = async (options: LiveSchema, endpoint?: string) => {
     const key = await getApiKey();
-    console.log(key)
     const deepgram = createClient(key);
+    // let audioBuffer : any;
 
     const conn = deepgram.listen.live(options, endpoint);
 
@@ -69,14 +76,48 @@ const DeepgramContextProvider: FunctionComponent<
       setConnectionState(LiveConnectionState.CLOSED);
     });
 
+    // const dgConnection = deepgram.speak.live({ model: "aura-asteria-en" });
+
+    // dgConnection.addListener(LiveTTSEvents.Open, () => {
+    //   setSpeakingConnectionState(LiveConnectionState.OPEN);
+    //   dgConnection.on(LiveTTSEvents.Metadata, (data) => {
+    //     console.dir(data, { depth: null });
+    //   });
+
+    //   dgConnection.on(LiveTTSEvents.Audio, (data) => {
+    //     console.log("Deepgram audio data received");
+    //     const buffer = Buffer.from(data);
+    //     audioBuffer = Buffer.concat([audioBuffer, buffer]);
+    //   });
+
+    //   dgConnection.on(LiveTTSEvents.Flushed, () => {
+    //     console.log("Deepgram Flushed");
+    //     const response =
+    //     // Write the buffered audio data to a file when the flush event is received
+    //   });
+
+    //   dgConnection.on(LiveTTSEvents.Error, (err) => {
+    //     console.error(err);
+    //   });
+    // });
+
+    // dgConnection.addListener(LiveTTSEvents.Close, () => {
+    //   setSpeakingConnectionState(LiveConnectionState.CLOSED);
+    // });
+
     setConnection(conn);
+    // setSpeakingConnection(dgConnection);
   };
 
   const disconnectFromDeepgram = async () => {
     if (connection) {
-      connection.finish();
+      connection.requestClose();
       setConnection(null);
     }
+    // if (speakingConnection) {
+    //   speakingConnection.requestClose();
+    //   setSpeakingConnection(null);
+    // }
   };
 
   return (

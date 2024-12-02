@@ -6,11 +6,12 @@ import { FaArrowRight } from "react-icons/fa6";
 import AuthLayout from "@/components/layout/auth-layout";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { routes } from "@/utils/routes";
 import axios from "@/axios";
+import countryList from "react-select-country-list";
 
 const gender = [
   {
@@ -76,6 +77,7 @@ type Inputs = {
   university: string;
   degree: string;
   year: string;
+  country: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -93,6 +95,7 @@ const SignUpView = () => {
   } = useForm<Inputs>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const countries = useMemo(() => countryList().getData(), []);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data.password !== data.confirmPassword) {
@@ -110,6 +113,7 @@ const SignUpView = () => {
       gender: data.gender,
       university: data.university,
       degree: data.degree,
+      country: data.country,
       year: parseInt(data.year),
       email: data.email,
       password: data.password,
@@ -266,6 +270,27 @@ const SignUpView = () => {
                   yearGroup?.find((f) => f.value === selected)?.label ?? ""
                 }
                 error={errors?.year?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="country"
+            rules={{
+              required: { value: true, message: "Country is required" },
+            }}
+            render={({ field: { value } }) => (
+              <Select
+                className="w-full mb-[0.625rem]"
+                selectClassName="text-[1.25rem] leading-[1.875rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
+                placeholder="Country"
+                value={value}
+                options={countries}
+                onChange={({ value }: any) => setValue("country", value)}
+                displayValue={(selected: string) =>
+                  countries?.find((f) => f.value === selected)?.label ?? ""
+                }
+                error={errors?.country?.message}
               />
             )}
           />

@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { pagesOptions } from "@/app/api/auth/[...nextauth]/pages-option";
 
 export default async function middleware(req: NextRequest) {
-  const AUTH_ROUTES = ["/dashboard"];
+  const AUTH_ROUTES = ["/dashboard", "/chat"];
+  const path = `/${req.nextUrl.pathname.split("/")?.[1]}`;
+  console.log(path);
   const token = await getToken({
     req,
     secureCookie: process.env.NODE_ENV !== "development",
@@ -13,14 +15,13 @@ export default async function middleware(req: NextRequest) {
   const isAuthenticated = !!token;
 
   if (
-    (req.nextUrl.pathname.startsWith("/signin") ||
-      req.nextUrl.pathname.startsWith("/signup")) &&
+    (path.startsWith("/signin") || path.startsWith("/signup")) &&
     isAuthenticated
   ) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (AUTH_ROUTES.includes(req.nextUrl.pathname) && !isAuthenticated) {
+  if (AUTH_ROUTES.includes(path) && !isAuthenticated) {
     return await withAuth(req as NextRequestWithAuth, {
       secret: process.env.NEXT_AUTH_SECRET_KEY,
       pages: {

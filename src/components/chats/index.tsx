@@ -13,17 +13,25 @@ import {
   MicrophoneState,
   useMicrophone,
 } from "@/context/MicrophoneContextProvider";
+import useChatMessages from "@/hooks/use-chat-messages";
+import { getUser } from "@/utils/get-user";
 
-const data: any = [
-  {
-    data: "dasda",
-  },
-];
+const data: any = [];
 
-const Chat = () => {
-  const [chats, setChats] = useState<any>([]);
+const Chat = ({ id }: { id: string }) => {
   const [preview, setPreview] = useState<any>(false);
-
+  const {
+    messages,
+    setMessages,
+    sendMessage,
+    msgLoading,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+    totalItems,
+  } = useChatMessages({ id, initialPage: 1, limit: 10 });
+  const user = getUser();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
     useMicrophone();
@@ -31,12 +39,14 @@ const Chat = () => {
   const keepAliveInterval = useRef<any>();
 
   useEffect(() => {
-    setupMicrophone();
+    if (id) {
+      setupMicrophone();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (microphoneState === MicrophoneState.Ready) {
+    if (id && microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
         smart_format: true,
@@ -44,14 +54,19 @@ const Chat = () => {
         utterance_end_ms: 3000,
         interim_results: true,
         vad_events: true,
-        endpointing: 300
+        endpointing: 200,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState]);
 
+  const getAudio = async (text: string) => {
+    const response = await fetch(`${process.env.BASE_URL}/api/get-audio`);
+    
+  };
+
   useEffect(() => {
-    console.log(connectionState, "connectionState")
+    if (!id) return;
     if (!microphone) return;
     if (!connection) return;
 
@@ -63,13 +78,21 @@ const Chat = () => {
       }
     };
 
-    const onTranscript = (data: LiveTranscriptionEvent) => {
+    const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       let thisCaption = data.channel.alternatives[0].transcript;
-      
+
       if (isFinal && speechFinal) {
         if (thisCaption !== "") {
-          setChats((prev: any) => [...prev, { data: thisCaption }]);
+          setMessages((prev: any) => [...prev, { message: thisCaption }]);
+
+          const payload = {
+            message: thisCaption,
+            message_type: "text",
+            topicid: id,
+            userid: user.id,
+          };
+          await sendMessage(payload);
         }
         clearTimeout(captionTimeout.current);
         captionTimeout.current = setTimeout(() => {
@@ -95,6 +118,7 @@ const Chat = () => {
   }, [connectionState]);
 
   useEffect(() => {
+    if (!id) return;
     if (!connection) return;
 
     if (
@@ -117,14 +141,14 @@ const Chat = () => {
   }, [microphoneState, connectionState]);
 
   useEffect(() => {
-    setChats(data);
+    setMessages(data);
   }, []);
 
   return (
     <div className="flex flex-col h-full">
       <ChatHeader setPreview={setPreview} />
-      <ChatContent chats={chats} preview={preview} />
-      <ChatFooter setChats={setChats} preview={preview} />
+      <ChatContent chats={messages} preview={preview} />
+      <ChatFooter setChats={setMessages} preview={preview} />
     </div>
   );
 };
