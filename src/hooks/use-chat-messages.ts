@@ -58,16 +58,24 @@ const useChatMessages = ({
     [id, limit]
   );
 
-  const sendMessage = async (payload: any) => {
+  const sendMessage = async (data: any) => {
     setMsgLoading(true);
+    const payload = {
+      message: data.message,
+      message_type: data.message_type,
+      topicid: data.topicid,
+      userid: data.userid,
+    };
     try {
       const response: any = await axios.post(
         "/conversation/sendmessage",
         payload
       );
       if (response?.AiResponse) {
+        if (data.callback) {
+          await data.callback(response?.AiResponse.message);
+        }
         setMessages((prev: any) => [...prev, response?.AiResponse]);
-        return response?.AiResponse.message;
       }
     } catch (error: any) {
       console.log(error);

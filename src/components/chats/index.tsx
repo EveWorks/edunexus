@@ -15,6 +15,8 @@ import {
 } from "@/context/MicrophoneContextProvider";
 import useChatMessages from "@/hooks/use-chat-messages";
 import { getUser } from "@/utils/get-user";
+import axios from "@/axios";
+import { Button } from "rizzui";
 
 const data: any = [];
 
@@ -61,8 +63,22 @@ const Chat = ({ id }: { id: string }) => {
   }, [microphoneState]);
 
   const getAudio = async (text: string) => {
-    const response = await fetch(`${process.env.BASE_URL}/api/get-audio`);
-    
+    const response: any = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-audio`,
+      { text },
+      { responseType: "blob" }
+    );
+    if (response) {
+      const audioBlob = await response;
+      // Create an audio URL from the Blob
+      const audioUrl = URL.createObjectURL(audioBlob);
+      // Create an audio element and play the audio
+      const audio = new Audio(audioUrl);
+      audio.play();
+      return true;
+    } else {
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -91,6 +107,7 @@ const Chat = ({ id }: { id: string }) => {
             message_type: "text",
             topicid: id,
             userid: user.id,
+            callback: getAudio,
           };
           await sendMessage(payload);
         }
@@ -146,6 +163,13 @@ const Chat = ({ id }: { id: string }) => {
 
   return (
     <div className="flex flex-col h-full">
+      <Button
+        onClick={() => {
+          getAudio("Make a request and configure the request with options");
+        }}
+      >
+        Click
+      </Button>
       <ChatHeader setPreview={setPreview} />
       <ChatContent chats={messages} preview={preview} />
       <ChatFooter setChats={setMessages} preview={preview} />
