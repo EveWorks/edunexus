@@ -13,7 +13,7 @@ import { IoClose } from "react-icons/io5";
 import useDevice from "@/hooks/use-device";
 import { useEffect, useState } from "react";
 import { clearTopicList, getTopicList } from "@/store/features/chat";
-import { getUser } from "@/utils/get-user";
+import useUser from "@/hooks/use-user";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
 
@@ -33,7 +33,7 @@ const Sidebar = ({
   const { topicList, topicListCount, listLoader } = useAppSelector(
     (state: any) => state.Chat
   );
-  const user = getUser();
+  const user = useUser();
 
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);

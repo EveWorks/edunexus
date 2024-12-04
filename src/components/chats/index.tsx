@@ -14,9 +14,9 @@ import {
   useMicrophone,
 } from "@/context/MicrophoneContextProvider";
 import useChatMessages from "@/hooks/use-chat-messages";
-import { getUser } from "@/utils/get-user";
 import axios from "@/axios";
 import { Button } from "rizzui";
+import useUser from "@/hooks/use-user";
 
 const data: any = [];
 
@@ -33,7 +33,7 @@ const Chat = ({ id }: { id: string }) => {
     loadMore,
     totalItems,
   } = useChatMessages({ id, initialPage: 1, limit: 10 });
-  const user = getUser();
+  const user = useUser();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
     useMicrophone();
@@ -96,7 +96,7 @@ const Chat = ({ id }: { id: string }) => {
 
     const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
-      let thisCaption = data.channel.alternatives[0].transcript;
+      const thisCaption = data.channel.alternatives[0].transcript;
 
       if (isFinal && speechFinal) {
         if (thisCaption !== "") {

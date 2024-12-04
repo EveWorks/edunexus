@@ -6,7 +6,7 @@ import { Button, Input, Password, Select } from "rizzui";
 import { BiChevronLeft } from "react-icons/bi";
 import { FaArrowRight } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
-import { getUser } from "@/utils/get-user";
+import useUser from "@/hooks/use-user";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMemo, useState } from "react";
 import axios from "@/axios";
@@ -84,7 +84,7 @@ type Inputs = {
 
 const SettingView = () => {
   const router = useRouter();
-  const user = getUser();
+  const user = useUser();
 
   const countries = useMemo(() => countryList().getData(), []);
 

@@ -6,7 +6,7 @@ const handler: any = async (req: NextRequest) => {
   try {
     // Parse the incoming JSON body
     const { text }: any = await req.json();
-    
+
     if (!text || text === "") {
       return NextResponse.json(
         { status: false, message: "Failed. Text is required." },
@@ -24,7 +24,7 @@ const handler: any = async (req: NextRequest) => {
     const url = req.url;
     const deepgram = createClient(process.env.DEEPGRAM_API_KEY ?? "");
 
-    let { result: projectsResult, error: projectsError } =
+    const { result: projectsResult, error: projectsError } =
       await deepgram.manage.getProjects();
 
     if (projectsError) {

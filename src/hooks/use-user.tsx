@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 
-export const getUser = () => {
+export default function useUser() {
   const { data: session }: any = useSession();
-  return session?.user.data.user;
-};
+  return session?.user.data.user || null;
+}
