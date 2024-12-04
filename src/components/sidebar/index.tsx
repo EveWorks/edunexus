@@ -9,13 +9,17 @@ import { GoArrowUpRight } from "react-icons/go";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateMenu } from "@/store/features/settings";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoCreateOutline } from "react-icons/io5";
 import useDevice from "@/hooks/use-device";
-import { useEffect, useState } from "react";
-import { clearTopicList, getTopicList } from "@/store/features/chat";
+import { useEffect } from "react";
+import {
+  clearconversationList,
+  getConversationList,
+} from "@/store/features/chat";
 import useUser from "@/hooks/use-user";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
+import moment from "moment";
 
 const Sidebar = ({
   open,
@@ -30,13 +34,9 @@ const Sidebar = ({
   const router = useRouter();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state: any) => state.Settings);
-  const { topicList, topicListCount, listLoader } = useAppSelector(
-    (state: any) => state.Chat
-  );
+  const { conversationList, conversationListCount, listLoader } =
+    useAppSelector((state: any) => state.Chat);
   const user = useUser();
-
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
 
   const CloseMenu = () => {
     dispatch(updateMenu(false));
@@ -44,12 +44,12 @@ const Sidebar = ({
 
   useEffect(() => {
     return () => {
-      dispatch(clearTopicList({}));
+      dispatch(clearconversationList({}));
     };
   }, []);
 
   useEffect(() => {
-    dispatch(getTopicList({ limit, page }));
+    dispatch(getConversationList({ userId: user.id }));
   }, []);
 
   return (
@@ -119,28 +119,38 @@ const Sidebar = ({
         <p className="pl-[1.25rem] text-[1.25rem] leading-[1.3313rem] mb-[1.4375rem] text-[#525252]">
           Notification
         </p>
-        <Button
-          variant="text"
-          className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] absolute right-[1.25rem] top-[1.25rem] z-2 p-0"
-        >
-          <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
-        </Button>
+
+        <div className="absolute right-[1.25rem] top-[1.25rem] z-2">
+          <Button
+            variant="text"
+            onClick={() => router.push(`/dashboard`)}
+            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] p-0 mr-2"
+          >
+            <IoCreateOutline className="w-[1.25rem] h-[1.25rem]" />
+          </Button>
+          <Button
+            variant="text"
+            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C]  p-0"
+          >
+            <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
+          </Button>
+        </div>
         <ul className="h-[calc(100vh-440px)] overflow-y-auto custom-scrollbar">
-          {topicListCount > 0 &&
-            topicList?.map((item: any) => (
+          {conversationListCount > 0 &&
+            conversationList?.map((item: any) => (
               <li
-                key={item.id}
+                key={item?.id}
                 className={`mb-[0.625rem] bg-[#0C0C0C] py-[1.25rem] px-[1.875rem] rounded-[1.5625rem] mx-auto ${
                   id === item.id && "bg-primary text-[#0C0C0C]"
                 }`}
               >
-                <Link href={`/chat/${item.id}`} className={``}>
+                <Link href={`/chat/${item?.id}`} className={``}>
                   <p className="text-[1.875rem] leading-[2.0269rem] mb-[0.625rem]">
-                    {item.topic_name}
+                    {item?.topicid?.topic_name}
                   </p>
-                  {item?.detail && (
+                  {item?.start_date && (
                     <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
-                      {item.detail}
+                      {moment(item?.start_date).format("DD MMM YYYY")}
                     </p>
                   )}
                 </Link>

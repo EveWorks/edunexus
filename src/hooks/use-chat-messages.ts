@@ -11,7 +11,7 @@ interface MessagesResponse {
 }
 
 interface UseChatMessagesProps {
-  id: string;
+  id?: string;
   initialPage?: number;
   limit?: number;
 }
@@ -28,6 +28,7 @@ const useChatMessages = ({
   const [page, setPage] = useState<number>(initialPage);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [topicId, setTopicId] = useState<string>("");
 
   const fetchMessages = useCallback(
     async (currentPage: number) => {
@@ -45,6 +46,7 @@ const useChatMessages = ({
         if (response.data.data?.length > 0) {
           setMessages((prev: any) => [...prev, ...response.data.data]);
           setTotalItems(response.data.pagination.totalItems);
+          setTopicId(response.data.data[0]?.conversationid?.topicid);
         }
         // if (data.messages.length < limit) {
         //   setHasMore(false);
@@ -63,8 +65,9 @@ const useChatMessages = ({
     const payload = {
       message: data.message,
       message_type: data.message_type,
-      topicid: data.topicid,
+      topicid: data?.topicid || topicId,
       userid: data.userid,
+      conversationid: data.conversationid,
     };
     try {
       const response: any = await axios.post(
@@ -77,6 +80,7 @@ const useChatMessages = ({
         }
         setMessages((prev: any) => [...prev, response?.AiResponse]);
       }
+      return response;
     } catch (error: any) {
       console.log(error);
       setError(error || "Failed to send message");

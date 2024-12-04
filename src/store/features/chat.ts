@@ -24,6 +24,27 @@ export const createTopic = createAsyncThunk(
   }
 );
 
+export const getConversationList = createAsyncThunk(
+  "chat/getConversationList",
+  async (request: any, thunkAPI) => {
+    try {
+      const { callback, userId } = request;
+      const url = `/conversation/list_conversation?userId=${userId}`;
+      const response: any = await axios.get(url);
+      if (response?.data?.length > 0) {
+        if (callback) {
+          callback();
+        }
+        return response?.data;
+      }
+      return {};
+    } catch (e) {
+      console.log("redux | getConversationList func got error => ", e);
+      return thunkAPI.rejectWithValue(e);
+    }
+  }
+);
+
 export const getTopicList = createAsyncThunk(
   "chat/getTopicList",
   async (request: any, thunkAPI) => {
@@ -48,16 +69,22 @@ export const getTopicList = createAsyncThunk(
 const initialState = {
   topicList: [] as any,
   topicListCount: 0 as number,
+  conversationList: [] as any,
+  conversationListCount: 0 as number,
   listLoader: false as boolean,
+  currentTopic: "" as string,
 };
 
 export const chats = createSlice({
   name: "chat",
   initialState: initialState,
   reducers: {
-    clearTopicList: (state, action) => {
-      state.topicList = [];
-      state.topicListCount = 0;
+    clearconversationList: (state, action) => {
+      state.conversationList = [];
+      state.conversationListCount = 0;
+    },
+    updateCurrentTopic: (state, action) => {
+      state.currentTopic = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -65,7 +92,12 @@ export const chats = createSlice({
       state.listLoader = true;
     });
     builder.addCase(createTopic.fulfilled, (state, action) => {
-      state.topicList = action.payload;
+      if (state.conversationList?.length > 0) {
+        state.conversationList = [...state.conversationList, action.payload];
+      } else {
+        state.conversationList = [action.payload];
+      }
+      state.conversationListCount = state.conversationListCount++;
       state.listLoader = false;
     });
     builder.addCase(getTopicList.pending, (state, action) => {
@@ -83,8 +115,22 @@ export const chats = createSlice({
       state.topicListCount = action.payload?.pagination?.totalPages || 0;
       state.listLoader = false;
     });
+    builder.addCase(getConversationList.pending, (state, action) => {
+      state.listLoader = true;
+    });
+    builder.addCase(getConversationList.fulfilled, (state, action) => {
+      if (state.conversationList?.length > 0) {
+        state.conversationList = [...state.conversationList, ...action.payload];
+        state.conversationListCount =
+          state.conversationListCount + state.conversationList?.length || 0;
+      } else {
+        state.conversationList = action.payload;
+        state.conversationListCount = state.conversationList?.length || 0;
+      }
+      state.listLoader = false;
+    });
   },
 });
 
-export const { clearTopicList } = chats.actions;
+export const { clearconversationList, updateCurrentTopic } = chats.actions;
 export default chats.reducer;

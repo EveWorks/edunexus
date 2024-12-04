@@ -17,8 +17,6 @@ const PreviewOne = ({ chats }: { chats: any }) => {
     }
   }, [chats]);
 
-  console.log("chats", chats);
-
   return (
     <div className="grow">
       {id ? (

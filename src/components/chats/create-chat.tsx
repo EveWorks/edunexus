@@ -3,21 +3,31 @@ import { Button } from "rizzui";
 import BgVector from "@/public/bg.png";
 import BgVectorShadow from "@/public/vector.svg";
 import axios from "@/axios";
-import { createTopic } from "@/store/features/chat";
+import {
+  createTopic,
+  getTopicList,
+  updateCurrentTopic,
+} from "@/store/features/chat";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const CreateChat = () => {
-  const { listLoader } = useAppSelector((state) => state.Chat);
+  const { topicList, currentTopic } = useAppSelector((state) => state.Chat);
   const dispatch = useAppDispatch();
-  const router = useRouter();
 
-  const createNewChat = async (topic: string) => {
-    const callback = (id: string) => {
-      router.push(`/chat/${id}`);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    dispatch(getTopicList({ limit, page }));
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(updateCurrentTopic(""));
     };
-    dispatch(createTopic({ topic, callback }));
-  };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -44,23 +54,24 @@ const CreateChat = () => {
         Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
         consectetur, adipisci velit
       </div>
-      <div className="flex items-center justify-center">
-        <Button
-          onClick={() => createNewChat("Mathematics")}
-          variant="text"
-          disabled={listLoader}
-          className="h-fit text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem] mr-[1.25rem]"
-        >
-          Mathematics
-        </Button>
-        <Button
-          onClick={() => createNewChat("Computer Science")}
-          variant="text"
-          disabled={listLoader}
-          className="h-fit text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem]"
-        >
-          Computer Science
-        </Button>
+      <div className="flex flex-wrap items-center justify-center">
+        {topicList?.length > 0 &&
+          topicList?.map((item: any) => {
+            return (
+              <Button
+                key={item.id}
+                onClick={() => dispatch(updateCurrentTopic(item.id))}
+                variant="text"
+                className={`h-fit text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem] mr-[1.25rem] mb-2 ${
+                  currentTopic === item.id
+                    ? "bg-primary border-primary text-[#0c0c0c] hover:text-[#0c0c0c]"
+                    : ""
+                } `}
+              >
+                {item.topic_name}
+              </Button>
+            );
+          })}
       </div>
     </div>
   );

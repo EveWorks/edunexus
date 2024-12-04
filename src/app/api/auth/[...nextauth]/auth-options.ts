@@ -58,7 +58,6 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials: any) {
         if (credentials == null) return null;
         try {
-          console.log(credentials);
           const payload = {
             email: credentials.email,
             password: credentials.password,
@@ -67,7 +66,6 @@ export const authOptions: NextAuthOptions = {
             device_token: "swsw",
           };
           const response: any = await axios.post("/users/login", payload);
-          console.log(response);
           if (response?.user) {
             return response;
           } else {

@@ -22,6 +22,7 @@ const data: any = [];
 
 const Chat = ({ id }: { id: string }) => {
   const [preview, setPreview] = useState<any>(false);
+  const [topic, setTopic] = useState<string>("");
   const {
     messages,
     setMessages,
@@ -56,7 +57,7 @@ const Chat = ({ id }: { id: string }) => {
         utterance_end_ms: 3000,
         interim_results: true,
         vad_events: true,
-        endpointing: 200,
+        endpointing: 100,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,7 +90,7 @@ const Chat = ({ id }: { id: string }) => {
     const onData = (e: BlobEvent) => {
       // iOS SAFARI FIX:
       // Prevent packetZero from being sent. If sent at size 0, the connection will close.
-      if (e.data.size > 0) {
+      if (e.data.size > 0 && !msgLoading) {
         connection?.send(e.data);
       }
     };
@@ -104,9 +105,9 @@ const Chat = ({ id }: { id: string }) => {
 
           const payload = {
             message: thisCaption,
-            message_type: "text",
-            topicid: id,
+            message_type: "message",
             userid: user.id,
+            conversationid: id,
             callback: getAudio,
           };
           await sendMessage(payload);
@@ -165,7 +166,7 @@ const Chat = ({ id }: { id: string }) => {
     <div className="flex flex-col h-full">
       <ChatHeader setPreview={setPreview} />
       <ChatContent chats={messages} preview={preview} />
-      <ChatFooter setChats={setMessages} preview={preview} />
+      <ChatFooter id={id} preview={preview} />
     </div>
   );
 };

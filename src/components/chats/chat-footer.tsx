@@ -9,16 +9,17 @@ import { FaStop } from "react-icons/fa6";
 import AudioLoader from "./audio-loader";
 import AudioPreview from "./audio-preview";
 import useDevice from "@/hooks/use-device";
+import { useMicrophone } from "@/context/MicrophoneContextProvider";
+import useUser from "@/hooks/use-user";
+import useChatMessages from "@/hooks/use-chat-messages";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { getConversationList } from "@/store/features/chat";
+import { useRouter } from "next/navigation";
 
-const ChatFooter = ({
-  setChats,
-  preview,
-}: {
-  setChats: any;
-  preview: boolean;
-}) => {
+const ChatFooter = ({ id, preview }: { id?: string; preview: boolean }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
+  const user = useUser();
 
   const {
     register,
@@ -32,27 +33,30 @@ const ChatFooter = ({
     },
   });
 
-  //   const deleteAudio = () => {
-  //     resetRecording();
-  //   };
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const currentTopic = useAppSelector((state: any) => state.Chat.currentTopic);
+  const { startMicrophone, stopMicrophone, microphone } = useMicrophone();
+  const { sendMessage, msgLoading } = useChatMessages({ id });
 
-  //   const {
-  //     isRecording,
-  //     audioUrl,
-  //     startRecording,
-  //     stopRecording,
-  //     resetRecording,
-  //   } = useAudioRecorder();
+  const callbackMessage = () => {
+    dispatch(getConversationList({ userId: user.id }));
+  };
 
-  const sendMessage = (data: any) => {
-    if (data?.message) {
+  const sendNewMessage = async (data: any) => {
+    if (data?.message && !msgLoading) {
       const payload = {
-        id: 4,
-        data: data.message.trim(),
-        alinda: false,
+        message: data?.message,
+        message_type: "message",
+        topicid: currentTopic,
+        userid: user.id,
+        conversationid: id,
+        callback: callbackMessage,
       };
-      setChats((prev: any) => [...prev, payload]);
-      setValue("message", "");
+      const response: any = await sendMessage(payload);
+      if (response?.conversation?.id) {
+        router.replace(`/chat/${response?.conversation?.id}`);
+      }
     }
   };
 
@@ -68,32 +72,29 @@ const ChatFooter = ({
 
   return (
     <div className="flex items-end p-[1.25rem]">
-      {/* {isRecording ? (
-                <Button onClick={() => stopRecording()} variant="text" className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]">
-                    <FaStop className="w-[1.875rem] h-[1.875rem]" />
-                </Button>
-            ) : ( */}
-      <Button
-        // onClick={() => startRecording()}
-        variant="text"
-        className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]"
-      >
-        <MdMicNone className="w-[1.875rem] h-[1.875rem]" />
-      </Button>
-      {/* )} */}
+      {microphone?.state === "recording" ? (
+        <Button
+          onClick={() => stopMicrophone()}
+          variant="text"
+          className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]"
+        >
+          <FaStop className="w-[1.875rem] h-[1.875rem]" />
+        </Button>
+      ) : (
+        <Button
+          onClick={() => startMicrophone()}
+          variant="text"
+          className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]"
+        >
+          <MdMicNone className="w-[1.875rem] h-[1.875rem]" />
+        </Button>
+      )}
       <form
-        onSubmit={handleSubmit(sendMessage)}
+        onSubmit={handleSubmit(sendNewMessage)}
         className={`${
           preview && !isMobile ? "w-[calc(100%-10rem)]" : "w-full"
         } transition-all duration-400`}
       >
-        {/* {audioUrl && <div className="bg-[#0C0C0C] rounded-[1.5625rem] py-[2.125rem] px-[1.25rem] ml-3 flex items-center">
-                    <AudioPreview audioUrl={audioUrl} deleteAudio={deleteAudio} />
-                    <Button type="submit" disabled={!audioUrl} variant="text" className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] ms-5">
-                        <BsFillSendFill className="text-primary  w-[2rem] h-[2rem]" />
-                    </Button>
-                </div>} */}
-        {/* {!audioUrl && ( */}
         <div className="w-full relative transition-all duration-400">
           {errors?.message && (
             <p className="text-red text-[13px] my-1 rizzui-textarea-error-text pl-3">
@@ -119,11 +120,11 @@ const ChatFooter = ({
           ></Textarea>
           <Button
             type="submit"
-            disabled={watch("message")?.length < 1}
+            disabled={watch("message")?.length < 1 || msgLoading}
             variant="text"
             className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] absolute bottom-[10px] md:bottom-[1.3125rem] right-[0.625rem]"
           >
-            {watch("message")?.length < 1 ? (
+            {watch("message")?.length < 1 || msgLoading ? (
               <FiSend className="w-[1.25rem] h-[1.25rem]" />
             ) : (
               <BsFillSendFill className="text-primary  w-[1.25rem] h-[1.25rem]" />
@@ -135,7 +136,6 @@ const ChatFooter = ({
             </span>
           )}
         </div>
-        {/* )} */}
       </form>
       <AudioLoader show={preview && !isMobile} size="5.9375rem" />
     </div>
