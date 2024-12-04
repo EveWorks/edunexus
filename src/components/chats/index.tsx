@@ -163,13 +163,6 @@ const Chat = ({ id }: { id: string }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Button
-        onClick={() => {
-          getAudio("Make a request and configure the request with options");
-        }}
-      >
-        Click
-      </Button>
       <ChatHeader setPreview={setPreview} />
       <ChatContent chats={messages} preview={preview} />
       <ChatFooter setChats={setMessages} preview={preview} />
