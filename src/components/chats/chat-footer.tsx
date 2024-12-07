@@ -13,10 +13,14 @@ import { useMicrophone } from "@/context/MicrophoneContextProvider";
 import useUser from "@/hooks/use-user";
 import useChatMessages from "@/hooks/use-chat-messages";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { getConversationList } from "@/store/features/chat";
+import {
+  addMessage,
+  getConversationList,
+  sendMessage,
+} from "@/store/features/chat";
 import { useRouter } from "next/navigation";
 
-const ChatFooter = ({ id, preview }: { id?: string; preview: boolean }) => {
+const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
   const user = useUser();
@@ -35,28 +39,46 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: boolean }) => {
 
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const currentTopic = useAppSelector((state: any) => state.Chat.currentTopic);
   const { startMicrophone, stopMicrophone, microphone } = useMicrophone();
-  const { sendMessage, msgLoading } = useChatMessages({ id });
+  const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
 
-  const callbackMessage = () => {
+  const callbackMessage = (id: string) => {
     dispatch(getConversationList({ userId: user.id }));
+    router.replace(`/chat/${id}`);
   };
 
   const sendNewMessage = async (data: any) => {
     if (data?.message && !msgLoading) {
-      const payload = {
-        message: data?.message,
-        message_type: "message",
-        topicid: currentTopic,
-        userid: user.id,
-        conversationid: id,
-        callback: callbackMessage,
+      const payload: any = {
+        data: {
+          message: data?.message,
+          message_type: "message",
+          topicid: topicId,
+          userid: user.id,
+          conversationid: id,
+        },
       };
-      const response: any = await sendMessage(payload);
-      if (response?.conversation?.id) {
-        router.replace(`/chat/${response?.conversation?.id}`);
+
+      if (id === "") {
+        payload.callback = callbackMessage;
       }
+
+      dispatch(
+        addMessage({
+          message: data?.message,
+          message_type: "message",
+          topicid: topicId,
+          conversationid: id,
+          userid: {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user.id,
+          },
+        })
+      );
+
+      setValue("message", "");
+      await dispatch(sendMessage(payload));
     }
   };
 
@@ -92,7 +114,9 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: boolean }) => {
       <form
         onSubmit={handleSubmit(sendNewMessage)}
         className={`${
-          preview && !isMobile ? "w-[calc(100%-10rem)]" : "w-full"
+          preview === "2" && microphone?.state === "recording" && !isMobile
+            ? "w-[calc(100%-10rem)]"
+            : "w-full"
         } transition-all duration-400`}
       >
         <div className="w-full relative transition-all duration-400">
@@ -137,7 +161,10 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: boolean }) => {
           )}
         </div>
       </form>
-      <AudioLoader show={preview && !isMobile} size="5.9375rem" />
+      <AudioLoader
+        show={preview === "2" && microphone?.state === "recording" && !isMobile}
+        size="5.9375rem"
+      />
     </div>
   );
 };

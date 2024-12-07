@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "@/axios";
+import useUser from "./use-user";
 
 interface Message {
   id: string;
@@ -29,6 +30,7 @@ const useChatMessages = ({
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [topicId, setTopicId] = useState<string>("");
+  const user = useUser();
 
   const fetchMessages = useCallback(
     async (currentPage: number) => {
@@ -69,23 +71,37 @@ const useChatMessages = ({
       userid: data.userid,
       conversationid: data.conversationid,
     };
+
+    const userPayload = {
+      ...payload,
+      userid: {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        id: user.id,
+      },
+    };
+
+    messages.push(userPayload);
+    setMessages(messages);
     try {
       const response: any = await axios.post(
         "/conversation/sendmessage",
         payload
       );
       if (response?.AiResponse) {
-        if (data.callback) {
+        if (data?.callback) {
           await data.callback(response?.AiResponse.message);
         }
-        setMessages((prev: any) => [...prev, response?.AiResponse]);
+        messages.push(response?.AiResponse);
+        setMessages(messages);
       }
       return response;
     } catch (error: any) {
       console.log(error);
       setError(error || "Failed to send message");
+    } finally {
+      setMsgLoading(false);
     }
-    setMsgLoading(false);
   };
 
   useEffect(() => {
@@ -95,6 +111,12 @@ const useChatMessages = ({
   const loadMore = useCallback(() => {
     if (hasMore) setPage((prevPage) => prevPage + 1);
   }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     setTopicId("");
+  //   };
+  // }, []);
 
   const memoizedMessages = useMemo(() => messages, [messages]);
 
@@ -108,6 +130,7 @@ const useChatMessages = ({
     loadMore,
     totalItems,
     sendMessage,
+    topicId,
   };
 };
 

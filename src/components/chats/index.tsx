@@ -13,39 +13,26 @@ import {
   MicrophoneState,
   useMicrophone,
 } from "@/context/MicrophoneContextProvider";
-import useChatMessages from "@/hooks/use-chat-messages";
 import axios from "@/axios";
-import { Button } from "rizzui";
 import useUser from "@/hooks/use-user";
-
-const data: any = [];
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { addMessage, sendMessage } from "@/store/features/chat";
 
 const Chat = ({ id }: { id: string }) => {
-  const [preview, setPreview] = useState<any>(false);
-  const [topic, setTopic] = useState<string>("");
-  const {
-    messages,
-    setMessages,
-    sendMessage,
-    msgLoading,
-    loading,
-    error,
-    hasMore,
-    loadMore,
-    totalItems,
-  } = useChatMessages({ id, initialPage: 1, limit: 10 });
+  const captionTimeout = useRef<any>();
+  const keepAliveInterval = useRef<any>();
+  const [preview, setPreview] = useState<string>("2");
+  const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
   const user = useUser();
+  const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
     useMicrophone();
-  const captionTimeout = useRef<any>();
-  const keepAliveInterval = useRef<any>();
 
   useEffect(() => {
     if (id) {
       setupMicrophone();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -60,7 +47,6 @@ const Chat = ({ id }: { id: string }) => {
         endpointing: 100,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState]);
 
   const getAudio = async (text: string) => {
@@ -71,9 +57,7 @@ const Chat = ({ id }: { id: string }) => {
     );
     if (response) {
       const audioBlob = await response;
-      // Create an audio URL from the Blob
       const audioUrl = URL.createObjectURL(audioBlob);
-      // Create an audio element and play the audio
       const audio = new Audio(audioUrl);
       audio.play();
       return true;
@@ -88,8 +72,6 @@ const Chat = ({ id }: { id: string }) => {
     if (!connection) return;
 
     const onData = (e: BlobEvent) => {
-      // iOS SAFARI FIX:
-      // Prevent packetZero from being sent. If sent at size 0, the connection will close.
       if (e.data.size > 0 && !msgLoading) {
         connection?.send(e.data);
       }
@@ -101,16 +83,33 @@ const Chat = ({ id }: { id: string }) => {
 
       if (isFinal && speechFinal) {
         if (thisCaption !== "") {
-          setMessages((prev: any) => [...prev, { message: thisCaption }]);
+          if (preview !== "2") {
+            dispatch(
+              addMessage({
+                message: thisCaption,
+                message_type: "message",
+                topicid: topicId,
+                conversationid: id,
+                userid: {
+                  firstname: user.firstname,
+                  lastname: user.lastname,
+                  id: user.id,
+                },
+              })
+            );
+          }
 
           const payload = {
-            message: thisCaption,
-            message_type: "message",
-            userid: user.id,
-            conversationid: id,
-            callback: getAudio,
+            data: {
+              message: thisCaption,
+              message_type: "message",
+              userid: user.id,
+              conversationid: id,
+              callback: () => getAudio(thisCaption),
+            },
           };
-          await sendMessage(payload);
+
+          await dispatch(sendMessage(payload));
         }
         clearTimeout(captionTimeout.current);
         captionTimeout.current = setTimeout(() => {
@@ -127,12 +126,13 @@ const Chat = ({ id }: { id: string }) => {
     }
 
     return () => {
-      // prettier-ignore
-      connection.removeListener(LiveTranscriptionEvents.Transcript, onTranscript);
+      connection.removeListener(
+        LiveTranscriptionEvents.Transcript,
+        onTranscript
+      );
       microphone.removeEventListener(MicrophoneEvents.DataAvailable, onData);
       clearTimeout(captionTimeout.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionState]);
 
   useEffect(() => {
@@ -155,17 +155,12 @@ const Chat = ({ id }: { id: string }) => {
     return () => {
       clearInterval(keepAliveInterval.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [microphoneState, connectionState]);
-
-  useEffect(() => {
-    setMessages(data);
-  }, []);
 
   return (
     <div className="flex flex-col h-full">
       <ChatHeader setPreview={setPreview} />
-      <ChatContent chats={messages} preview={preview} />
+      <ChatContent preview={preview} />
       <ChatFooter id={id} preview={preview} />
     </div>
   );

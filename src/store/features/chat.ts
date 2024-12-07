@@ -66,6 +66,52 @@ export const getTopicList = createAsyncThunk(
   }
 );
 
+export const fetchMessages = createAsyncThunk(
+  "chat/fetchMessages",
+  async (request: any, thunkAPI) => {
+    const { id, limit, page, callback } = request;
+    try {
+      const response = await axios.get("/conversation/get_allmessage", {
+        params: { conversation_id: id, limit, page },
+      });
+
+      if (callback) {
+        callback();
+      }
+
+      return {
+        messages: response.data.data || [],
+        totalItems: response.data.pagination.totalItems || 0,
+        topicId: response.data.data[0]?.conversationid?.topicid || "",
+      };
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(
+        err.message || "Failed to fetch messages"
+      );
+    }
+  }
+);
+
+// Send message
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async (request: any, thunkAPI) => {
+    try {
+      const { data } = request;
+      const response: any = await axios.post("/conversation/sendmessage", data);
+      if (response?.AiResponse && data?.callback) {
+        data.callback(response?.conversation_id?.id);
+      }
+
+      return {
+        aiResponse: response?.AiResponse,
+      };
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message || "Failed to send message");
+    }
+  }
+);
+
 const initialState = {
   topicList: [] as any,
   topicListCount: 0 as number,
@@ -73,6 +119,14 @@ const initialState = {
   conversationListCount: 0 as number,
   listLoader: false as boolean,
   currentTopic: "" as string,
+  messages: [] as any,
+  loading: false as boolean,
+  msgLoading: false as boolean,
+  error: "" as string | null,
+  page: 1 as number,
+  hasMore: true as boolean,
+  totalItems: 0 as number,
+  topicId: "" as string,
 };
 
 export const chats = createSlice({
@@ -85,6 +139,19 @@ export const chats = createSlice({
     },
     updateCurrentTopic: (state, action) => {
       state.currentTopic = action.payload;
+    },
+    resetChatDetail: (state, action) => {
+      state.topicId = "";
+      state.messages = [];
+      state.loading = false;
+      state.msgLoading = false;
+      state.error = "";
+      state.page = 1;
+      state.hasMore = true;
+      state.totalItems = 0;
+    },
+    addMessage: (state, action) => {
+      state.messages.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -119,18 +186,48 @@ export const chats = createSlice({
       state.listLoader = true;
     });
     builder.addCase(getConversationList.fulfilled, (state, action) => {
-      if (state.conversationList?.length > 0) {
-        state.conversationList = [...state.conversationList, ...action.payload];
-        state.conversationListCount =
-          state.conversationListCount + state.conversationList?.length || 0;
-      } else {
-        state.conversationList = action.payload;
-        state.conversationListCount = state.conversationList?.length || 0;
-      }
+      state.conversationList = action.payload;
+      state.conversationListCount = state.conversationList?.length || 0;
       state.listLoader = false;
+    });
+    builder.addCase(fetchMessages.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchMessages.fulfilled, (state, action) => {
+      const { messages, totalItems, topicId } = action.payload;
+      if (state.messages?.length > 0) {
+        state.messages = [...messages, ...state.messages];
+      } else {
+        state.messages = messages;
+      }
+      state.totalItems = totalItems;
+      state.topicId = topicId;
+      state.hasMore = messages.length > 0;
+      state.loading = false;
+    });
+    builder.addCase(fetchMessages.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+    builder.addCase(sendMessage.pending, (state) => {
+      state.msgLoading = true;
+      state.error = null;
+    });
+    builder.addCase(sendMessage.fulfilled, (state, action) => {
+      const { aiResponse } = action.payload;
+      if (aiResponse) {
+        state.messages.push(aiResponse);
+      }
+      state.msgLoading = false;
+    });
+    builder.addCase(sendMessage.rejected, (state, action) => {
+      state.msgLoading = false;
+      state.error = action.payload as string;
     });
   },
 });
 
-export const { clearconversationList, updateCurrentTopic } = chats.actions;
+export const { clearconversationList, updateCurrentTopic, addMessage } =
+  chats.actions;
 export default chats.reducer;

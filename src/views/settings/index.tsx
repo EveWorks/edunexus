@@ -106,6 +106,7 @@ const SettingView = () => {
       degree: user.degree,
       year: user.year.toString(),
       email: user.email,
+      country: user.conutry,
     },
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -129,15 +130,16 @@ const SettingView = () => {
       year: parseInt(data.year),
       email: data.email,
       password: data.password,
+      country: data.country,
     };
-    const response: any = await axios.post("/users", payload);
+    const response: any = await axios.patch(`/users/${user.id}`, payload);
 
     setIsLoading(false);
   };
 
   return (
     <div className="md:p-[3.125rem]">
-      <form className="">
+      <form onSubmit={handleSubmit(onSubmit)} className="">
         <div className="mb-[0.625rem] md:bg-[#141414] rounded-[3.125rem] p-[1.25rem] md:p-[3.125rem] relative mb-[3.4375rem]">
           <div className="flex items-start">
             <div className="w-[33.33%]">

@@ -4,10 +4,12 @@ import BgVectorShadow from "@/public/vector.svg";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import CreateChat from "../create-chat";
+import { useAppSelector } from "@/store/hooks";
 
-const PreviewOne = ({ chats }: { chats: any }) => {
+const PreviewOne = () => {
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
+  const { messages } = useAppSelector((state: any) => state.Chat);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -15,7 +17,7 @@ const PreviewOne = ({ chats }: { chats: any }) => {
     if (chatEndRef?.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chats]);
+  }, [messages]);
 
   return (
     <div className="grow">
@@ -41,7 +43,7 @@ const PreviewOne = ({ chats }: { chats: any }) => {
           </div>
           <div className="ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
             <ul className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]">
-              {chats?.map((item: any, index: number) => {
+              {messages?.map((item: any, index: number) => {
                 return (
                   <li className="flex justify-center mb-[2rem]" key={index}>
                     <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">

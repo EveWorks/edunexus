@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { Button, Input, Password } from "rizzui";
 import { FaArrowRight } from "react-icons/fa6";
@@ -7,8 +7,9 @@ import { routes } from "@/utils/routes";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import toast from "react-hot-toast";
+import { Mixpanel } from "@/utils/mixpanel";
 
 type Inputs = {
   email: string;
@@ -26,15 +27,27 @@ const SignInView = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsLoading(true);
-    const response: any = await signIn("credentials", {
-      ...data,
-      redirect: false,
-    });
-    console.log(response)
-    if (response?.ok) {
-      router.push(routes.dashboard);
-    } else {
-      toast.error(response?.error);
+    try {
+      const response: any = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+      if (response?.ok) {
+        const session: any = await getSession();
+        const user = session?.user?.data?.user;
+        // Mixpanel.identify(user.id);
+        // Mixpanel.track("Successful login");
+        // Mixpanel.people.set({
+        //   $first_name: user.first_name,
+        //   $last_name: user.last_name,
+        // });
+        router.push(routes.dashboard);
+      } else {
+        toast.error(response?.error);
+      }
+    } catch (error) {
+      // Mixpanel.track("Unsuccessful login");
+      console.log("Error sign in:", error);
     }
     setIsLoading(false);
   };

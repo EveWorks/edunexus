@@ -1,14 +1,9 @@
 "use client";
 
 import EmptyChat from "@/components/chats/empty-chat";
-import ChatProvider from "@/components/provider/chat-provider";
 
 const Dashboard = () => {
-  return (
-    <ChatProvider>
-      <EmptyChat />
-    </ChatProvider>
-  );
+  return <EmptyChat />;
 };
 
 export default Dashboard;

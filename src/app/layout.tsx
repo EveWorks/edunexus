@@ -6,6 +6,7 @@ import AuthProvider from "./api/auth/[...nextauth]/auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/auth-options";
 import { Toaster } from "react-hot-toast";
+import ChatProvider from "@/components/provider/chat-provider";
 
 const grebaviRegular = localFont({
   src: "./fonts/grebavi-regular.otf",
@@ -62,7 +63,7 @@ export default async function RootLayout({
       >
         <AuthProvider session={session}>
           <StoreProvider initialState={{}}>
-            {children}
+            <ChatProvider>{children}</ChatProvider>
             <Toaster />
           </StoreProvider>
         </AuthProvider>
