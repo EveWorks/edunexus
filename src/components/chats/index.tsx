@@ -21,7 +21,7 @@ import { addMessage, sendMessage } from "@/store/features/chat";
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>();
   const keepAliveInterval = useRef<any>();
-  const [preview, setPreview] = useState<string>("2");
+  const [preview, setPreview] = useState<string>("1");
   const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
   const user = useUser();
   const dispatch = useAppDispatch();
@@ -66,6 +66,37 @@ const Chat = ({ id }: { id: string }) => {
     }
   };
 
+  const sendNewMessage = async (text: string) => {
+    if (preview !== "2") {
+      dispatch(
+        addMessage({
+          message: text,
+          message_type: "message",
+          topicid: topicId,
+          conversationid: id,
+          userid: {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user.id,
+          },
+        })
+      );
+    }
+
+    const payload = {
+      data: {
+        message: text,
+        message_type: "message",
+        userid: user.id,
+        conversationid: id,
+        topicid: topicId,
+        audioCallback: (response: string) => getAudio(response),
+      },
+    };
+
+    await dispatch(sendMessage(payload));
+  };
+
   useEffect(() => {
     if (!id) return;
     if (!microphone) return;
@@ -79,37 +110,11 @@ const Chat = ({ id }: { id: string }) => {
 
     const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
-      const thisCaption = data.channel.alternatives[0].transcript;
+      const transcript = data.channel.alternatives[0].transcript;
 
       if (isFinal && speechFinal) {
-        if (thisCaption !== "") {
-          if (preview !== "2") {
-            dispatch(
-              addMessage({
-                message: thisCaption,
-                message_type: "message",
-                topicid: topicId,
-                conversationid: id,
-                userid: {
-                  firstname: user.firstname,
-                  lastname: user.lastname,
-                  id: user.id,
-                },
-              })
-            );
-          }
-
-          const payload = {
-            data: {
-              message: thisCaption,
-              message_type: "message",
-              userid: user.id,
-              conversationid: id,
-              callback: () => getAudio(thisCaption),
-            },
-          };
-
-          await dispatch(sendMessage(payload));
+        if (transcript !== "") {
+          sendNewMessage(transcript);
         }
         clearTimeout(captionTimeout.current);
         captionTimeout.current = setTimeout(() => {

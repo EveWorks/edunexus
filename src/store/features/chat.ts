@@ -103,6 +103,10 @@ export const sendMessage = createAsyncThunk(
         data.callback(response?.conversation_id?.id);
       }
 
+      if (response?.AiResponse && data?.audioCallback) {
+        data.audioCallback(response?.AiResponse?.message);
+      }
+
       return {
         aiResponse: response?.AiResponse,
       };
@@ -228,6 +232,10 @@ export const chats = createSlice({
   },
 });
 
-export const { clearconversationList, updateCurrentTopic, addMessage } =
-  chats.actions;
+export const {
+  clearconversationList,
+  updateCurrentTopic,
+  addMessage,
+  resetChatDetail,
+} = chats.actions;
 export default chats.reducer;

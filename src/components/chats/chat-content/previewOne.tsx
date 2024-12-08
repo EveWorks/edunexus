@@ -1,23 +1,61 @@
 import Image from "next/image";
 import BgVector2 from "@/public/vc.svg";
 import BgVectorShadow from "@/public/vector.svg";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import CreateChat from "../create-chat";
 import { useAppSelector } from "@/store/hooks";
 
-const PreviewOne = () => {
+const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatWrapperRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
   const { messages } = useAppSelector((state: any) => state.Chat);
+  const [scrollFromBottom, setScrollFromBottom] = useState(0);
 
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const calculateScrollFromBottom = () => {
+    const chatWrapper = chatWrapperRef.current;
+    if (chatWrapper) {
+      const scrollValue =
+        chatWrapper.scrollHeight -
+        (chatWrapper.scrollTop + chatWrapper.offsetHeight);
+      setScrollFromBottom(scrollValue);
+    }
+  };
 
   useEffect(() => {
-    if (chatEndRef?.current) {
+    const chatWrapper = chatWrapperRef.current;
+    if (page === 1 && messages?.length > 0 && chatEndRef?.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    } else if (chatWrapper && scrollFromBottom > 0) {
+      chatWrapper.scrollTop =
+        chatWrapper.scrollHeight - scrollFromBottom - chatWrapper.offsetHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const chatWrapper = chatWrapperRef.current;
+      if (chatWrapper) {
+        if (chatWrapper.scrollTop === 0) {
+          setPage((prevPage: number) => prevPage + 1);
+          calculateScrollFromBottom();
+        }
+      }
+    };
+
+    const chatWrapper = chatWrapperRef.current;
+    if (chatWrapper) {
+      chatWrapper.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (chatWrapper) {
+        chatWrapper.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
 
   return (
     <div className="grow">
@@ -42,7 +80,10 @@ const PreviewOne = () => {
             </div>
           </div>
           <div className="ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
-            <ul className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]">
+            <ul
+              ref={chatWrapperRef}
+              className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]"
+            >
               {messages?.map((item: any, index: number) => {
                 return (
                   <li className="flex justify-center mb-[2rem]" key={index}>

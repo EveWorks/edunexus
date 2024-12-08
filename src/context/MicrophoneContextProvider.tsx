@@ -65,7 +65,7 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
 
       const microphone = new MediaRecorder(userMedia);
 
-      setMicrophoneState(MicrophoneState.Paused);
+      setMicrophoneState(MicrophoneState.Ready);
       setMicrophone(microphone);
     } catch (err: any) {
       console.error(err);
