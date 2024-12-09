@@ -30,7 +30,7 @@ const useChatMessages = ({
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [topicId, setTopicId] = useState<string>("");
-  const user = useUser();
+  const {user} = useUser();
 
   const fetchMessages = useCallback(
     async (currentPage: number) => {

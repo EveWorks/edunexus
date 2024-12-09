@@ -8,7 +8,7 @@ import useUser from "@/hooks/use-user";
 
 const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const user = useUser();
+  const {user} = useUser();
 
   if (
     !user ||

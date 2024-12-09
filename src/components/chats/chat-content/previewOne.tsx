@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import CreateChat from "../create-chat";
 import { useAppSelector } from "@/store/hooks";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -88,7 +90,9 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
                 return (
                   <li className="flex justify-center mb-[2rem]" key={index}>
                     <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {item?.message}
+                    </ReactMarkdown>
                     </div>
                   </li>
                 );

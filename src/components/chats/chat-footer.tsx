@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
-  const user = useUser();
+  const {user} = useUser();
 
   const {
     register,

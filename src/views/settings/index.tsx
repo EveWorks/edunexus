@@ -11,6 +11,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMemo, useState } from "react";
 import axios from "@/axios";
 import countryList from "react-select-country-list";
+import toast from "react-hot-toast";
 
 const gender = [
   {
@@ -77,14 +78,14 @@ type Inputs = {
   degree: string;
   year: string;
   email: string;
-  password: string;
-  confirmPassword: string;
+  password?: string;
+  confirmPassword?: string;
   country?: string;
 };
 
 const SettingView = () => {
   const router = useRouter();
-  const user = useUser();
+  const { user, updateUser } = useUser();
 
   const countries = useMemo(() => countryList().getData(), []);
 
@@ -106,13 +107,13 @@ const SettingView = () => {
       degree: user.degree,
       year: user.year.toString(),
       email: user.email,
-      country: user.conutry,
+      country: user.country,
     },
   });
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    if (data.password !== data.confirmPassword) {
+    if (data?.password !== data?.confirmPassword) {
       setError("confirmPassword", {
         type: "manual",
         message: "Passwords do not match",
@@ -120,7 +121,7 @@ const SettingView = () => {
       return;
     }
     setIsLoading(true);
-    const payload = {
+    const payload: any = {
       firstname: data.firstname,
       lastname: data.lastname,
       age: parseInt(data.age),
@@ -129,11 +130,19 @@ const SettingView = () => {
       degree: data.degree,
       year: parseInt(data.year),
       email: data.email,
-      password: data.password,
       country: data.country,
     };
+
+    if (data?.password) {
+      payload.password = data.password;
+    }
+
     const response: any = await axios.patch(`/users/${user.id}`, payload);
 
+    if (response && Object.keys(response)?.length > 0) {
+      toast.success("Profile updated successfully");
+      await updateUser(response);
+    }
     setIsLoading(false);
   };
 
@@ -169,7 +178,8 @@ const SettingView = () => {
               </Button>
               <Button
                 variant="text"
-                disabled={isLoading}
+                type="submit"
+                isLoading={isLoading}
                 className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] h-fit p-[0.5rem] me-[0.625rem] mb-[0.9rem]"
               >
                 {" "}
@@ -252,9 +262,18 @@ const SettingView = () => {
                   value={value}
                   options={countries}
                   onChange={({ value }: any) => setValue("country", value)}
-                  displayValue={(selected: string) =>
-                    countries?.find((f) => f.value === selected)?.label ?? ""
-                  }
+                  displayValue={(selected: string) => {
+                    if (selected) {
+                      return (
+                        countries?.find((f) => f.value === selected)?.label ??
+                        ""
+                      );
+                    } else {
+                      return (
+                        countries?.find((f) => f.value === value)?.label ?? ""
+                      );
+                    }
+                  }}
                   error={errors?.country?.message}
                 />
               )}
@@ -334,11 +353,13 @@ const SettingView = () => {
               className="w-full md:w-[calc(33.33%-1rem/2)] mb-[0.625rem]"
               inputClassName="text-[1.25rem] leading-[1.875rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
               placeholder="Enter Your Password"
+              {...register("password")}
             />
             <Password
               className="w-full md:w-[calc(33.33%-1rem/2)] mb-[0.625rem]"
               inputClassName="text-[1.25rem] leading-[1.875rem] mb-[1.25rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
               placeholder="Re-enter Your Password"
+              {...register("confirmPassword")}
             />
           </div>
         </div>

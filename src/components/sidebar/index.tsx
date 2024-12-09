@@ -36,7 +36,7 @@ const Sidebar = ({
   const settings = useAppSelector((state: any) => state.Settings);
   const { conversationList, conversationListCount, listLoader } =
     useAppSelector((state: any) => state.Chat);
-  const user = useUser();
+  const {user} = useUser();
 
   const CloseMenu = () => {
     dispatch(updateMenu(false));
@@ -124,16 +124,16 @@ const Sidebar = ({
           <Button
             variant="text"
             onClick={() => router.push(`/dashboard`)}
-            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] p-0 mr-2"
+            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] p-0"
           >
             <IoCreateOutline className="w-[1.25rem] h-[1.25rem]" />
           </Button>
-          <Button
+          {/* <Button
             variant="text"
-            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C]  p-0"
+            className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] ml-2 p-0"
           >
             <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
-          </Button>
+          </Button> */}
         </div>
         <ul className="h-[calc(100vh-440px)] overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&

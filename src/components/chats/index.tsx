@@ -23,7 +23,7 @@ const Chat = ({ id }: { id: string }) => {
   const keepAliveInterval = useRef<any>();
   const [preview, setPreview] = useState<string>("1");
   const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
-  const user = useUser();
+  const {user} = useUser();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
