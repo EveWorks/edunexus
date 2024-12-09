@@ -82,7 +82,6 @@ export const fetchMessages = createAsyncThunk(
       return {
         messages: response.data.data || [],
         totalItems: response.data.pagination.totalItems || 0,
-        topicId: response.data.data[0]?.conversationid?.topicid || "",
       };
     } catch (err: any) {
       return thunkAPI.rejectWithValue(
@@ -110,6 +109,29 @@ export const sendMessage = createAsyncThunk(
       return {
         aiResponse: response?.AiResponse,
       };
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message || "Failed to send message");
+    }
+  }
+);
+
+// create a new conversation
+export const createConversation = createAsyncThunk(
+  "chat/createConversation",
+  async (request: any, thunkAPI) => {
+    try {
+      const { conversation_title, topicid, userid, callback } = request;
+      const response: any = await axios.post("/conversation/new_conversation", {
+        conversation_title,
+        topicid,
+        userid,
+        callback,
+      });
+      if (response?.data && callback) {
+        callback(response?.data?.id);
+      }
+
+      return response?.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message || "Failed to send message");
     }
@@ -199,14 +221,13 @@ export const chats = createSlice({
       state.error = null;
     });
     builder.addCase(fetchMessages.fulfilled, (state, action) => {
-      const { messages, totalItems, topicId } = action.payload;
+      const { messages, totalItems } = action.payload;
       if (state.messages?.length > 0) {
         state.messages = [...messages, ...state.messages];
       } else {
         state.messages = messages;
       }
       state.totalItems = totalItems;
-      state.topicId = topicId;
       state.hasMore = messages.length > 0;
       state.loading = false;
     });
@@ -228,6 +249,15 @@ export const chats = createSlice({
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.msgLoading = false;
       state.error = action.payload as string;
+    });
+    builder.addCase(createConversation.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(createConversation.fulfilled, (state, action) => {
+      state.loading = false;
+    });
+    builder.addCase(createConversation.rejected, (state, action) => {
+      state.loading = false;
     });
   },
 });

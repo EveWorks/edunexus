@@ -36,7 +36,7 @@ const Sidebar = ({
   const settings = useAppSelector((state: any) => state.Settings);
   const { conversationList, conversationListCount, listLoader } =
     useAppSelector((state: any) => state.Chat);
-  const {user} = useUser();
+  const { user } = useUser();
 
   const CloseMenu = () => {
     dispatch(updateMenu(false));

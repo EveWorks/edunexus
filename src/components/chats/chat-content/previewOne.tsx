@@ -61,49 +61,45 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
 
   return (
     <div className="grow">
-      {id ? (
-        <div className="h-full">
-          <div className="h-[calc(100%-244px)] flex items-center justify-center">
-            <div
-              className={`relative transition-all duration-400 scale-[1] h-[200px] md:h-[315px] w-[200px] md:w-[315px]`}
-            >
-              <Image
-                src={BgVector2}
-                alt="vector"
-                className="w-full h-auto absolute bottom-0 right-0 z-[2] mix-blend-overlay rotate-audio"
-                priority
-              />
-              <Image
-                src={BgVectorShadow}
-                alt="vector"
-                className="w-full h-auto absolute bottom-0 right-0 z-[1] rotate-audio-reverse"
-                priority
-              />
-            </div>
+      <div className="h-full">
+        <div className="h-[calc(100%-244px)] flex items-center justify-center">
+          <div
+            className={`relative transition-all duration-400 scale-[1] h-[200px] md:h-[315px] w-[200px] md:w-[315px]`}
+          >
+            <Image
+              src={BgVector2}
+              alt="vector"
+              className="w-full h-auto absolute bottom-0 right-0 z-[2] mix-blend-overlay rotate-audio"
+              priority
+            />
+            <Image
+              src={BgVectorShadow}
+              alt="vector"
+              className="w-full h-auto absolute bottom-0 right-0 z-[1] rotate-audio-reverse"
+              priority
+            />
           </div>
-          <div className="ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
-            <ul
-              ref={chatWrapperRef}
-              className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]"
-            >
-              {messages?.map((item: any, index: number) => {
-                return (
-                  <li className="flex justify-center mb-[2rem]" key={index}>
-                    <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">
+        </div>
+        <div className="ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
+          <ul
+            ref={chatWrapperRef}
+            className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]"
+          >
+            {messages?.map((item: any, index: number) => {
+              return (
+                <li className="flex justify-center mb-[2rem]" key={index}>
+                  <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {item?.message}
                     </ReactMarkdown>
-                    </div>
-                  </li>
-                );
-              })}
-              <div ref={chatEndRef}></div>
-            </ul>
-          </div>
+                  </div>
+                </li>
+              );
+            })}
+            <div ref={chatEndRef}></div>
+          </ul>
         </div>
-      ) : (
-        <CreateChat />
-      )}
+      </div>
     </div>
   );
 };

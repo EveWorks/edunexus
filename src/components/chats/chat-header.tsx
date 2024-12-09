@@ -19,7 +19,7 @@ const courses = [
   },
 ];
 
-const ChatHeader = ({ setPreview }: { setPreview: any }) => {
+const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
   const { isMobile } = useDevice();
   const dispatch = useAppDispatch();
 
@@ -32,16 +32,18 @@ const ChatHeader = ({ setPreview }: { setPreview: any }) => {
       {!isMobile ? (
         <div className="bg-[#0C0C0C50] border-b border-[#525252] py-[1.875rem] ps-[1.875rem] pr-[1.25rem] flex items-center">
           <div className="w-[33.33%]">
-            <Button
-              className="w-[2.5rem] h-[2.5rem] rounded-[0.625rem] border border-primary p-0"
-              variant="text"
-              color="primary"
-              onClick={() =>
-                setPreview((prev: string) => (prev === "1" ? "2" : "1"))
-              }
-            >
-              <Image src={Icon} alt="layout" className="w-[1rem] h-[1rem]" />
-            </Button>
+            {setPreview && (
+              <Button
+                className="w-[2.5rem] h-[2.5rem] rounded-[0.625rem] border border-primary p-0"
+                variant="text"
+                color="primary"
+                onClick={() =>
+                  setPreview((prev: string) => (prev === "1" ? "2" : "1"))
+                }
+              >
+                <Image src={Icon} alt="layout" className="w-[1rem] h-[1rem]" />
+              </Button>
+            )}
           </div>
           <div className="w-[33.33%] text-center text-[1.875rem] leading-[2.0269rem] flex items-center justify-center">
             Conversation 8{" "}

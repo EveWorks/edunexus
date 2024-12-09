@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
-  const {user} = useUser();
+  const { user } = useUser();
 
   const {
     register,
@@ -145,6 +145,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           <Button
             type="submit"
             disabled={watch("message")?.length < 1 || msgLoading}
+            isLoading={msgLoading}
             variant="text"
             className="p-0 rounded-[3.125rem] h-[1.875rem] w-[1.875rem] absolute bottom-[10px] md:bottom-[1.3125rem] right-[0.625rem]"
           >

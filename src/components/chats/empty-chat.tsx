@@ -1,19 +1,16 @@
 import { useState } from "react";
-import ChatContent from "@/components/chats/chat-content";
-import ChatFooter from "@/components/chats/chat-footer";
 import ChatHeader from "@/components/chats/chat-header";
-import useChatMessages from "@/hooks/use-chat-messages";
+import ConversationTitle from "./conversation-title";
+import CreateChat from "./create-chat";
 
 const EmptyChat = () => {
-  const [chats, setChats] = useState<any>([]);
-  const [preview, setPreview] = useState<any>(false);
-  const { sendMessage } = useChatMessages({});
+  const [topicId, setTopicId] = useState<any>(false);
 
   return (
     <div className="flex flex-col h-full">
-      <ChatHeader setPreview={setPreview} />
-      <ChatContent chats={chats} preview={preview} />
-      <ChatFooter preview={preview} />
+      <ChatHeader />
+      <CreateChat topicId={topicId} setTopicId={setTopicId} />
+      <ConversationTitle topicId={topicId} />
     </div>
   );
 };
