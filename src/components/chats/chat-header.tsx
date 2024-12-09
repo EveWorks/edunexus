@@ -4,24 +4,14 @@ import Icon from "@/public/layout-icon.svg";
 import Logo from "@/public/logo.svg";
 import { TbEdit } from "react-icons/tb";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateMenu } from "@/store/features/settings";
 import useDevice from "@/hooks/use-device";
-
-const courses = [
-  {
-    value: "mathematics",
-    label: "Mathematics",
-  },
-  {
-    value: "computer_science",
-    label: "Computer Science",
-  },
-];
 
 const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
   const { isMobile } = useDevice();
   const dispatch = useAppDispatch();
+  const { chatDetail } = useAppSelector((state: any) => state.Chat);
 
   const OpenMenu = () => {
     dispatch(updateMenu(true));
@@ -46,8 +36,8 @@ const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
             )}
           </div>
           <div className="w-[33.33%] text-center text-[1.875rem] leading-[2.0269rem] flex items-center justify-center">
-            Conversation 8{" "}
-            <TbEdit className="ml-[1.25rem] w-[1.125rem] h-[1.125rem] text-[#525252]" />
+            {chatDetail?.conversation_title}
+            {/* <TbEdit className="ml-[1.25rem] w-[1.125rem] h-[1.125rem] text-[#525252]" /> */}
           </div>
           <div className="w-[33.33%] text-center flex items-center justify-end">
             <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#525252] border border-primary bg-primary rounded-[0.625rem] p-[0.5rem] mr-[1.25rem]">
@@ -92,13 +82,12 @@ const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
             <TbEdit className="ml-[5px] w-[1.125rem] h-[1.125rem] text-[#525252]" />
           </div>
           <div className="w-[50%] flex justify-end mt-[15px]">
-            <Select
+            {/* <Select
               className="w-fit font-medium"
               suffixClassName="text-[#151515]"
               selectClassName="text-[12px] leading-[1.875rem] min-w-[92px] w-fit h-[22px] rounded-[10px] py-[7px] px-[10px] border border-primary bg-primary"
               placeholder="Course"
-              options={courses}
-            />
+            /> */}
           </div>
         </div>
       )}

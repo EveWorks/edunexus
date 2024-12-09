@@ -59,7 +59,7 @@ const ConversationTitle = ({ topicId }: { topicId: string }) => {
   };
 
   return (
-    <div className="flex items-end p-[1.25rem]">
+    <div className="flex items-end p-[1.25rem] w-full max-w-[600px]">
       <form
         onSubmit={handleSubmit(createNewConversation)}
         className={`w-full transition-all duration-400`}
@@ -78,13 +78,14 @@ const ConversationTitle = ({ topicId }: { topicId: string }) => {
                   "Conversation title has maximum limit of 200 characters",
               },
             })}
+            disabled={!topicId}
             placeholder="Write a conversation title here"
             className="w-full transition-all duration-400 "
             style={{
               overflow: "hidden",
               resize: "none",
             }}
-            inputClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
+            inputClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[18px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
           />
           <Button
             type="submit"

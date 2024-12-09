@@ -5,19 +5,15 @@ import BgVectorShadow from "@/public/vector.svg";
 import { getTopicList } from "@/store/features/chat";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState } from "react";
+import ConversationTitle from "./conversation-title";
 
-const CreateChat = ({
-  topicId,
-  setTopicId,
-}: {
-  topicId: string;
-  setTopicId: any;
-}) => {
+const CreateChat = () => {
   const { topicList } = useAppSelector((state) => state.Chat);
   const dispatch = useAppDispatch();
 
   const [limit, setLimit] = useState(20);
   const [page, setPage] = useState(1);
+  const [topicId, setTopicId] = useState<any>(false);
 
   useEffect(() => {
     dispatch(getTopicList({ limit, page }));
@@ -68,6 +64,7 @@ const CreateChat = ({
               );
             })}
         </div>
+        <ConversationTitle topicId={topicId} />
       </div>
     </div>
   );

@@ -14,12 +14,15 @@ import useDevice from "@/hooks/use-device";
 import { useEffect } from "react";
 import {
   clearconversationList,
+  deleteConversation,
   getConversationList,
+  updateChatDetail,
 } from "@/store/features/chat";
 import useUser from "@/hooks/use-user";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
 import moment from "moment";
+import { BiTrash } from "react-icons/bi";
 
 const Sidebar = ({
   open,
@@ -52,9 +55,32 @@ const Sidebar = ({
     dispatch(getConversationList({ userId: user.id }));
   }, []);
 
+  const openConversation = async (item: any) => {
+    router.push(`/chat/${item?.id}`);
+    dispatch(
+      updateChatDetail({
+        data: item,
+      })
+    );
+  };
+
+  const deleteChat = (conversationId: string) => {
+    const payload: any = {
+      id: conversationId,
+    };
+
+    if (id === conversationId) {
+      payload.callback = () => {
+        router.replace(`/dashboard`);
+      };
+    }
+
+    dispatch(deleteConversation(payload));
+  };
+
   return (
     <aside
-      className={`h-screen md:h-[calc(100vh-40px)] py-[1.875rem] fixed top-0 md:top-[1.25rem] ${
+      className={`h-screen md:h-[calc(100vh-2.5rem)] pt-[1.875rem] fixed top-0 md:top-[1.25rem] flex flex-col ${
         settings?.menu ? "left-0" : "left-[-100%]"
       } md:left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-screen md:w-[calc(30%-1.25rem)] bg-[#0C0C0C] md:bg-transparent`}
     >
@@ -115,7 +141,7 @@ const Sidebar = ({
         </div>
       </div>
 
-      <nav className="mb-[0.625rem] bg-[#141414] rounded-[3.125rem] py-[2rem] px-[0.625rem] relative">
+      <nav className="bg-[#141414] rounded-[3.125rem] py-[2rem] px-[0.625rem] relative grow">
         <p className="pl-[1.25rem] text-[1.25rem] leading-[1.3313rem] mb-[1.4375rem] text-[#525252]">
           Notification
         </p>
@@ -135,25 +161,41 @@ const Sidebar = ({
             <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
           </Button> */}
         </div>
-        <ul className="h-[calc(100vh-440px)] overflow-y-auto custom-scrollbar">
+
+        <ul className="h-full overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&
             conversationList?.map((item: any) => (
               <li
                 key={item?.id}
-                className={`mb-[0.625rem] bg-[#0C0C0C] py-[1.25rem] px-[1.875rem] rounded-[1.5625rem] mx-auto ${
+                className={`mb-[0.625rem] bg-[#0C0C0C] py-[1.25rem] pl-[1.875rem] pe-[2.75rem] rounded-[1.5625rem] mx-auto relative group ${
                   id === item.id && "bg-primary text-[#0C0C0C]"
                 }`}
               >
-                <Link href={`/chat/${item?.id}`} className={``}>
-                  <p className="text-[1.875rem] leading-[2.0269rem] mb-[0.625rem]">
-                    {item?.topicid?.topic_name}
+                <Button
+                  variant="text"
+                  onClick={() => openConversation(item)}
+                  className={`h-fit flex-col items-start text-left p-0`}
+                >
+                  <p
+                    className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${
+                      id === item.id && "text-[#0C0C0C]"
+                    }`}
+                  >
+                    {item?.conversation_title}
                   </p>
                   {item?.start_date && (
                     <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
                       {moment(item?.start_date).format("DD MMM YYYY")}
                     </p>
                   )}
-                </Link>
+                </Button>
+                <Button
+                  variant="text"
+                  onClick={() => deleteChat(item?.id)}
+                  className="bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                >
+                  <BiTrash className="w-[1.25rem] h-[1.25rem]" />
+                </Button>
               </li>
             ))}
           {listLoader && (

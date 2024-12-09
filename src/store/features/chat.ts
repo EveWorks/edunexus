@@ -138,13 +138,31 @@ export const createConversation = createAsyncThunk(
   }
 );
 
+// delete conversation
+export const deleteConversation = createAsyncThunk(
+  "chat/deleteConversation",
+  async (request: any, thunkAPI) => {
+    try {
+      const { id, callback } = request;
+      await axios.delete(`/conversation/remove_conversation/${id}`);
+      if (callback) {
+        callback();
+      }
+
+      return id;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message || "Failed to send message");
+    }
+  }
+);
+
 const initialState = {
   topicList: [] as any,
   topicListCount: 0 as number,
   conversationList: [] as any,
   conversationListCount: 0 as number,
   listLoader: false as boolean,
-  currentTopic: "" as string,
+  chatDetail: {} as any,
   messages: [] as any,
   loading: false as boolean,
   msgLoading: false as boolean,
@@ -163,8 +181,8 @@ export const chats = createSlice({
       state.conversationList = [];
       state.conversationListCount = 0;
     },
-    updateCurrentTopic: (state, action) => {
-      state.currentTopic = action.payload;
+    updateChatDetail: (state, action) => {
+      state.chatDetail = action.payload.data;
     },
     resetChatDetail: (state, action) => {
       state.topicId = "";
@@ -175,6 +193,7 @@ export const chats = createSlice({
       state.page = 1;
       state.hasMore = true;
       state.totalItems = 0;
+      state.chatDetail = {};
     },
     addMessage: (state, action) => {
       state.messages.push(action.payload);
@@ -255,16 +274,22 @@ export const chats = createSlice({
     });
     builder.addCase(createConversation.fulfilled, (state, action) => {
       state.loading = false;
+      state.chatDetail = action.payload;
     });
     builder.addCase(createConversation.rejected, (state, action) => {
       state.loading = false;
+    });
+    builder.addCase(deleteConversation.fulfilled, (state, action) => {
+      state.conversationList = state.conversationList?.filter(
+        (item: any) => item.id !== action.payload
+      );
     });
   },
 });
 
 export const {
   clearconversationList,
-  updateCurrentTopic,
+  updateChatDetail,
   addMessage,
   resetChatDetail,
 } = chats.actions;

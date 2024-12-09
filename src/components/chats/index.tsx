@@ -22,8 +22,10 @@ const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>();
   const keepAliveInterval = useRef<any>();
   const [preview, setPreview] = useState<string>("1");
-  const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
-  const {user} = useUser();
+  const { msgLoading, topicId, chatDetail } = useAppSelector(
+    (state: any) => state.Chat
+  );
+  const { user } = useUser();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
@@ -72,7 +74,7 @@ const Chat = ({ id }: { id: string }) => {
         addMessage({
           message: text,
           message_type: "message",
-          topicid: topicId,
+          topicid: chatDetail?.topicid?.id,
           conversationid: id,
           userid: {
             firstname: user.firstname,
@@ -89,7 +91,7 @@ const Chat = ({ id }: { id: string }) => {
         message_type: "message",
         userid: user.id,
         conversationid: id,
-        topicid: topicId,
+        topicid: chatDetail?.topicid?.id,
         audioCallback: (response: string) => getAudio(response),
       },
     };
