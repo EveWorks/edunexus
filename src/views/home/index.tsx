@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import {
   LocomotiveScrollProvider,
   useLocomotiveScroll,
@@ -18,7 +17,7 @@ const LandingPage = () => {
   const { scroll } = useLocomotiveScroll();
 
   const onUpdate = (args: any) => {
-    console.log(args);
+    // console.log(args);
   };
 
   useEffect(() => {

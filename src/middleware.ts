@@ -6,7 +6,6 @@ import { pagesOptions } from "@/app/api/auth/[...nextauth]/pages-option";
 export default async function middleware(req: NextRequest) {
   const AUTH_ROUTES = ["/dashboard", "/chat"];
   const path = `/${req.nextUrl.pathname.split("/")?.[1]}`;
-  console.log(path);
   const token = await getToken({
     req,
     secureCookie: process.env.NODE_ENV !== "development",
@@ -18,7 +17,7 @@ export default async function middleware(req: NextRequest) {
     (path.startsWith("/signin") || path.startsWith("/signup")) &&
     isAuthenticated
   ) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   if (AUTH_ROUTES.includes(path) && !isAuthenticated) {

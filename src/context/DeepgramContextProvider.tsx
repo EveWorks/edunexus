@@ -38,7 +38,6 @@ interface DeepgramContextProviderProps {
 const getApiKey = async (): Promise<string> => {
   const response = await fetch("/api/authenticate", { cache: "no-store" });
   const result = await response.json();
-  console.log(result);
   return result.key;
 };
 
