@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Button, Select } from "rizzui";
+import { Button, Select, Tooltip } from "rizzui";
 import Icon from "@/public/layout-icon.svg";
 import Logo from "@/public/logo.svg";
 import { TbEdit } from "react-icons/tb";
@@ -35,8 +35,12 @@ const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
               </Button>
             )}
           </div>
-          <div className="w-[33.33%] text-center text-[1.875rem] leading-[2.0269rem] flex items-center justify-center">
-            {chatDetail?.conversation_title}
+          <div className="w-[33.33%] text-center text-[1.575rem] leading-[2.0269rem] flex items-center justify-center ">
+            <Tooltip content={chatDetail?.conversation_title}>
+              <span className="chat-title">
+                {chatDetail?.conversation_title}
+              </span>
+            </Tooltip>
             {/* <TbEdit className="ml-[1.25rem] w-[1.125rem] h-[1.125rem] text-[#525252]" /> */}
           </div>
           <div className="w-[33.33%] text-center flex items-center justify-end">
