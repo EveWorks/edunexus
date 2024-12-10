@@ -48,12 +48,12 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   };
 
   const sendNewMessage = async (data: any) => {
-    if (data?.message && !msgLoading) {
+    if (data?.message && !msgLoading && chatDetail?.topicid?.id) {
       const payload: any = {
         data: {
           message: data?.message,
           message_type: "message",
-          topicid: chatDetail?.topicId,
+          topicid: chatDetail?.topicid?.id,
           userid: user.id,
           conversationid: id,
         },
@@ -67,7 +67,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
         addMessage({
           message: data?.message,
           message_type: "message",
-          topicid: chatDetail?.topicId,
+          topicid: chatDetail?.topicid?.id,
           conversationid: id,
           userid: {
             firstname: user.firstname,

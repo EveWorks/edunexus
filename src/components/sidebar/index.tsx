@@ -57,11 +57,6 @@ const Sidebar = ({
 
   const openConversation = async (item: any) => {
     router.push(`/chat/${item?.id}`);
-    dispatch(
-      updateChatDetail({
-        data: item,
-      })
-    );
   };
 
   const deleteChat = (conversationId: string) => {
@@ -192,7 +187,9 @@ const Sidebar = ({
                 <Button
                   variant="text"
                   onClick={() => deleteChat(item?.id)}
-                  className="bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  className={`bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+                    id === item.id && "hover:text-[#0C0C0C]"
+                  }`}
                 >
                   <BiTrash className="w-[1.25rem] h-[1.25rem]" />
                 </Button>

@@ -163,6 +163,30 @@ export const deleteConversation = createAsyncThunk(
   }
 );
 
+// get conversation detail
+export const getConversationDetail = createAsyncThunk(
+  "chat/getConversationDetail",
+  async (request: any, thunkAPI) => {
+    try {
+      const { id, callback } = request;
+      const response: any = await axios.get(
+        `/conversation/get_conversation?conversation_id=${id}`
+      );
+      if (callback) {
+        callback();
+      }
+
+      if (response?.data) {
+        return response?.data;
+      }
+
+      return {};
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message || "Failed to send message");
+    }
+  }
+);
+
 const initialState = {
   topicList: [] as any,
   topicListCount: 0 as number,
@@ -290,6 +314,9 @@ export const chats = createSlice({
       state.conversationList = state.conversationList?.filter(
         (item: any) => item.id !== action.payload
       );
+    });
+    builder.addCase(getConversationDetail.fulfilled, (state, action) => {
+      state.chatDetail = action.payload;
     });
   },
 });

@@ -1,6 +1,10 @@
 import PreviewTwo from "./chat-content/previewTwo";
 import PreviewOne from "./chat-content/previewOne";
-import { fetchMessages, resetChatDetail } from "@/store/features/chat";
+import {
+  fetchMessages,
+  getConversationDetail,
+  resetChatDetail,
+} from "@/store/features/chat";
 import { useAppDispatch } from "@/store/hooks";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -21,16 +25,6 @@ const ChatContent = ({ preview }: { preview: string }) => {
       })
     );
   }, [page]);
-
-  useEffect(() => {
-    dispatch(
-      fetchMessages({
-        id,
-        limit,
-        page,
-      })
-    );
-  }, []);
 
   useEffect(() => {
     return () => {

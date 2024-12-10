@@ -83,7 +83,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
         <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul
             ref={chatWrapperRef}
-            className="h-[15.25rem] overflow-y-auto no-scrollbar mb-[0.75rem]"
+            className="h-full overflow-y-auto no-scrollbar mb-[0.75rem]"
           >
             {messages?.map((item: any, index: number) => {
               return (

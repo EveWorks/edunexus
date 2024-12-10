@@ -22,9 +22,7 @@ const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>();
   const keepAliveInterval = useRef<any>();
   const [preview, setPreview] = useState<string>("1");
-  const { msgLoading, topicId, chatDetail } = useAppSelector(
-    (state: any) => state.Chat
-  );
+  const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
   const { user } = useUser();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
@@ -69,34 +67,36 @@ const Chat = ({ id }: { id: string }) => {
   };
 
   const sendNewMessage = async (text: string) => {
-    if (preview !== "2") {
-      dispatch(
-        addMessage({
+    if (chatDetail?.topicid?.id) {
+      if (preview !== "2") {
+        dispatch(
+          addMessage({
+            message: text,
+            message_type: "message",
+            topicid: chatDetail.topicid.id,
+            conversationid: id,
+            userid: {
+              firstname: user.firstname,
+              lastname: user.lastname,
+              id: user.id,
+            },
+          })
+        );
+      }
+
+      const payload = {
+        data: {
           message: text,
           message_type: "message",
-          topicid: chatDetail?.topicid?.id,
+          userid: user.id,
           conversationid: id,
-          userid: {
-            firstname: user.firstname,
-            lastname: user.lastname,
-            id: user.id,
-          },
-        })
-      );
+          topicid: chatDetail.topicid.id,
+          audioCallback: (response: string) => getAudio(response),
+        },
+      };
+
+      await dispatch(sendMessage(payload));
     }
-
-    const payload = {
-      data: {
-        message: text,
-        message_type: "message",
-        userid: user.id,
-        conversationid: id,
-        topicid: chatDetail?.topicid?.id,
-        audioCallback: (response: string) => getAudio(response),
-      },
-    };
-
-    await dispatch(sendMessage(payload));
   };
 
   useEffect(() => {
