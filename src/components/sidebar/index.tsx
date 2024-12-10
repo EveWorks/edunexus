@@ -82,7 +82,7 @@ const Sidebar = ({
     <aside
       className={`h-screen md:h-[calc(100vh-2.5rem)] pt-[1.875rem] fixed top-0 md:top-[1.25rem] flex flex-col ${
         settings?.menu ? "left-0" : "left-[-100%]"
-      } md:left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-screen md:w-[calc(30%-1.25rem)] bg-[#0C0C0C] md:bg-transparent`}
+      } md:left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-screen md:w-[calc(30rem-1.25rem)] bg-[#0C0C0C] md:bg-transparent`}
     >
       <div className="px-[1.25rem] flex items-center justify-between mb-[1.0219rem]">
         <Image className="w-[2.5rem]" src={Logo} alt="logo" />
@@ -162,19 +162,19 @@ const Sidebar = ({
           </Button> */}
         </div>
 
-        <ul className="h-full overflow-y-auto custom-scrollbar">
+        <ul className="h-full max-h-[calc(100dvh-410px)] overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&
             conversationList?.map((item: any) => (
               <li
                 key={item?.id}
-                className={`mb-[0.625rem] bg-[#0C0C0C] py-[1.25rem] pl-[1.875rem] pe-[2.75rem] rounded-[1.5625rem] mx-auto relative group ${
+                className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
                   id === item.id && "bg-primary text-[#0C0C0C]"
                 }`}
               >
                 <Button
                   variant="text"
                   onClick={() => openConversation(item)}
-                  className={`h-fit flex-col items-start text-left p-0`}
+                  className={`h-fit flex-col items-start text-left p-0 py-[1.25rem] pl-[1.875rem] pe-[2.75rem] w-full`}
                 >
                   <p
                     className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${

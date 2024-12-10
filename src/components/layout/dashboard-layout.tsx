@@ -12,7 +12,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="md:p-[1.25rem]">
             <Sidebar open={open} setOpen={setOpen} />
             <main
-                className={`relative ml-auto transition-all duration-300 md:w-[70%] h-screen md:h-[calc(100dvh-2.5rem)]`}
+                className={`relative ml-auto transition-all duration-300 md:w-[calc(100%-30rem)] h-screen md:h-[calc(100dvh-2.5rem)]`}
             >
                 <div className="content h-full pb-0 bg-[#0C0C0C] md:bg-[#141414] md:rounded-[3.125rem]">
                     {children}

@@ -58,7 +58,7 @@
 
 html,
 body {
-  font-size: 16px;
+  font-size: 13px;
 }
 
 body {
@@ -265,12 +265,19 @@ input::placeholder {
   background: transparent;
 }
 
-@media (max-width: 1600px) {
+/* @media (max-width: 1600px) {
   html,
   body {
     font-size: 13px;
   }
 }
+
+@media (max-width: 1600px) {
+  html,
+  body {
+    font-size: 13px;
+  }
+} */
 
 @media (max-width: 560px) {
   html,

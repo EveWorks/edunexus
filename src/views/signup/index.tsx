@@ -15,30 +15,30 @@ import countryList from "react-select-country-list";
 
 const gender = [
   {
-    value: "male",
+    value: "Male",
     label: "Male",
   },
   {
-    value: "female",
+    value: "Female",
     label: "Female",
   },
   {
-    value: "others",
+    value: "Others",
     label: "Others",
   },
 ];
 
 const university = [
   {
-    value: "hardvard",
+    value: "Hardvard University",
     label: "Hardvard University",
   },
   {
-    value: "cambridge",
+    value: "Cambridge University",
     label: "Cambridge University",
   },
   {
-    value: "stanford",
+    value: "Stanford University",
     label: "Stanford University",
   },
 ];

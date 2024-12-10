@@ -103,12 +103,19 @@ export const sendMessage = createAsyncThunk(
       }
 
       if (response?.AiResponse && data?.audioCallback) {
-        data.audioCallback(response?.AiResponse?.message);
+        const audioResponse = await data.audioCallback(
+          response?.AiResponse?.message
+        );
+        if (audioResponse) {
+          return {
+            aiResponse: response?.AiResponse,
+          };
+        }
+      } else {
+        return {
+          aiResponse: response?.AiResponse,
+        };
       }
-
-      return {
-        aiResponse: response?.AiResponse,
-      };
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message || "Failed to send message");
     }
@@ -193,7 +200,7 @@ export const chats = createSlice({
       state.page = 1;
       state.hasMore = true;
       state.totalItems = 0;
-      state.chatDetail = {};
+      // state.chatDetail = {};
     },
     addMessage: (state, action) => {
       state.messages.push(action.payload);
@@ -259,9 +266,9 @@ export const chats = createSlice({
       state.error = null;
     });
     builder.addCase(sendMessage.fulfilled, (state, action) => {
-      const { aiResponse } = action.payload;
-      if (aiResponse) {
-        state.messages.push(aiResponse);
+      const data = action.payload;
+      if (data?.aiResponse) {
+        state.messages.push(data?.aiResponse);
       }
       state.msgLoading = false;
     });

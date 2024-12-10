@@ -40,7 +40,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { startMicrophone, stopMicrophone, microphone } = useMicrophone();
-  const { msgLoading, topicId } = useAppSelector((state: any) => state.Chat);
+  const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
 
   const callbackMessage = (id: string) => {
     dispatch(getConversationList({ userId: user.id }));
@@ -53,7 +53,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
         data: {
           message: data?.message,
           message_type: "message",
-          topicid: topicId,
+          topicid: chatDetail?.topicId,
           userid: user.id,
           conversationid: id,
         },
@@ -67,7 +67,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
         addMessage({
           message: data?.message,
           message_type: "message",
-          topicid: topicId,
+          topicid: chatDetail?.topicId,
           conversationid: id,
           userid: {
             firstname: user.firstname,

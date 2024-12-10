@@ -62,9 +62,9 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   return (
     <div className="grow">
       <div className="h-full">
-        <div className="h-[calc(100%-244px)] flex items-center justify-center">
+        <div className="h-[50%] flex items-center justify-center">
           <div
-            className={`relative transition-all duration-400 scale-[1] h-[200px] md:h-[315px] w-[200px] md:w-[315px]`}
+            className={`relative transition-all duration-400 scale-[1] h-[10.5rem] xl:h-[12.5rem] w-[10.5rem] xl:w-[12.5rem]`}
           >
             <Image
               src={BgVector2}
@@ -80,10 +80,10 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
             />
           </div>
         </div>
-        <div className="ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
+        <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul
             ref={chatWrapperRef}
-            className="h-[244px] overflow-y-auto no-scrollbar mb-[0.75rem]"
+            className="h-[15.25rem] overflow-y-auto no-scrollbar mb-[0.75rem]"
           >
             {messages?.map((item: any, index: number) => {
               return (
