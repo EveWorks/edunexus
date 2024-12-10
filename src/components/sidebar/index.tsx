@@ -80,11 +80,11 @@ const Sidebar = ({
 
   return (
     <aside
-      className={`h-screen md:h-[calc(100vh-2.5rem)] pt-[1.875rem] fixed top-0 md:top-[1.25rem] flex flex-col ${
+      className={`h-screen md:h-[calc(100vh-2.5rem)] pt-[1.875rem] fixed top-0 md:top-[1.25rem] flex flex-col px-4 md:px-0 ${
         settings?.menu ? "left-0" : "left-[-100%]"
       } md:left-[1.25rem] z-20 transition-all duration-300 overflow-hidden w-screen md:w-[calc(30rem-1.25rem)] bg-[#0C0C0C] md:bg-transparent`}
     >
-      <div className="px-[1.25rem] flex items-center justify-between mb-[1.0219rem]">
+      <div className="md:px-[1.25rem] flex items-center justify-between mb-[1.0219rem]">
         <Image className="w-[2.5rem]" src={Logo} alt="logo" />
         <span
           className={`text-[3.125rem] leading-[3.3781rem] font-medium transition-all duration-400 pl-[0.625r`}

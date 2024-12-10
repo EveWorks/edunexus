@@ -23,6 +23,16 @@ const ChatContent = ({ preview }: { preview: string }) => {
   }, [page]);
 
   useEffect(() => {
+    dispatch(
+      fetchMessages({
+        id,
+        limit,
+        page,
+      })
+    );
+  }, []);
+
+  useEffect(() => {
     return () => {
       dispatch(resetChatDetail({}));
     };

@@ -7,9 +7,13 @@ import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateMenu } from "@/store/features/settings";
 import useDevice from "@/hooks/use-device";
+import { useRouter } from "next/navigation";
+import useUser from "@/hooks/use-user";
 
 const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
   const { isMobile } = useDevice();
+  const { user }: any = useUser();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { chatDetail } = useAppSelector((state: any) => state.Chat);
 
@@ -77,13 +81,15 @@ const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
               className="bg-[#0c0c0c] w-[30px] h-[30px] rounded-[30px] p-0 text-[15px] leading-[21px]"
               variant="text"
               color="primary"
+              onClick={() => router.push("/settings")}
             >
-              ST
+              {user?.firstname?.substring(0, 1)}
+              {user?.lastname?.substring(0, 1)}
             </Button>
           </div>
           <div className="w-[50%] text-center text-[20px] leading-[21px] flex items-center mt-[15px]">
-            Conversation 8{" "}
-            <TbEdit className="ml-[5px] w-[1.125rem] h-[1.125rem] text-[#525252]" />
+            <span className="chat-title">{chatDetail?.conversation_title}</span>
+            {/* <TbEdit className="ml-[5px] w-[1.125rem] h-[1.125rem] text-[#525252]" /> */}
           </div>
           <div className="w-[50%] flex justify-end mt-[15px]">
             {/* <Select
