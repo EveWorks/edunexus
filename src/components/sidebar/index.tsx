@@ -72,6 +72,7 @@ const Sidebar = ({
     }
 
     dispatch(deleteConversation(payload));
+    CloseMenu();
   };
 
   return (
@@ -122,7 +123,10 @@ const Sidebar = ({
         <div className="absolute right-[1.25rem] top-[1.25rem] z-2">
           <Button
             variant="text"
-            onClick={() => router.push(`/settings`)}
+            onClick={() => {
+              CloseMenu();
+              router.push(`/settings`);
+            }}
             className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] p-0 mr-2"
           >
             <GoArrowUpRight className="w-[1.25rem] h-[1.25rem]" />
