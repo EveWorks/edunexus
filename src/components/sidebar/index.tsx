@@ -56,6 +56,7 @@ const Sidebar = ({
   }, []);
 
   const openConversation = async (item: any) => {
+    CloseMenu();
     router.push(`/chat/${item?.id}`);
   };
 

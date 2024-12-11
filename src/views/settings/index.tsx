@@ -161,7 +161,7 @@ const SettingView = () => {
               </Button>
             </div>
             <div className="w-[33.33%] flex justify-center">
-              <div className="px-[3.75rem] py-[2.875rem] rounded-[1.5625rem] bg-[#080808]">
+              <div className="md:px-[3.75rem] md:py-[2.875rem] rounded-[1.5625rem] bg-[#080808]">
                 <Image
                   className="w-[2.5rem] h-[2.5rem]"
                   src={Logo}
@@ -172,7 +172,7 @@ const SettingView = () => {
             <div className="w-[33.33%] flex justify-end">
               <Button
                 color="primary"
-                className="text-[1.25rem] leading-[0.9375rem] font-medium rounded-[0.625rem] h-fit p-[0.5rem] me-[0.625rem] mb-[0.9rem]"
+                className="hidden md:flex text-[1.25rem] leading-[0.9375rem] font-medium rounded-[0.625rem] h-fit p-[0.5rem] me-[0.625rem] mb-[0.9rem]"
               >
                 Edit Profile
               </Button>
