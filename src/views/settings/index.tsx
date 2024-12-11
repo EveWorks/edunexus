@@ -15,11 +15,11 @@ import toast from "react-hot-toast";
 
 const gender = [
   {
-    value: "Male",
+    value: "male",
     label: "Male",
   },
   {
-    value: "Female",
+    value: "female",
     label: "Female",
   },
   {

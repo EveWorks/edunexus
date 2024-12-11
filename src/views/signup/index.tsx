@@ -15,15 +15,15 @@ import countryList from "react-select-country-list";
 
 const gender = [
   {
-    value: "Male",
+    value: "male",
     label: "Male",
   },
   {
-    value: "Female",
+    value: "female",
     label: "Female",
   },
   {
-    value: "Others",
+    value: "others",
     label: "Others",
   },
 ];
