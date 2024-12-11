@@ -69,7 +69,7 @@ const useChatMessages = ({
       message_type: data.message_type,
       topicid: data?.topicid || topicId,
       userid: data.userid,
-      conversationid: data.conversationid,
+      conversation_id: data.conversationid,
     };
 
     const userPayload = {

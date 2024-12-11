@@ -61,7 +61,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
 
   return (
     <div className="grow">
-      <div className="h-full">
+      <div className="h-full max-h-[calc(100dvh-219px)]">
         <div className="h-[50%] flex items-center justify-center">
           <div
             className={`relative transition-all duration-400 scale-[1] h-[10.5rem] xl:h-[12.5rem] w-[10.5rem] xl:w-[12.5rem]`}
@@ -83,14 +83,14 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
         <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul
             ref={chatWrapperRef}
-            className="h-full overflow-y-auto no-scrollbar mb-[0.75rem]"
+            className="h-full overflow-y-auto no-scrollbar chat-list"
           >
             {messages?.map((item: any, index: number) => {
               return (
                 <li className="flex justify-center mb-[2rem]" key={index}>
                   <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {item?.message}
+                      {item?.content || item?.message}
                     </ReactMarkdown>
                   </div>
                 </li>

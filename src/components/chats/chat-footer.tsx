@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";
 import { MdMicNone } from "react-icons/md";
-import { Button, Textarea } from "rizzui";
+import { Button, Input, Textarea } from "rizzui";
 import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { FaStop } from "react-icons/fa6";
 import AudioLoader from "./audio-loader";
@@ -55,7 +55,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           message_type: "message",
           topicid: chatDetail?.topicid?.id,
           userid: user.id,
-          conversationid: id,
+          conversation_id: id,
         },
       };
 
@@ -68,7 +68,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           message: data?.message,
           message_type: "message",
           topicid: chatDetail?.topicid?.id,
-          conversationid: id,
+          conversation_id: id,
           userid: {
             firstname: user.firstname,
             lastname: user.lastname,
@@ -125,7 +125,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
               {errors?.message?.message}
             </p>
           )}
-          <Textarea
+          <Input
             {...register("message", {
               maxLength: {
                 value: 5000,
@@ -140,8 +140,8 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
               // maxHeight: '250px',
               resize: "none",
             }}
-            textareaClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
-          ></Textarea>
+            inputClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
+          />
           <Button
             type="submit"
             disabled={watch("message")?.length < 1 || msgLoading}

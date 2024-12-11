@@ -102,18 +102,27 @@ export const sendMessage = createAsyncThunk(
         data.callback(response?.conversation_id?.id);
       }
 
-      if (response?.AiResponse && data?.audioCallback) {
-        const audioResponse = await data.audioCallback(
-          response?.AiResponse?.message
-        );
+      if (response?.aiResponse && data?.audioCallback) {
+        const audioSummary = response?.aiResponse?.messageObject?.content;
+        const textResponse =
+          response?.aiResponse?.messagesArray?.length > 0 &&
+          response?.aiResponse?.messagesArray[
+            response?.aiResponse?.messagesArray?.length - 2
+          ];
+        const audioResponse = await data.audioCallback(audioSummary);
         if (audioResponse) {
           return {
-            aiResponse: response?.AiResponse,
+            aiResponse: textResponse,
           };
         }
       } else {
+        const textResponse =
+          response?.aiResponse?.messagesArray?.length > 0 &&
+          response?.aiResponse?.messagesArray[
+            response?.aiResponse?.messagesArray?.length - 2
+          ];
         return {
-          aiResponse: response?.AiResponse,
+          aiResponse: textResponse,
         };
       }
     } catch (err: any) {

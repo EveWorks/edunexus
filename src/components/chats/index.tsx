@@ -74,7 +74,7 @@ const Chat = ({ id }: { id: string }) => {
             message: text,
             message_type: "message",
             topicid: chatDetail.topicid.id,
-            conversationid: id,
+            conversation_id: id,
             userid: {
               firstname: user.firstname,
               lastname: user.lastname,
@@ -89,7 +89,7 @@ const Chat = ({ id }: { id: string }) => {
           message: text,
           message_type: "message",
           userid: user.id,
-          conversationid: id,
+          conversation_id: id,
           topicid: chatDetail.topicid.id,
           audioCallback: (response: string) => getAudio(response),
         },

@@ -1,22 +1,15 @@
 import { BsSoundwave } from "react-icons/bs";
-import { LuRefreshCcw } from "react-icons/lu";
-import { Button } from "rizzui";
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import CreateChat from "../create-chat";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useAppSelector } from "@/store/hooks";
+import useUser from "@/hooks/use-user";
 
 const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatWrapperRef = useRef<HTMLUListElement>(null);
+  const { user } = useUser();
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
   const { messages } = useAppSelector((state: any) => state.Chat);
@@ -71,7 +64,7 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
       <div className="h-full overflow-auto ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem]">
         <ul
           ref={chatWrapperRef}
-          className="h-[calc(100dvh-300px)] overflow-y-auto custom-scrollbar"
+          className="h-[calc(100dvh-267px)] overflow-y-auto custom-scrollbar"
         >
           {messages?.map((item: any) => {
             return (
@@ -98,14 +91,14 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
                       className="text-primary text-[1.25rem] font-bold flex items-center justify-center w-[3.125rem] h-[3.125rem] rounded-[0.625rem] border border-[#525252]"
                       style={{ boxShadow: "0px 0px 2px 0px #FFFFFF" }}
                     >
-                      {item?.userid?.firstname?.substring(0, 1)}
-                      {item?.userid?.lastname?.substring(0, 1)}
+                      {user?.firstname?.substring(0, 1)}
+                      {user?.lastname?.substring(0, 1)}
                     </div>
                   </div>
                 )}
                 <div className="w-[calc(100%-4.375rem)] mt-[0.75rem] text-[1.5625rem] leading-[1.4375rem]">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {item?.message}
+                    {item?.content || item?.message}
                   </ReactMarkdown>
                 </div>
               </li>
