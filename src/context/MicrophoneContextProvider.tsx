@@ -14,6 +14,7 @@ interface MicrophoneContextType {
   stopMicrophone: () => void;
   setupMicrophone: () => void;
   microphoneState: MicrophoneState | null;
+  error: string | null;
 }
 
 export enum MicrophoneEvents {
@@ -51,9 +52,11 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
     MicrophoneState.NotSetup
   );
   const [microphone, setMicrophone] = useState<MediaRecorder | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const setupMicrophone = async () => {
     setMicrophoneState(MicrophoneState.SettingUp);
+    setError(null);
 
     try {
       const userMedia = await navigator.mediaDevices.getUserMedia({
@@ -64,36 +67,58 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
       });
 
       const microphone = new MediaRecorder(userMedia);
-
       setMicrophoneState(MicrophoneState.Ready);
       setMicrophone(microphone);
     } catch (err: any) {
-      console.error(err);
-
-      throw err;
+      console.warn("Microphone setup error:", err);
+      setError(
+        err.name === "NotAllowedError"
+          ? "Microphone access is blocked. Please enable it in your browser settings."
+          : err.name === "NotFoundError"
+          ? "No microphone found. Please connect a microphone and try again."
+          : "An unexpected error occurred while setting up the microphone."
+      );
+      setMicrophoneState(MicrophoneState.Error);
     }
   };
 
   const stopMicrophone = useCallback(() => {
-    setMicrophoneState(MicrophoneState.Pausing);
+    setError(null);
+    if (!microphone) {
+      setError("Microphone is not initialized.");
+      return;
+    }
 
-    if (microphone?.state === "recording") {
+    if (microphone.state === "recording") {
       microphone.pause();
       setMicrophoneState(MicrophoneState.Paused);
+    } else {
+      setError("Microphone is not recording.");
     }
   }, [microphone]);
 
   const startMicrophone = useCallback(() => {
-    setMicrophoneState(MicrophoneState.Opening);
-
-    if (microphone?.state === "paused") {
-      microphone.resume();
-    } else if (microphone?.state !== "recording") {
-      microphone?.start(250);
+    setError(null);
+    if (!microphone) {
+      setError("Microphone is not initialized.");
+      return;
     }
-  
-    setMicrophoneState(MicrophoneState.Open);
+
+    try {
+      if (microphone.state === "paused") {
+        microphone.resume();
+      } else if (microphone.state !== "recording") {
+        microphone.start(250);
+      }
+      setMicrophoneState(MicrophoneState.Open);
+    } catch (err: any) {
+      console.error("Microphone start error:", err);
+      setError("Failed to start the microphone. Please try again.");
+      setMicrophoneState(MicrophoneState.Error);
+    }
   }, [microphone]);
+
+  console.log("Microphone error:", error);
 
   return (
     <MicrophoneContext.Provider
@@ -103,6 +128,7 @@ const MicrophoneContextProvider: React.FC<MicrophoneContextProviderProps> = ({
         stopMicrophone,
         setupMicrophone,
         microphoneState,
+        error,
       }}
     >
       {children}
