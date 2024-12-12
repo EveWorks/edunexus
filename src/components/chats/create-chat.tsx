@@ -42,8 +42,7 @@ const CreateChat = () => {
           Choose one of the following
         </div>
         <div className="text-[1.25rem] leading-[0.9375rem] md:w-[30.125rem] mb-[1.875rem] text-center text-[#525252]">
-          Neque porro quisquam est qui dolorem ipsum quia dolor sit amet,
-          consectetur, adipisci velit
+          Topic Titles:
         </div>
         <div className="flex flex-wrap items-center justify-center">
           {topicList?.length > 0 &&
