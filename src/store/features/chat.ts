@@ -102,12 +102,18 @@ export const sendMessage = createAsyncThunk(
         data.callback(response?.conversation_id?.id);
       }
 
+      let chatTitle: any = {};
       if (response?.aiResponse && data?.audioCallback) {
         const audioSummary = response?.aiResponse?.messageObject?.content;
-        const textResponse =
+        chatTitle =
           response?.aiResponse?.messagesArray?.length > 0 &&
           response?.aiResponse?.messagesArray[
             response?.aiResponse?.messagesArray?.length - 2
+          ];
+        const textResponse =
+          response?.aiResponse?.messagesArray?.length > 0 &&
+          response?.aiResponse?.messagesArray[
+            response?.aiResponse?.messagesArray?.length - 3
           ];
         const audioResponse = await data.audioCallback(audioSummary);
         if (audioResponse) {
@@ -123,6 +129,8 @@ export const sendMessage = createAsyncThunk(
           ];
         return {
           aiResponse: textResponse,
+          chatTitle: chatTitle?.content,
+          id: response?.conversation_id?.id,
         };
       }
     } catch (err: any) {
@@ -238,6 +246,9 @@ export const chats = createSlice({
     addMessage: (state, action) => {
       state.messages.push(action.payload);
     },
+    updateMsgLoader: (state, action) => {
+      state.msgLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createTopic.pending, (state, action) => {
@@ -303,7 +314,15 @@ export const chats = createSlice({
       if (data?.aiResponse) {
         state.messages.push(data?.aiResponse);
       }
-      state.msgLoading = false;
+      if (data?.chatTitle != "") {
+        state.conversationList = state.conversationList.map((item: any) => {
+          if (item?.id == data?.id) {
+            item.title = data?.chatTitle;
+          }
+          return item;
+        });
+      }
+      // state.msgLoading = false;
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.msgLoading = false;
@@ -335,5 +354,6 @@ export const {
   updateChatDetail,
   addMessage,
   resetChatDetail,
+  updateMsgLoader,
 } = chats.actions;
 export default chats.reducer;

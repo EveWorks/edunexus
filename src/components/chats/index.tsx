@@ -17,6 +17,7 @@ import axios from "@/axios";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addMessage, sendMessage } from "@/store/features/chat";
+import { useAudio } from "@/hooks/use-audio";
 
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>();
@@ -24,6 +25,7 @@ const Chat = ({ id }: { id: string }) => {
   const [preview, setPreview] = useState<string>("1");
   const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
   const { user } = useUser();
+  const { getAudio } = useAudio();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
@@ -48,23 +50,6 @@ const Chat = ({ id }: { id: string }) => {
       });
     }
   }, [microphoneState]);
-
-  const getAudio = async (text: string) => {
-    const response: any = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-audio`,
-      { text },
-      { responseType: "blob" }
-    );
-    if (response) {
-      const audioBlob = await response;
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   const sendNewMessage = async (text: string) => {
     if (chatDetail?.topicid?.id) {

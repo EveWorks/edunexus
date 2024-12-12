@@ -1,29 +1,28 @@
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";
 import { MdMicNone } from "react-icons/md";
 import { Button, Input, Textarea } from "rizzui";
-import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { FaStop } from "react-icons/fa6";
 import AudioLoader from "./audio-loader";
-import AudioPreview from "./audio-preview";
 import useDevice from "@/hooks/use-device";
 import { useMicrophone } from "@/context/MicrophoneContextProvider";
 import useUser from "@/hooks/use-user";
-import useChatMessages from "@/hooks/use-chat-messages";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   addMessage,
   getConversationList,
   sendMessage,
 } from "@/store/features/chat";
-import { useRouter } from "next/navigation";
+import { useAudio } from "@/hooks/use-audio";
 
 const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
   const { user } = useUser();
+  const { getAudio } = useAudio();
 
   const {
     register,
@@ -40,7 +39,9 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { startMicrophone, stopMicrophone, microphone } = useMicrophone();
-  const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
+  const { msgLoading, chatDetail, error }: any = useAppSelector(
+    (state: any) => state.Chat
+  );
 
   const callbackMessage = (id: string) => {
     dispatch(getConversationList({ userId: user.id }));
@@ -56,6 +57,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           topicid: chatDetail?.topicid?.id,
           userid: user.id,
           conversation_id: id,
+          audioCallback: (response: string) => getAudio(response),
         },
       };
 
@@ -120,6 +122,11 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
         } transition-all duration-400`}
       >
         <div className="w-full relative transition-all duration-400">
+          {error && (
+            <p className="text-red text-[13px] my-1 rizzui-textarea-error-text pl-3">
+              {error}
+            </p>
+          )}
           {errors?.message && (
             <p className="text-red text-[13px] my-1 rizzui-textarea-error-text pl-3">
               {errors?.message?.message}
@@ -140,6 +147,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
               // maxHeight: '250px',
               resize: "none",
             }}
+            disabled={msgLoading}
             inputClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
           />
           <Button

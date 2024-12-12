@@ -1,23 +1,10 @@
-import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";
-import { MdMicNone } from "react-icons/md";
-import { Button, Input, Textarea } from "rizzui";
-import { useAudioRecorder } from "@/hooks/use-audio-recorder";
-import { FaStop } from "react-icons/fa6";
-import AudioLoader from "./audio-loader";
-import AudioPreview from "./audio-preview";
-import useDevice from "@/hooks/use-device";
-import { useMicrophone } from "@/context/MicrophoneContextProvider";
+import { Button, Input } from "rizzui";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  addMessage,
-  createConversation,
-  getConversationList,
-  sendMessage,
-} from "@/store/features/chat";
+import { createConversation, getConversationList } from "@/store/features/chat";
 import { useRouter } from "next/navigation";
 
 const ConversationTitle = ({ topicId }: { topicId: string }) => {

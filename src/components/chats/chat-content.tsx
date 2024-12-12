@@ -8,13 +8,24 @@ import {
 import { useAppDispatch } from "@/store/hooks";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import axios from "@/axios";
+import useUser from "@/hooks/use-user";
 
 const ChatContent = ({ preview }: { preview: string }) => {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
+  const { user } = useUser();
   const id = pathname.split("/")?.[2];
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+
+  const updatePersonalization = async () => {
+    const payload = {
+      conversationId: id,
+      userId: user.id,
+    };
+    await axios.post("/conversation/update-personalization", payload);
+  };
 
   useEffect(() => {
     dispatch(
@@ -28,6 +39,7 @@ const ChatContent = ({ preview }: { preview: string }) => {
 
   useEffect(() => {
     return () => {
+      updatePersonalization();
       dispatch(resetChatDetail({}));
     };
   }, []);
