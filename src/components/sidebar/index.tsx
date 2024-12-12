@@ -105,7 +105,8 @@ const Sidebar = ({
           Profile
         </p>
         <p className="text-[1.875rem] leading-[2.0269rem] mb-[0.9375rem] font-medium">
-          Good Morning, {user?.firstname}
+          {/* User Greeting and converting the first letter to Uppercase and rest to lowercase */}
+          Good Morning, {user.firstname.charAt(0).toUpperCase() + user.firstname.slice(1).toLowerCase()}
         </p>
         <div className="flex flex-wrap items-center">
           <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#525252] border border-[#525252] rounded-[0.625rem] p-[0.5rem] me-[0.625rem] mb-[0.9rem]">

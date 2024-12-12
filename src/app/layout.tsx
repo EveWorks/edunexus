@@ -46,7 +46,7 @@ const borel = localFont({
 
 export const metadata: Metadata = {
   title: "Alinda",
-  description: "",
+  description: "#1 AI Educator App - The Learning You Deserve",
 };
 
 export default async function RootLayout({

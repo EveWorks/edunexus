@@ -6,12 +6,15 @@ import { FaArrowRight } from "react-icons/fa6";
 import AuthLayout from "@/components/layout/auth-layout";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { signIn } from "next-auth/react";
 import { routes } from "@/utils/routes";
 import axios from "@/axios";
 import countryList from "react-select-country-list";
+import getUniversities from "@/utils/getUniversities";
+
+//two console errors from the university search selection, doesn't affect functionality
 
 const gender = [
   {
@@ -28,20 +31,7 @@ const gender = [
   },
 ];
 
-const university = [
-  {
-    value: "Hardvard University",
-    label: "Hardvard University",
-  },
-  {
-    value: "Cambridge University",
-    label: "Cambridge University",
-  },
-  {
-    value: "Stanford University",
-    label: "Stanford University",
-  },
-];
+const university = await getUniversities();
 
 const degree = [
   {
@@ -55,7 +45,7 @@ const degree = [
 ];
 
 const ageGroup = Array.from({ length: 71 }, (_, i) => {
-  const value = (18 + i).toString();
+  const value = (16 + i).toString();
   return { value, label: value };
 });
 
@@ -96,6 +86,35 @@ const SignUpView = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const countries = useMemo(() => countryList().getData(), []);
+  const [universities, setUniversities] = useState<Array<{ value: string, label: string }>>([]);
+  const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const loadUniversities = async () => {
+      try {
+        const data = await getUniversities();
+        if (data) {
+          setUniversities(data);
+        }
+      } catch (error) {
+        console.error("Failed to load universities:", error);
+      } finally {
+        setIsLoadingUniversities(false);
+      }
+    };
+
+    loadUniversities();
+  }, []);
+
+  const filteredUniversities = useMemo(() => {
+    if (!searchTerm) return universities.slice(0, 50); // Show first 50 if no search term
+    return universities
+      .filter((uni) =>
+        uni.label.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .slice(0, 50); // Limit to 50 results
+  }, [universities, searchTerm]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data.password !== data.confirmPassword) {
@@ -144,13 +163,13 @@ const SignUpView = () => {
     <AuthLayout>
       <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
         <span className="text-[0.9375rem] leading-[1.875rem] px-[3.125rem] py-[0.9375rem] bg-[#FFFFFF15] rounded-[3.125rem] text-center">
-          Create Your Unique identity 🚀
+          Start Speaking With Alinda 🚀
         </span>
         <h2 className="text-[3.125rem] leading-[4.375rem] text-center font-medium mt-[3.125rem]">
           Sign Up Account
         </h2>
         <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
-          Lorem ipsum dolor sit amet
+          Tell Alinda about yourself 😉
         </p>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -216,22 +235,25 @@ const SignUpView = () => {
           />
           <Controller
             control={control}
+            name="university"
             rules={{
               required: { value: true, message: "University is required" },
             }}
-            name="university"
             render={({ field: { value } }) => (
               <Select
                 className="w-full mb-[0.625rem]"
                 selectClassName="text-[1.25rem] leading-[1.875rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
-                placeholder="University"
                 value={value}
-                options={university}
+                placeholder={isLoadingUniversities ? "Finding Universities..." : "University"}
+                options={filteredUniversities}
                 onChange={({ value }: any) => setValue("university", value)}
                 displayValue={(selected: string) =>
-                  university?.find((f) => f.value === selected)?.label ?? ""
+                  universities?.find((f) => f.value === selected)?.label ?? ""
                 }
                 error={errors?.university?.message}
+                searchable={true}
+                dropdownClassName="max-h-[200px] overflow-y-auto bg-secondary"
+                onSearchChange={(value: string) => setSearchTerm(value)}
               />
             )}
           />
