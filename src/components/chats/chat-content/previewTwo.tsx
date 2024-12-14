@@ -1,10 +1,9 @@
 import { BsSoundwave } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useAppSelector } from "@/store/hooks";
 import useUser from "@/hooks/use-user";
+import MarkdownRenderer from "@/components/markdown";
 
 const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -68,7 +67,7 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
         >
           {messages?.map((item: any) => {
             return (
-              <li className="flex mt-[4.375rem]" key={item?.message}>
+              <li className="flex mt-[4.375rem]" key={item?.id}>
                 {item?.role === "assistant" ? (
                   <div className="w-[3.125rem] mr-[1.25rem] flex flex-col items-center">
                     <div
@@ -97,9 +96,7 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
                   </div>
                 )}
                 <div className="w-[calc(100%-4.375rem)] mt-[0.75rem] text-[1.5625rem] leading-[1.4375rem]">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {item?.content || item?.message}
-                  </ReactMarkdown>
+                  <MarkdownRenderer markdown={item?.content || item?.message} />
                 </div>
               </li>
             );

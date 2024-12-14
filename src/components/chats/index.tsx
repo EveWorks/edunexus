@@ -20,8 +20,8 @@ import { addMessage, sendMessage } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
 
 const Chat = ({ id }: { id: string }) => {
-  const captionTimeout = useRef<any>();
-  const keepAliveInterval = useRef<any>();
+  const captionTimeout = useRef<any>(null);
+  const keepAliveInterval = useRef<any>(null);
   const [preview, setPreview] = useState<string>("1");
   const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
   const { user } = useUser();

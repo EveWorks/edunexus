@@ -3,10 +3,8 @@ import BgVector2 from "@/public/vc.svg";
 import BgVectorShadow from "@/public/vector.svg";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import CreateChat from "../create-chat";
 import { useAppSelector } from "@/store/hooks";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import MarkdownRenderer from "@/components/markdown";
 
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -85,15 +83,12 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
             ref={chatWrapperRef}
             className="h-full overflow-y-auto no-scrollbar chat-list"
           >
-            {messages?.map((item: any, index: number) => {
+            {messages?.map((item: any) => {
               return (
-                <li className="flex justify-center mb-[2rem]" key={index}>
-                  <div className="mb-[1.25rem] text-[1.5625rem] leading-[1.4375rem] text-center">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {item?.content || item?.message}
-                    </ReactMarkdown>
-                  </div>
-                </li>
+                <Message
+                  content={item?.content || item?.message}
+                  key={item?.id}
+                />
               );
             })}
             <div ref={chatEndRef}></div>
@@ -101,6 +96,16 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Message = ({ content }: { content: string }) => {
+  return (
+    <li className="flex justify-center mb-[2rem]">
+      <div className="mb-[1.25rem] text-[1.2625rem] leading-[1.4375rem] text-center">
+        <MarkdownRenderer markdown={content} />
+      </div>
+    </li>
   );
 };
 
