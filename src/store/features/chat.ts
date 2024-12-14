@@ -1,5 +1,6 @@
 import axios from "@/axios";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
 export const createTopic = createAsyncThunk(
   "chat/createTopic",
@@ -98,14 +99,9 @@ export const sendMessage = createAsyncThunk(
     try {
       const { data } = request;
       const response: any = await axios.post("/conversation/sendmessage", data);
-      // if (response?.AiResponse && data?.callback) {
-      //   data.callback(response?.conversation_id?.id);
-      // }
-
-      let chatTitle: any = {};
       if (response?.aiResponse && data?.audioCallback) {
         const audioSummary = response?.aiResponse?.messageObject?.content;
-        chatTitle =
+        const chatTitle =
           response?.aiResponse?.messagesArray?.length > 0 &&
           response?.aiResponse?.messagesArray[
             response?.aiResponse?.messagesArray?.length - 2
@@ -124,18 +120,12 @@ export const sendMessage = createAsyncThunk(
           };
         }
       } else {
-        const textResponse =
-          response?.aiResponse?.messagesArray?.length > 0 &&
-          response?.aiResponse?.messagesArray[
-            response?.aiResponse?.messagesArray?.length - 2
-          ];
-        return {
-          aiResponse: textResponse,
-          chatTitle: chatTitle?.content,
-          id: data?.conversation_id,
-        };
+        console.error("redux | sendMessage func got error => ");
+        toast.error("Error generating response, please try again");
+        return {};
       }
     } catch (err: any) {
+      console.error("redux | sendMessage func got error => ", err);
       return thunkAPI.rejectWithValue(err.message || "Failed to send message");
     }
   }
