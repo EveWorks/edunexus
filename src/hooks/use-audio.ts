@@ -7,11 +7,16 @@ export const useAudio = () => {
   const dispatch = useAppDispatch();
 
   const getAudio = async (text: string) => {
+    console.time("getAudioResponseTime"); // Start the timer
+
     const response: any = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-audio`,
       { text },
       { responseType: "blob" }
     );
+
+    console.timeEnd("getAudioResponseTime"); // End the timer and log the time taken
+
     if (response) {
       const audioBlob = await response;
       const audioUrl = URL.createObjectURL(audioBlob);

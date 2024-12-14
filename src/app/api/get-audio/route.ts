@@ -4,6 +4,8 @@ import fs from "fs";
 
 const handler: any = async (req: NextRequest) => {
   try {
+    console.time("audioGenerationTime"); // Start the timer
+
     // Parse the incoming JSON body
     const { text }: any = await req.json();
 
@@ -13,12 +15,6 @@ const handler: any = async (req: NextRequest) => {
         { status: 400 }
       );
     }
-
-    // if (process.env.DEEPGRAM_ENV === "development") {
-    //   return NextResponse.json({
-    //     key: process.env.DEEPGRAM_API_KEY ?? "",
-    //   });
-    // }
 
     // gotta use the request object to invalidate the cache every request :vomit:
     const url = req.url;
@@ -53,6 +49,7 @@ const handler: any = async (req: NextRequest) => {
     const stream = await response.getStream();
     if (stream) {
       const buffer = await getAudioBuffer(stream);
+      console.timeEnd("audioGenerationTime"); // End the timer and log the time taken
       return new NextResponse(buffer, {
         status: 200,
         headers: {

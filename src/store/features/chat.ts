@@ -98,9 +98,9 @@ export const sendMessage = createAsyncThunk(
     try {
       const { data } = request;
       const response: any = await axios.post("/conversation/sendmessage", data);
-      if (response?.AiResponse && data?.callback) {
-        data.callback(response?.conversation_id?.id);
-      }
+      // if (response?.AiResponse && data?.callback) {
+      //   data.callback(response?.conversation_id?.id);
+      // }
 
       let chatTitle: any = {};
       if (response?.aiResponse && data?.audioCallback) {
@@ -119,6 +119,8 @@ export const sendMessage = createAsyncThunk(
         if (audioResponse) {
           return {
             aiResponse: textResponse,
+            chatTitle: chatTitle?.content,
+            id: data?.conversation_id,
           };
         }
       } else {
@@ -130,7 +132,7 @@ export const sendMessage = createAsyncThunk(
         return {
           aiResponse: textResponse,
           chatTitle: chatTitle?.content,
-          id: response?.conversation_id?.id,
+          id: data?.conversation_id,
         };
       }
     } catch (err: any) {
@@ -316,11 +318,14 @@ export const chats = createSlice({
       }
       if (data?.chatTitle != "") {
         state.conversationList = state.conversationList.map((item: any) => {
-          if (item?.id == data?.id) {
-            item.title = data?.chatTitle;
+          if (item?.id === data?.id) {
+            item.conversation_title = data?.chatTitle;
           }
           return item;
         });
+      }
+      if (state?.chatDetail?.id === data?.id) {
+        state.chatDetail.conversation_title = data?.chatTitle;
       }
       // state.msgLoading = false;
     });

@@ -43,10 +43,6 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
     (state: any) => state.Chat
   );
 
-  const callbackMessage = (id: string) => {
-    dispatch(getConversationList({ userId: user.id }));
-    router.replace(`/chat/${id}`);
-  };
 
   const sendNewMessage = async (data: any) => {
     if (data?.message && !msgLoading && chatDetail?.topicid?.id) {
@@ -60,10 +56,6 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           audioCallback: (response: string) => getAudio(response),
         },
       };
-
-      if (id === "") {
-        payload.callback = callbackMessage;
-      }
 
       dispatch(
         addMessage({

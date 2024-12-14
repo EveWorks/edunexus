@@ -6,6 +6,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "katex/dist/katex.min.css";
 import mermaid from "mermaid";
+import { IoCopyOutline } from "react-icons/io5";
 
 // Define types for props
 interface MarkdownRendererProps {
@@ -40,7 +41,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
     return !inline && match ? (
       <div className="relative">
         <SyntaxHighlighter
-          style={vscDarkPlus}
+          style={{ ...vscDarkPlus, borderRadius: "10" }}
           language={match[1]}
           PreTag="div"
           {...props}
@@ -49,9 +50,10 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
         </SyntaxHighlighter>
         <button
           onClick={() => handleCopyClick(codeContent)}
-          className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded"
+          className="absolute top-2 right-2 bg-[#0c0c0c50] text-white p-2 rounded text-[1.25rem] flex items-center"
           title="Copy code"
         >
+          <IoCopyOutline className="w-5 h-5 mr-2" />
           {copySuccess || "Copy"}
         </button>
       </div>
