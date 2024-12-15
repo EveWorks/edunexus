@@ -31,8 +31,6 @@ const gender = [
   },
 ];
 
-const university = await getUniversities();
-
 const degree = [
   {
     value: "Computer Science",
@@ -50,6 +48,11 @@ const ageGroup = Array.from({ length: 71 }, (_, i) => {
 });
 
 const yearGroup = generateYearObjects(1980);
+
+//all dropdown menu's
+const dropdownStyles = {
+  dropdownClassName: "bg-secondary opacity-90 z-10",
+};
 
 function generateYearObjects(startYear: number) {
   const currentYear = new Date().getFullYear();
@@ -210,6 +213,7 @@ const SignUpView = () => {
                 displayValue={(selected: string) =>
                   ageGroup?.find((f) => f.value === selected)?.label ?? ""
                 }
+                dropdownClassName={dropdownStyles.dropdownClassName}
                 error={errors?.age?.message}
               />
             )}
@@ -229,6 +233,7 @@ const SignUpView = () => {
                 displayValue={(selected: string) =>
                   gender?.find((f) => f.value === selected)?.label ?? ""
                 }
+                dropdownClassName={dropdownStyles.dropdownClassName}
                 error={errors?.gender?.message}
               />
             )}
@@ -252,7 +257,7 @@ const SignUpView = () => {
                 }
                 error={errors?.university?.message}
                 searchable={true}
-                dropdownClassName="max-h-[200px] overflow-y-auto bg-secondary"
+                dropdownClassName={`${dropdownStyles.dropdownClassName} max-h-[200px] overflow-y-auto`}
                 onSearchChange={(value: string) => setSearchTerm(value)}
               />
             )}
@@ -272,6 +277,7 @@ const SignUpView = () => {
                 displayValue={(selected: string) =>
                   degree?.find((f) => f.value === selected)?.label ?? ""
                 }
+                dropdownClassName={dropdownStyles.dropdownClassName}
                 error={errors?.degree?.message}
               />
             )}
@@ -291,6 +297,7 @@ const SignUpView = () => {
                 displayValue={(selected: string) =>
                   yearGroup?.find((f) => f.value === selected)?.label ?? ""
                 }
+                dropdownClassName={dropdownStyles.dropdownClassName}
                 error={errors?.year?.message}
               />
             )}
@@ -312,6 +319,7 @@ const SignUpView = () => {
                 displayValue={(selected: string) =>
                   countries?.find((f) => f.value === selected)?.label ?? ""
                 }
+                dropdownClassName={dropdownStyles.dropdownClassName}
                 error={errors?.country?.message}
               />
             )}
