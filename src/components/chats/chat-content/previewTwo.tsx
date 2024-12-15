@@ -5,6 +5,8 @@ import { useAppSelector } from "@/store/hooks";
 import useUser from "@/hooks/use-user";
 import MarkdownRenderer from "@/components/markdown";
 
+// Secondary Chat Preview (minimised orb)
+
 const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatWrapperRef = useRef<HTMLUListElement>(null);
@@ -90,8 +92,7 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
                       className="text-primary text-[1.25rem] font-bold flex items-center justify-center w-[3.125rem] h-[3.125rem] rounded-[0.625rem] border border-[#525252]"
                       style={{ boxShadow: "0px 0px 2px 0px #FFFFFF" }}
                     >
-                      {user?.firstname?.substring(0, 1)}
-                      {user?.lastname?.substring(0, 1)}
+                      {user?.firstname?.substring(0, 1).toUpperCase() + user?.lastname?.substring(0, 1).toUpperCase()} {/* capitalize first & last letter */}
                     </div>
                   </div>
                 )}

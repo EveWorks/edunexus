@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import MarkdownRenderer from "@/components/markdown";
 
+// Primary Chat Preview (full orb)
+
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatWrapperRef = useRef<HTMLUListElement>(null);

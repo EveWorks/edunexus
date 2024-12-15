@@ -118,7 +118,7 @@ const Sidebar = ({
         </div>
         <div className="flex flex-wrap items-center">
           <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-primary border border-primary mb-0 rounded-[0.625rem] p-[0.5rem]">
-            Free Plan (7 days left in your free trial)
+            Free Plan (7 days left in your free trial) {/* this needs to be dynamic */}
           </span>
         </div>
         <div className="absolute right-[1.25rem] top-[1.25rem] z-2">
@@ -166,9 +166,10 @@ const Sidebar = ({
           </Button> */}
         </div>
 
+        {/* .slice().reverse() -> slice creates a copy of the list and reverse changes the order - allowing for top to bottom viewing of the conversation history */}
         <ul className="h-full max-h-[calc(100dvh-410px)] overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&
-            conversationList?.map((item: any) => (
+            (conversationList?.slice().reverse()).map((item: any) => (
               <li
                 key={item?.id}
                 className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
