@@ -122,6 +122,9 @@ export const sendMessage = createAsyncThunk(
       } else {
         console.error("redux | sendMessage func got error => ");
         toast.error("Error generating response, please try again");
+        if (data.audioCallback) {
+          data.audioCallback(false);
+        }
         return {};
       }
     } catch (err: any) {

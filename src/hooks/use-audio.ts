@@ -6,8 +6,13 @@ import { useAppDispatch } from "@/store/hooks";
 export const useAudio = () => {
   const dispatch = useAppDispatch();
 
-  const getAudio = async (text: string) => {
+  const getAudio = async (text: string | boolean) => {
     console.time("getAudioResponseTime"); // Start the timer
+
+    if (typeof text === "boolean") {
+      dispatch(updateMsgLoader({}));
+      return false;
+    }
 
     const response: any = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-audio`,
