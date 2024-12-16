@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "./index.module.css";
 import { Button, Loader } from "rizzui";
-// import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react"; miles was here
 import { GoArrowUpRight } from "react-icons/go";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -162,6 +162,7 @@ const Sidebar = ({
             variant="text"
             className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] ml-2 p-0"
           >
+
             <HiOutlineMenuAlt3 className="w-[1.125rem] h-[1.125rem]" />
           </Button> */}
         </div>
