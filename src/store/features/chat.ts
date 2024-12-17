@@ -100,23 +100,14 @@ export const sendMessage = createAsyncThunk(
       const { data } = request;
       const response: any = await axios.post("/conversation/sendmessage", data);
       if (response?.aiResponse && data?.audioCallback) {
-        const audioSummary = response?.aiResponse?.messageObject?.content;
-        const chatTitle =
-          response?.aiResponse?.messagesArray?.length > 0 &&
-          response?.aiResponse?.messagesArray[
-            response?.aiResponse?.messagesArray?.length - 2
-          ];
-        const textResponse =
-          response?.aiResponse?.messagesArray?.length > 0 &&
-          response?.aiResponse?.messagesArray[
-            response?.aiResponse?.messagesArray?.length - 3
-          ];
+        const audioSummary = response?.aiResponse?.messageObject.summary;
+        const chatTitle = response?.aiResponse?.messageObject.title;
         const audioResponse = await data.audioCallback(audioSummary);
         if (audioResponse) {
           return {
-            aiResponse: textResponse,
-            chatTitle: chatTitle?.content,
-            id: data?.conversation_id,
+            ...response?.aiResponse?.messageObject,
+            chatTitle: chatTitle,
+            conversationid: { id: data?.conversation_id },
           };
         }
       } else {
@@ -128,6 +119,7 @@ export const sendMessage = createAsyncThunk(
         return {};
       }
     } catch (err: any) {
+      toast.error("Error generating response, please try again");
       console.error("redux | sendMessage func got error => ", err);
       return thunkAPI.rejectWithValue(err.message || "Failed to send message");
     }
@@ -306,12 +298,13 @@ export const chats = createSlice({
     });
     builder.addCase(sendMessage.fulfilled, (state, action) => {
       const data = action.payload;
-      if (data?.aiResponse) {
-        state.messages.push(data?.aiResponse);
+      console.log("data", data);
+      if (data?.content) {
+        state.messages.push(data);
       }
       if (data?.chatTitle != "") {
         state.conversationList = state.conversationList.map((item: any) => {
-          if (item?.id === data?.id) {
+          if (item?.id === data?.conversationid.id) {
             item.conversation_title = data?.chatTitle;
           }
           return item;

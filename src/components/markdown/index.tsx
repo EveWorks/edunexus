@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
+import rehypeRaw from "rehype-raw";
 import rehypeKatex from "rehype-katex";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import "katex/dist/katex.min.css";
 import mermaid from "mermaid";
 import { IoCopyOutline } from "react-icons/io5";
+import Hand from "@/public/hand.png";
 
 // Define types for props
 interface MarkdownRendererProps {
@@ -68,14 +70,26 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
     return <div className="mermaid">{value}</div>;
   };
 
+  // Custom renderer for images
+  const renderImage = ({ src, alt }: { src: string; alt: string }) => {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        style={{ margin: "20px 0", maxWidth: "100%", height: "auto" }}
+      />
+    );
+  };
+
   return (
     <div className="markdown-body">
       <ReactMarkdown
         remarkPlugins={[remarkMath]}
-        rehypePlugins={[rehypeKatex]}
+        rehypePlugins={[rehypeKatex, rehypeRaw]}
         components={{
           code: renderCodeBlock,
           mermaid: renderMermaid,
+          img: renderImage, // Fix for inline base64 images
         }}
       >
         {markdown}
