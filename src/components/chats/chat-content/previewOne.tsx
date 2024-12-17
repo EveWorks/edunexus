@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import MarkdownRenderer from "@/components/markdown";
-
-// Primary Chat Preview (full orb)
+import VisualizerComponent from "@/components/orb";
 
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -63,6 +62,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
     <div className="grow">
       <div className="h-full max-h-[calc(100dvh-176px)] md:max-h-[calc(100dvh-235px)]">
         <div className="h-[50%] flex items-center justify-center">
+          <VisualizerComponent />
           <div
             className={`relative transition-all duration-400 scale-[1] h-[10.5rem] xl:h-[12.5rem] w-[10.5rem] xl:w-[12.5rem]`}
           >
