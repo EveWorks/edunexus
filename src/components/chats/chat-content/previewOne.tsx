@@ -85,11 +85,11 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
             ref={chatWrapperRef}
             className="h-full overflow-y-auto no-scrollbar chat-list"
           >
-            {messages?.map((item: any) => {
+            {messages?.map((item: any, index: number) => {
               return (
                 <Message
                   content={item?.content || item?.message}
-                  key={item?.id}
+                  key={item?.id || index}
                 />
               );
             })}

@@ -74,7 +74,7 @@ type Inputs = {
 const SettingView = () => {
   const router = useRouter();
   const { user, updateUser } = useUser();
-  const [universities, setUniversities] = useState<Array<{value: string, label: string, country: string}>>([]);
+  const [universities, setUniversities] = useState<Array<{value: string, label: string}>>([]);
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState("GB");
   const [searchTerm, setSearchTerm] = useState("");

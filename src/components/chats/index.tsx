@@ -18,6 +18,7 @@ import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { addMessage, sendMessage } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
+import { Button } from "rizzui";
 
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>(null);
