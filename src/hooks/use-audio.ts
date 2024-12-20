@@ -1,6 +1,6 @@
 "use client";
 import axios from "@/axios";
-import { updateMsgLoader } from "@/store/features/chat";
+import { updateAudio, updateMsgLoader } from "@/store/features/chat";
 import { useAppDispatch } from "@/store/hooks";
 
 export const useAudio = () => {
@@ -25,8 +25,7 @@ export const useAudio = () => {
     if (response) {
       const audioBlob = await response;
       const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
+      dispatch(updateAudio(audioUrl));
       dispatch(updateMsgLoader({}));
       return true;
     } else {

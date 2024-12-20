@@ -21,6 +21,7 @@
     "@types/three": "^0.171.0",
     "axios": "^1.7.8",
     "classnames": "^2.5.1",
+    "dat.gui": "^0.7.9",
     "gsap": "^3.12.5",
     "latex.js": "^0.12.6",
     "locomotive-scroll": "^4.1.4",

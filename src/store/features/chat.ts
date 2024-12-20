@@ -206,6 +206,7 @@ const initialState = {
   hasMore: true as boolean,
   totalItems: 0 as number,
   topicId: "" as string,
+  audio: null as any,
 };
 
 export const chats = createSlice({
@@ -235,6 +236,9 @@ export const chats = createSlice({
     },
     updateMsgLoader: (state, action) => {
       state.msgLoading = false;
+    },
+    updateAudio: (state, action) => {
+      state.audio = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -346,5 +350,6 @@ export const {
   addMessage,
   resetChatDetail,
   updateMsgLoader,
+  updateAudio
 } = chats.actions;
 export default chats.reducer;

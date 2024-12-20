@@ -9,6 +9,7 @@ import VisualizerComponent from "@/components/orb";
 
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const orbRef = useRef<HTMLDivElement>(null);
   const chatWrapperRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
@@ -61,9 +62,14 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   return (
     <div className="grow">
       <div className="h-full max-h-[calc(100dvh-176px)] md:max-h-[calc(100dvh-235px)]">
-        <div className="h-[50%] flex items-center justify-center">
-          <VisualizerComponent />
-          <div
+        <div className="h-[50%] flex items-center justify-center" ref={orbRef}>
+          <VisualizerComponent
+            width={250}
+            height={250}
+            wrapperHeight={orbRef?.current?.clientHeight}
+            wrapperWidth={orbRef?.current?.clientWidth}
+          />
+          {/* <div
             className={`relative transition-all duration-400 scale-[1] h-[10.5rem] xl:h-[12.5rem] w-[10.5rem] xl:w-[12.5rem]`}
           >
             <Image
@@ -78,7 +84,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
               className="w-full h-auto absolute bottom-0 right-0 z-[1] rotate-audio-reverse"
               priority
             />
-          </div>
+          </div> */}
         </div>
         <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul

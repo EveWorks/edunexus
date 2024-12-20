@@ -4,13 +4,21 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
-  webpack: (config) => {
+  webpack(config) {
     config.module.rules.push({
-      test: /\.(glsl|frag|vert)$/,
-      type: 'asset/source'
-    })
-    return config
-  }
+      test: /\.(wav|mp3|ogg|flac|aac)$/i,
+      type: "asset/resource",
+    });
+
+    return config;
+  },
+  // webpack: (config) => {
+  //   config.module.rules.push({
+  //     test: /\.(glsl|frag|vert)$/,
+  //     type: 'asset/source'
+  //   })
+  //   return config
+  // }
 };
 
 export default withSentryConfig(

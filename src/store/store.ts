@@ -9,6 +9,10 @@ export const makeStore = (preloadedState = {}) => {
       Chat,
     },
     preloadedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }),
   });
 };
 
