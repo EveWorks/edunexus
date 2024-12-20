@@ -10,7 +10,7 @@ export const useAudio = () => {
     console.time("getAudioResponseTime"); // Start the timer
 
     if (typeof text === "boolean") {
-      dispatch(updateMsgLoader({}));
+      dispatch(updateMsgLoader(false));
       return false;
     }
 
@@ -26,7 +26,7 @@ export const useAudio = () => {
       const audioBlob = await response;
       const audioUrl = URL.createObjectURL(audioBlob);
       dispatch(updateAudio(audioUrl));
-      dispatch(updateMsgLoader({}));
+      dispatch(updateMsgLoader(false));
       return true;
     } else {
       return false;

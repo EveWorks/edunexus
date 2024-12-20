@@ -16,30 +16,36 @@ const ThreeScene = ({
   cameraPosition = { x: 0, y: -2, z: 14 },
 }) => {
   const mountRef = useRef(null);
-  const audio = useAppSelector((state) => state.Chat.audio);
+  const { audio, msgLoading } = useAppSelector((state) => state.Chat);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width || window.innerWidth, height || window.innerHeight);
+    renderer.setSize(
+      wrapperWidth || window.innerWidth,
+      wrapperHeight || window.innerHeight
+    );
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0);
+    // renderer.setClearColor(new THREE.Color("#141414"), 1)
+    renderer.domElement.style.backgroundColor = "#141414";
     if (mountRef.current) mountRef.current.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#141414");
     const camera = new THREE.PerspectiveCamera(
       45,
-      (width || window.innerWidth) / (height || window.innerHeight),
+      (wrapperWidth || window.innerWidth) /
+        (wrapperHeight || window.innerHeight),
       0.1,
       1000
     );
 
     const params = {
       red: 1.0,
-      green: 0.4,
+      green: 0.7,
       blue: 0,
-      threshold: 0.18,
-      strength: 0.38,
+      threshold: 0.2,
+      strength: 0.1,
       radius: 0.0,
     };
 
@@ -196,7 +202,7 @@ const ThreeScene = ({
       fragmentShader,
     });
 
-    const geo = new THREE.IcosahedronGeometry(4, 30);
+    const geo = new THREE.IcosahedronGeometry(3, 7);
     const mesh = new THREE.Mesh(geo, mat);
     scene.add(mesh);
     mesh.material.wireframe = true;
@@ -212,7 +218,7 @@ const ThreeScene = ({
         sound.setBuffer(buffer);
         sound.setVolume(1);
         sound.play();
-        const duration = buffer.duration * 1000; 
+        const duration = buffer.duration * 1000;
         setTimeout(() => {
           dispatch(updateAudio(null));
         }, duration);
@@ -238,46 +244,57 @@ const ThreeScene = ({
     // bloomFolder.add(params, "threshold", 0, 0.18).onChange((value) => {
     //   bloomPass.threshold = Number(value);
     // });
-    // bloomFolder.add(params, "strength", 0, 0.38).onChange((value) => {
+    // bloomFolder.add(params, "strength", 0, 0.28).onChange((value) => {
     //   bloomPass.strength = Number(value);
     // });
     // bloomFolder.add(params, "radius", 0, 0.0).onChange((value) => {
     //   bloomPass.radius = Number(value);
     // });
 
-    const clock = new THREE.Clock();
+    let mouseX = 0;
+    let mouseY = 0;
+    document.addEventListener("mousemove", function (e) {
+      let windowHalfX = window.innerWidth / 2;
+      let windowHalfY = window.innerHeight / 2;
+      mouseX = (e.clientX - windowHalfX) / 100;
+      mouseY = (e.clientY - windowHalfY) / 100;
+    });
 
-    function animate() {
-      if (audio) {
-        uniforms.u_time.value = clock.getElapsedTime();
-        uniforms.u_frequency.value = analyser.getAverageFrequency();
+    const clock = new THREE.Clock();
+    function animateOrb() {
+      uniforms.u_time.value = clock.getElapsedTime();
+      uniforms.u_frequency.value = analyser.getAverageFrequency();
+      if (msgLoading) {
+        mesh.rotation.y += 0.005;
+      } else {
+        camera.position.x += (mouseX - camera.position.x) * 0.05;
+        camera.position.y += (-mouseY - camera.position.y) * 0.5;
+        camera.lookAt(scene.position);
       }
       bloomComposer.render();
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animateOrb);
     }
+    animateOrb();
 
-    animate();
-
-    window.addEventListener("resize", () => {
-      camera.aspect =
-        (width || window.innerWidth) / (height || window.innerHeight);
-      camera.updateProjectionMatrix();
-      renderer.setSize(
-        width || window.innerWidth,
-        height || window.innerHeight
-      );
-      bloomComposer.setSize(
-        width || window.innerWidth,
-        height || window.innerHeight
-      );
-    });
+    // window.addEventListener("resize", () => {
+    //   camera.aspect =
+    //     (width || window.innerWidth) / (height || window.innerHeight);
+    //   camera.updateProjectionMatrix();
+    //   renderer.setSize(
+    //     width || window.innerWidth,
+    //     height || window.innerHeight
+    //   );
+    //   bloomComposer.setSize(
+    //     width || window.innerWidth,
+    //     height || window.innerHeight
+    //   );
+    // });
 
     return () => {
       renderer.dispose();
-      // gui.destroy();
       mountRef.current.removeChild(renderer.domElement);
     };
-  }, [audio, width, height, cameraPosition]);
+  }, [audio, msgLoading, width, height, cameraPosition]);
 
   return <div ref={mountRef} />;
 };

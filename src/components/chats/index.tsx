@@ -16,7 +16,7 @@ import {
 import axios from "@/axios";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addMessage, sendMessage } from "@/store/features/chat";
+import { addMessage, sendMessage, updateMsgLoader } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
 import { Button } from "rizzui";
 
@@ -53,7 +53,9 @@ const Chat = ({ id }: { id: string }) => {
   }, [microphoneState]);
 
   const sendNewMessage = async (text: string) => {
-    if (chatDetail?.topicid?.id) {
+    if (chatDetail?.topicid?.id && !msgLoading) {
+      dispatch(updateMsgLoader(true));
+
       if (preview !== "2") {
         dispatch(
           addMessage({
@@ -101,7 +103,7 @@ const Chat = ({ id }: { id: string }) => {
       const transcript = data.channel.alternatives[0].transcript;
 
       if (isFinal && speechFinal) {
-        if (transcript !== "") {
+        if (transcript !== "" && !msgLoading) {
           sendNewMessage(transcript);
         }
         clearTimeout(captionTimeout.current);

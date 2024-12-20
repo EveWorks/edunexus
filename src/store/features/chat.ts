@@ -235,7 +235,7 @@ export const chats = createSlice({
       state.messages.push(action.payload);
     },
     updateMsgLoader: (state, action) => {
-      state.msgLoading = false;
+      state.msgLoading = action.payload;
     },
     updateAudio: (state, action) => {
       state.audio = action.payload;
