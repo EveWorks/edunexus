@@ -95,6 +95,7 @@ const SettingView = () => {
 
     loadUniversities();
   }, []);
+  //
 
   const countries = useMemo(() => countryList().getData(), []);
 
