@@ -7,6 +7,7 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateAudio } from "@/store/features/chat";
+import useDevice from "@/hooks/use-device";
 
 const ThreeScene = ({
   width,
@@ -18,6 +19,7 @@ const ThreeScene = ({
   const mountRef = useRef(null);
   const { audio, msgLoading } = useAppSelector((state) => state.Chat);
   const dispatch = useAppDispatch();
+  const { isMobile } = useDevice();
 
   useEffect(() => {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -26,12 +28,13 @@ const ThreeScene = ({
       wrapperHeight || window.innerHeight
     );
     renderer.setPixelRatio(window.devicePixelRatio);
-    // renderer.setClearColor(new THREE.Color("#141414"), 1)
-    renderer.domElement.style.backgroundColor = "#141414";
+    renderer.domElement.style.backgroundColor = !isMobile
+      ? "#141414"
+      : "#0C0C0C";
     if (mountRef.current) mountRef.current.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#141414");
+    scene.background = new THREE.Color(!isMobile ? "#141414" : "#0C0C0C");
     const camera = new THREE.PerspectiveCamera(
       45,
       (wrapperWidth || window.innerWidth) /
@@ -275,20 +278,6 @@ const ThreeScene = ({
       requestAnimationFrame(animateOrb);
     }
     animateOrb();
-
-    // window.addEventListener("resize", () => {
-    //   camera.aspect =
-    //     (width || window.innerWidth) / (height || window.innerHeight);
-    //   camera.updateProjectionMatrix();
-    //   renderer.setSize(
-    //     width || window.innerWidth,
-    //     height || window.innerHeight
-    //   );
-    //   bloomComposer.setSize(
-    //     width || window.innerWidth,
-    //     height || window.innerHeight
-    //   );
-    // });
 
     return () => {
       renderer.dispose();
