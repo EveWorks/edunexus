@@ -281,7 +281,9 @@ const ThreeScene = ({
 
     return () => {
       renderer.dispose();
-      mountRef.current.removeChild(renderer.domElement);
+      if (mountRef.current) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
     };
   }, [audio, msgLoading, width, height, cameraPosition]);
 

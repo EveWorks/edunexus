@@ -1,11 +1,15 @@
 import Image from "next/image";
 import BgVector2 from "@/public/vc.svg";
 import BgVectorShadow from "@/public/vector.svg";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import MarkdownRenderer from "@/components/markdown";
-import VisualizerComponent from "@/components/orb";
+import dynamic from "next/dynamic";
+// Lazy load the VisualizerComponent with no SSR
+const VisualizerComponent = dynamic(() => import('@/components/orb'), {
+  ssr: false, // Disable server-side rendering for this component
+});
 
 const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -63,18 +67,20 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
     <div className="grow">
       <div className="h-full max-h-[calc(100dvh-176px)] md:max-h-[calc(100dvh-235px)]">
         <div className="h-[50%] flex items-center justify-center" ref={orbRef}>
-          <VisualizerComponent
-            width={150}
-            height={150}
-            wrapperHeight={
-              orbRef?.current?.clientHeight
-                ? orbRef?.current?.clientHeight
-                : null
-            }
-            wrapperWidth={
-              orbRef?.current?.clientWidth ? orbRef?.current?.clientWidth : null
-            }
-          />
+          <Suspense fallback={<div>Alinda is waking up...</div>}>
+            <VisualizerComponent
+              width={150}
+              height={150}
+              wrapperHeight={
+                orbRef?.current?.clientHeight
+                  ? orbRef?.current?.clientHeight
+                  : null
+              }
+              wrapperWidth={
+                orbRef?.current?.clientWidth ? orbRef?.current?.clientWidth : null
+              }
+            />
+          </Suspense>
         </div>
         <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul

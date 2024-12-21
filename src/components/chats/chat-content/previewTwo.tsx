@@ -41,7 +41,9 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
       const chatWrapper = chatWrapperRef.current;
       if (chatWrapper) {
         if (chatWrapper.scrollTop === 0) {
-          setPage((prevPage: number) => prevPage + 1);
+          setTimeout(() => {
+            setPage((prevPage: number) => prevPage + 1);
+          }, 0);          
           calculateScrollFromBottom();
         }
       }
@@ -67,9 +69,9 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
           ref={chatWrapperRef}
           className="h-[calc(100dvh-267px)] overflow-y-auto custom-scrollbar"
         >
-          {messages?.map((item: any) => {
+          {messages?.map((item: any, index: number) => {
             return (
-              <li className="flex mt-[4.375rem]" key={item?.id}>
+              <li className="flex mt-[4.375rem]" key={item?.id || `${index}`}>
                 {item?.role === "assistant" ? (
                   <div className="w-[3.125rem] mr-[1.25rem] flex flex-col items-center">
                     <div
