@@ -16,9 +16,14 @@ import {
 import axios from "@/axios";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { addMessage, sendMessage, updateMsgLoader } from "@/store/features/chat";
+import {
+  addMessage,
+  sendMessage,
+  updateMsgLoader,
+} from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
 import { Button } from "rizzui";
+import { getMLoading, setMLoading } from "@/utils/storage";
 
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>(null);
@@ -29,6 +34,7 @@ const Chat = ({ id }: { id: string }) => {
   const { getAudio } = useAudio();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
+  const isLoading = getMLoading();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
     useMicrophone();
 
@@ -47,12 +53,16 @@ const Chat = ({ id }: { id: string }) => {
         utterance_end_ms: 3000,
         interim_results: true,
         vad_events: true,
-        endpointing: 300,
+        endpointing: 1000,
       });
     }
   }, [microphoneState]);
 
   const sendNewMessage = async (text: string) => {
+    // if (isLoading === "2") {
+    //   return;
+    // }
+
     if (chatDetail?.topicid?.id && !msgLoading) {
       dispatch(updateMsgLoader(true));
 
@@ -83,6 +93,7 @@ const Chat = ({ id }: { id: string }) => {
         },
       };
 
+      setMLoading("2");
       await dispatch(sendMessage(payload));
     }
   };
@@ -93,7 +104,7 @@ const Chat = ({ id }: { id: string }) => {
     if (!connection) return;
 
     const onData = (e: BlobEvent) => {
-      if (e.data.size > 0 && !msgLoading) {
+      if (e.data.size > 0) {
         connection?.send(e.data);
       }
     };
@@ -103,7 +114,7 @@ const Chat = ({ id }: { id: string }) => {
       const transcript = data.channel.alternatives[0].transcript;
 
       if (isFinal && speechFinal) {
-        if (transcript !== "" && !msgLoading) {
+        if (transcript !== "") {
           sendNewMessage(transcript);
         }
         clearTimeout(captionTimeout.current);
@@ -154,6 +165,7 @@ const Chat = ({ id }: { id: string }) => {
 
   return (
     <div className="flex flex-col h-full">
+      {isLoading}
       <ChatHeader setPreview={setPreview} />
       <ChatContent preview={preview} />
       <ChatFooter id={id} preview={preview} />

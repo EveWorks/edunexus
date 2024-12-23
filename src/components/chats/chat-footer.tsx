@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
@@ -43,6 +43,9 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
     (state: any) => state.Chat
   );
 
+  useEffect(() => {
+    startMicrophone();
+  }, []);
 
   const sendNewMessage = async (data: any) => {
     if (data?.message && !msgLoading && chatDetail?.topicid?.id) {

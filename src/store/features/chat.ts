@@ -1,4 +1,5 @@
 import axios from "@/axios";
+import { setMLoading } from "@/utils/storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
@@ -302,7 +303,6 @@ export const chats = createSlice({
     });
     builder.addCase(sendMessage.fulfilled, (state, action) => {
       const data = action.payload;
-      console.log("data", data);
       if (data?.content) {
         state.messages.push(data);
       }
@@ -317,7 +317,9 @@ export const chats = createSlice({
       if (state?.chatDetail?.id === data?.id) {
         state.chatDetail.conversation_title = data?.chatTitle;
       }
-      // state.msgLoading = false;
+      setTimeout(() => {
+        setMLoading("1");
+      }, 2000);
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.msgLoading = false;
@@ -350,6 +352,6 @@ export const {
   addMessage,
   resetChatDetail,
   updateMsgLoader,
-  updateAudio
+  updateAudio,
 } = chats.actions;
 export default chats.reducer;
