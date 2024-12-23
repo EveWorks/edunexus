@@ -57,7 +57,6 @@ const LandingPage = () => {
         },
         smartphone: {
           smooth: false,
-          direction: "vertical",
           gestureDirection: "vertical",
           interia: 0.1,
         },
@@ -68,7 +67,7 @@ const LandingPage = () => {
     >
       <div
         data-scroll-container
-        className="w-full relative overflow-x-hidden"
+        className="w-full relative md:overflow-x-hidden"
         ref={containerRef}
       >
         <Hero />

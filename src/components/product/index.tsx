@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Controller } from "swiper/modules";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
@@ -15,23 +15,30 @@ import FadeUpComponent from "../fadeInComponent";
 const Product = () => {
   const [swiper1, setSwiper1] = useState(null) as any;
   const [swiper2, setSwiper2] = useState(null) as any;
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
+  const swiper1Ref = useRef(null) as any;
+  const swiper2Ref = useRef(null) as any;
 
-  const updateNavigationState = (swiper: any) => {
-    setIsBeginning(swiper.isBeginning);
-    setIsEnd(swiper.isEnd);
-  };
+  useEffect(() => {
+    if (swiper1Ref.current && swiper2Ref.current) {
+      setSwiper1(swiper1Ref.current.swiper);
+      setSwiper2(swiper2Ref.current.swiper);
+
+      // Crucial: Set the controller relationship AFTER both Swipers are initialized
+      swiper1Ref.current.swiper.controller.control = swiper2Ref.current.swiper;
+      swiper2Ref.current.swiper.controller.control = swiper1Ref.current.swiper;
+    }
+  }, []);
 
   const slidePrev = () => {
-    if (swiper1) swiper1.slidePrev();
-    if (swiper2) swiper2.slidePrev();
+    swiper1?.slidePrev();
   };
 
   const slideNext = () => {
-    if (swiper1) swiper1.slideNext();
-    if (swiper2) swiper2.slideNext();
+    swiper1?.slideNext();
   };
+
+  const isBeginning = swiper1?.isBeginning ?? true;
+  const isEnd = swiper1?.isEnd ?? false;
 
   return (
     <div
@@ -50,16 +57,7 @@ const Product = () => {
           data-scroll
           data-scroll-speed="-1"
         >
-          <Swiper
-            className="w-full"
-            modules={[Controller]}
-            onSwiper={(swiper) => {
-              setSwiper1(swiper);
-              updateNavigationState(swiper);
-            }}
-            onSlideChange={(swiper) => updateNavigationState(swiper)}
-            controller={{ control: swiper2 }}
-          >
+          <Swiper className="w-full" modules={[Controller]} ref={swiper1Ref}>
             <SwiperSlide>
               <Image
                 className="w-full h-auto object-cover md:min-h-0 min-h-[36.9375rem]"
@@ -88,16 +86,7 @@ const Product = () => {
           data-scroll
           data-scroll-speed="1"
         >
-          <Swiper
-            modules={[Controller]}
-            onSwiper={(swiper) => {
-              setSwiper2(swiper);
-              updateNavigationState(swiper);
-            }}
-            onSlideChange={(swiper) => updateNavigationState(swiper)}
-            controller={{ control: swiper1 }}
-            className="h-full"
-          >
+          <Swiper modules={[Controller]} className="h-full" ref={swiper2Ref}>
             <SwiperSlide className="">
               <FadeUpComponent className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
                 Tailored virtual tutoring using AI, offering the personalised
@@ -122,7 +111,6 @@ const Product = () => {
               className="w-[44px] md:w-[4rem] h-[44px] md:h-[4rem] border border-[#ffffff] text-[#ffffff] mr-[2.1875rem] disabled:border-[#525252] disabled:text-[#525252]"
               variant="text"
               onClick={slidePrev}
-              disabled={isBeginning}
             >
               <BiChevronLeft className="w-6 h-6" />
             </Button>
@@ -130,7 +118,6 @@ const Product = () => {
               className="w-[44px] md:w-[4rem] h-[44px] md:h-[4rem] border border-[#ffffff] text-[#ffffff] disabled:border-[#525252] disabled:text-[#525252]"
               onClick={slideNext}
               variant="text"
-              disabled={isEnd}
             >
               <BiChevronRight className="w-6 h-6" />
             </Button>

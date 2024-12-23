@@ -311,4 +311,8 @@ input::placeholder {
   .fadeBox::after {
     background: linear-gradient(180deg, rgba(20, 20, 20, 0) 0%, #0c0c0c 72%);
   }
+
+  .mb-of {
+    overflow-x: hidden;
+  }
 }

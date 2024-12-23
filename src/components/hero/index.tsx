@@ -35,10 +35,10 @@ const Hero = () => {
 
   return (
     <div className="" data-scroll-section>
-      <div className="min-h-screen flex flex-col justify-between">
+      <div className="md:min-h-screen flex flex-col justify-between ">
         <Header />
         <div className="grow flex items-center justify-center py-[3rem] relative md:min-h-0 min-h-[400px]">
-          <div className="w-full h-full flex items-center justify-center absolute top-0 left-0">
+          <div className="w-full h-full flex items-center justify-center absolute top-0 left-0 mb-of">
             <Image
               id="heroImg"
               className="w-auto h-full max-w-[662px] max-h-[662px] object-contain p-[4rem] rotate-center"
