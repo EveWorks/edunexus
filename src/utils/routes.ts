@@ -4,7 +4,7 @@ export const routes = {
   home: "/",
   dashboard: "/dashboard",
   gdpr: "/gdpr",
-  terms: "/terms-and-conditions",
+  terms: "/terms-of-use",
   privacy: "/privacy-policy",
   contact: "/contact-us",
 };
