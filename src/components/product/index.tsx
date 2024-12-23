@@ -4,6 +4,8 @@ import { Controller } from "swiper/modules";
 import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
 import { GoArrowDownLeft } from "react-icons/go";
 import Hand from "@/public/hand.png";
+import Man from "@/public/man.png";
+import Square from "@/public/square.png";
 import { Button } from "rizzui";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import "swiper/css";
@@ -68,13 +70,24 @@ const Product = () => {
             <SwiperSlide>
               <Image
                 className="w-full h-auto object-cover md:min-h-0 min-h-[36.9375rem]"
-                src={Hand}
-                alt="img1"
+                src={Man}
+                alt="img2"
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Image
+                className="w-full h-auto object-cover md:min-h-0 min-h-[36.9375rem]"
+                src={Square}
+                alt="img3"
               />
             </SwiperSlide>
           </Swiper>
         </div>
-        <div className="w-full md:w-1/2 md:mt-0 mt-[30px]" data-scroll data-scroll-speed="1">
+        <div
+          className="w-full md:w-1/2 md:mt-0 mt-[30px]"
+          data-scroll
+          data-scroll-speed="1"
+        >
           <Swiper
             modules={[Controller]}
             onSwiper={(swiper) => {
@@ -93,8 +106,14 @@ const Product = () => {
             </SwiperSlide>
             <SwiperSlide className="">
               <FadeUpComponent className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
-                Tailored virtual tutoring using AI, offering the personalised
-                help students need. 2
+                AI teaching assistants that help manage large classrooms
+                efficiently.
+              </FadeUpComponent>
+            </SwiperSlide>
+            <SwiperSlide className="">
+              <FadeUpComponent className="text-[20px] md:text-[2.5rem] leading-[20px] md:leading-[2.5rem] tracking-[-1px] text-center md:text-right font-medium flex flex-col justify-end h-full pb-[6.25rem]">
+                Ensures transparency, accountability, and academic integrity in
+                an AI-driven learning environment.
               </FadeUpComponent>
             </SwiperSlide>
           </Swiper>

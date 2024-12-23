@@ -13,49 +13,9 @@ import axios from "@/axios";
 import countryList from "react-select-country-list";
 import toast from "react-hot-toast";
 import getUniversities from "@/utils/getUniversities";
+import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
 
 //two console errors from the university search selection, doesn't affect functionality
-
-const gender = [
-  {
-    value: "male",
-    label: "Male",
-  },
-  {
-    value: "female",
-    label: "Female",
-  },
-  {
-    value: "Others",
-    label: "Others",
-  },
-];
-
-const degree = [
-  {
-    value: "Computer Science",
-    label: "Computer Science",
-  },
-  {
-    value: "Mathematics",
-    label: "Mathematics",
-  },
-];
-
-const ageGroup = Array.from({ length: 71 }, (_, i) => {
-  const value = (18 + i).toString();
-  return { value, label: value };
-});
-
-const yearGroup = generateYearObjects(1980);
-
-function generateYearObjects(startYear: number) {
-  const currentYear = new Date().getFullYear();
-  return Array.from({ length: currentYear - startYear + 1 }, (_, i) => {
-    const year = (startYear + i).toString();
-    return { value: year, label: year };
-  });
-}
 
 type Inputs = {
   firstname: string;

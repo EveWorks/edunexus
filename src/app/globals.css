@@ -71,6 +71,7 @@ body {
 
 .font-regular {
   font-family: var(--font-grebavi-regular) !important;
+  font-weight: 400;
 }
 
 .font-medium {

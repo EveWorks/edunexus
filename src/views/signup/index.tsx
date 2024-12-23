@@ -13,54 +13,13 @@ import { routes } from "@/utils/routes";
 import axios from "@/axios";
 import countryList from "react-select-country-list";
 import getUniversities from "@/utils/getUniversities";
+import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
 
 //two console errors from the university search selection, doesn't affect functionality
 
-const gender = [
-  {
-    value: "male",
-    label: "Male",
-  },
-  {
-    value: "female",
-    label: "Female",
-  },
-  {
-    value: "others",
-    label: "Others",
-  },
-];
-
-const degree = [
-  {
-    value: "Computer Science",
-    label: "Computer Science",
-  },
-  {
-    value: "Mathematics",
-    label: "Mathematics",
-  },
-];
-
-const ageGroup = Array.from({ length: 71 }, (_, i) => {
-  const value = (16 + i).toString();
-  return { value, label: value };
-});
-
-const yearGroup = generateYearObjects(1980);
-
-//all dropdown menu's
 const dropdownStyles = {
   dropdownClassName: "bg-secondary opacity-90 z-10",
 };
-
-function generateYearObjects(startYear: number) {
-  const currentYear = new Date().getFullYear();
-  return Array.from({ length: currentYear - startYear + 1 }, (_, i) => {
-    const year = (startYear + i).toString();
-    return { value: year, label: year };
-  });
-}
 
 type Inputs = {
   firstname: string;
@@ -89,7 +48,9 @@ const SignUpView = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const countries = useMemo(() => countryList().getData(), []);
-  const [universities, setUniversities] = useState<Array<{ value: string, label: string }>>([]);
+  const [universities, setUniversities] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -249,7 +210,11 @@ const SignUpView = () => {
                 className="w-full mb-[0.625rem]"
                 selectClassName="text-[1.25rem] leading-[1.875rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
                 value={value}
-                placeholder={isLoadingUniversities ? "Finding Universities..." : "University"}
+                placeholder={
+                  isLoadingUniversities
+                    ? "Finding Universities..."
+                    : "University"
+                }
                 options={filteredUniversities}
                 onChange={({ value }: any) => setValue("university", value)}
                 displayValue={(selected: string) =>

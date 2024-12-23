@@ -39,12 +39,6 @@ const Chat = ({ id }: { id: string }) => {
     useMicrophone();
 
   useEffect(() => {
-    if (id) {
-      setupMicrophone();
-    }
-  }, []);
-
-  useEffect(() => {
     if (id && microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
@@ -165,7 +159,7 @@ const Chat = ({ id }: { id: string }) => {
 
   return (
     <div className="flex flex-col h-full">
-      {isLoading}
+      {/* {isLoading} */}
       <ChatHeader setPreview={setPreview} />
       <ChatContent preview={preview} />
       <ChatFooter id={id} preview={preview} />

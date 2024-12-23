@@ -19,9 +19,9 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
   }
 
-  // if (pathname === "/") {
-  //   return <>{children}</>;
-  // }
+  if (pathname === "/") {
+    return <>{children}</>;
+  }
 
   return (
     <DashboardLayout>

@@ -48,12 +48,12 @@ const ChatHeader = ({ setPreview }: { setPreview?: any }) => {
             {/* <TbEdit className="ml-[1.25rem] w-[1.125rem] h-[1.125rem] text-[#525252]" /> */}
           </div>
           <div className="w-[33.33%] text-center flex items-center justify-end">
-            <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#525252] border border-primary bg-primary rounded-[0.625rem] p-[0.5rem] mr-[1.25rem]">
+            {/* <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#525252] border border-primary bg-primary rounded-[0.625rem] p-[0.5rem] mr-[1.25rem]">
               Mathematics
             </span>
             <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem]">
               Computer Science
-            </span>
+            </span> */}
           </div>
         </div>
       ) : (

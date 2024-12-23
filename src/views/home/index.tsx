@@ -56,7 +56,7 @@ const LandingPage = () => {
           breakpoint: 1024,
         },
         smartphone: {
-          smooth: true,
+          smooth: false,
           direction: "vertical",
           gestureDirection: "vertical",
           interia: 0.1,

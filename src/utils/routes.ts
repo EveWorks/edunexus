@@ -3,4 +3,8 @@ export const routes = {
   signUp: "/signup",
   home: "/",
   dashboard: "/dashboard",
+  gdpr: "/gdpr",
+  terms: "/terms-and-conditions",
+  privacy: "/privacy-policy",
+  contact: "/contact-us",
 };
