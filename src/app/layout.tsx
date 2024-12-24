@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/auth-options";
 import { Toaster } from "react-hot-toast";
 import ChatProvider from "@/components/provider/chat-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const grebaviRegular = localFont({
   src: "./fonts/grebavi-regular.otf",
@@ -64,6 +65,7 @@ export default async function RootLayout({
         <AuthProvider session={session}>
           <StoreProvider initialState={{}}>
             <ChatProvider>{children}</ChatProvider>
+            <SpeedInsights/> {/* if buggy remove */}
             <Toaster />
           </StoreProvider>
         </AuthProvider>
