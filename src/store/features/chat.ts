@@ -101,7 +101,7 @@ export const sendMessage = createAsyncThunk(
       const { data } = request;
       const response: any = await axios.post("/conversation/sendmessage", data);
       if (response?.aiResponse && data?.audioCallback) {
-        const audioSummary = response?.aiResponse?.messageObject.summary;
+        const audioSummary = response?.aiResponse?.messageObject.audioFile;
         const chatTitle = response?.aiResponse?.messageObject.title;
         const audioResponse = await data.audioCallback(audioSummary);
         if (audioResponse) {

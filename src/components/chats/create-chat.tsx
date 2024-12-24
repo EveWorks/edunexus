@@ -2,22 +2,48 @@ import Image from "next/image";
 import { Button } from "rizzui";
 import BgVector from "@/public/bg.png";
 import BgVectorShadow from "@/public/vector.svg";
-import { getTopicList } from "@/store/features/chat";
+import {
+  createConversation,
+  getConversationList,
+  getTopicList,
+} from "@/store/features/chat";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState } from "react";
 import ConversationTitle from "./conversation-title";
+import useUser from "@/hooks/use-user";
+import { useRouter } from "next/navigation";
 
 const CreateChat = () => {
-  const { topicList } = useAppSelector((state) => state.Chat);
+  const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const { user } = useUser();
+  const { topicList } = useAppSelector((state) => state.Chat);
   const [limit, setLimit] = useState(20);
   const [page, setPage] = useState(1);
-  const [topicId, setTopicId] = useState<any>(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     dispatch(getTopicList({ limit, page }));
   }, []);
+
+  const callbackMessage = (id: string) => {
+    dispatch(getConversationList({ userId: user.id }));
+    router.replace(`/chat/${id}`);
+  };
+
+  const createNewConversation = async (id: string) => {
+    if (!loading) {
+      setLoading(true);
+      const payload: any = {
+        conversation_title: "Untitled",
+        topicid: id,
+        userid: user.id,
+        callback: callbackMessage,
+      };
+
+      dispatch(createConversation(payload));
+    }
+  };
 
   return (
     <div className="grow px-4 md:mt-0 mt-4">
@@ -50,20 +76,16 @@ const CreateChat = () => {
               return (
                 <Button
                   key={item.id}
-                  onClick={() => setTopicId(item.id)}
+                  onClick={() => createNewConversation(item.id)}
                   variant="text"
-                  className={`h-fit text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem] mr-[1.25rem] mb-2 ${
-                    topicId === item.id
-                      ? "bg-primary border-primary text-[#0c0c0c] hover:text-[#0c0c0c]"
-                      : ""
-                  } `}
+                  className={`h-fit text-[1.25rem] leading-[0.9375rem] font-medium text-[#FFFFFF] border border-[#525252] rounded-[0.625rem] p-[0.5rem] mr-[1.25rem] mb-2 `}
                 >
                   {item.topic_name}
                 </Button>
               );
             })}
         </div>
-        <ConversationTitle topicId={topicId} />
+        {/* <ConversationTitle topicId={topicId} /> */}
       </div>
     </div>
   );

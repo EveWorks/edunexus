@@ -41,7 +41,7 @@ const Chat = ({ id }: { id: string }) => {
   useEffect(() => {
     if (id && microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
-        model: "nova-2",
+        model: "aura-asteria-en",
         smart_format: true,
         filler_words: true,
         utterance_end_ms: 3000,
