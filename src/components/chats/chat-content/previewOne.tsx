@@ -30,6 +30,8 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
     }
   };
 
+  //ignore line
+
   useEffect(() => {
     const chatWrapper = chatWrapperRef.current;
     if (page === 1 && messages?.length > 0 && chatEndRef?.current) {
