@@ -7,7 +7,7 @@ import { setMLoading } from "@/utils/storage";
 export const useAudio = () => {
   const dispatch = useAppDispatch();
 
-  const getAudio = async (audio: any) => {
+  const getAudio = (audio: any) => {
     if (typeof audio === "boolean") {
       dispatch(updateMsgLoader(false));
       return false;

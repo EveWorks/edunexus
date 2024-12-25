@@ -43,6 +43,7 @@ const SignInView = () => {
       if (response?.ok) {
         const session: any = await getSession();
         const user = session?.user?.data?.user;
+        mixpanel.identify(user.id);
         mixpanel.track("user_logged_in", {
           name: user.firstname + " " + user.lastname,
           email: user.email,

@@ -122,6 +122,7 @@ const SignUpView = () => {
         redirect: false,
       });
       if (responseSignIn?.ok) {
+        mixpanel.alias(response?.user.id);
         mixpanel.track("user_signup", {
           name: response?.user.firstname + " " + response?.user.lastname,
           email: response?.user.email,
@@ -139,6 +140,10 @@ const SignUpView = () => {
           year: response?.user.year,
           age: response?.user.age,
           gender: response?.user.gender,
+        });
+        mixpanel.track("session_start", {
+          session_start: new Date().toISOString(),
+          email: response?.user.email,
         });
         router.push(routes.dashboard);
       } else {

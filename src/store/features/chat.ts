@@ -103,14 +103,14 @@ export const sendMessage = createAsyncThunk(
       if (response?.aiResponse && data?.audioCallback) {
         const audioSummary = response?.aiResponse?.messageObject.audioFile;
         const chatTitle = response?.aiResponse?.messageObject.title;
-        const audioResponse = await data.audioCallback(audioSummary);
-        if (audioResponse) {
-          return {
-            ...response?.aiResponse?.messageObject,
-            chatTitle: chatTitle,
-            conversationid: { id: data?.conversation_id },
-          };
-        }
+        const audioResponse = data.audioCallback(audioSummary);
+        // if (audioResponse) {
+        return {
+          ...response?.aiResponse?.messageObject,
+          chatTitle: chatTitle,
+          conversationid: { id: data?.conversation_id },
+        };
+        // }
       } else {
         console.error("redux | sendMessage func got error => ");
         toast.error("Error generating response, please try again");

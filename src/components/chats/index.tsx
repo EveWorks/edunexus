@@ -85,17 +85,16 @@ const Chat = ({ id }: { id: string }) => {
           userid: user.id,
           conversation_id: id,
           topicid: chatDetail.topicid.id,
-          audioCallback: (response: string) => {
-            getAudio(response);
-            mixpanel.track("user_interacted_with_key_feature", {
-              conversation_id: id,
-              message: text,
-              email: user.email,
-            });
-          },
+          audioCallback: (response: string) => getAudio(response),
         },
       };
 
+      mixpanel.track("user_interacted_with_key_feature", {
+        conversation_id: id,
+        message: text,
+        email: user.email,
+        text: "audio",
+      });
       setMLoading("2");
       await dispatch(sendMessage(payload));
     }

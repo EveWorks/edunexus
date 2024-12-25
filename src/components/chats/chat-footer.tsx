@@ -58,14 +58,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           topicid: chatDetail?.topicid?.id,
           userid: user.id,
           conversation_id: id,
-          audioCallback: (response: string) => {
-            getAudio(response);
-            mixpanel.track("user_interacted_with_key_feature", {
-              conversation_id: id,
-              message: data?.message,
-              email: user.email,
-            });
-          },
+          audioCallback: (response: string) => getAudio(response),
         },
       };
 
@@ -85,6 +78,13 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
 
       setValue("message", "");
       await dispatch(sendMessage(payload));
+
+      mixpanel.track("user_interacted_with_key_feature", {
+        conversation_id: id,
+        message: data?.message,
+        email: user.email,
+        type: "text"
+      });
     }
   };
 
