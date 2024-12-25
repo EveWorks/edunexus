@@ -23,6 +23,7 @@ import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
 import moment from "moment";
 import { BiTrash } from "react-icons/bi";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 const Sidebar = ({
   open,
@@ -40,6 +41,7 @@ const Sidebar = ({
   const { conversationList, conversationListCount, listLoader } =
     useAppSelector((state: any) => state.Chat);
   const { user } = useUser();
+  const mixpanel = useMixpanel();
 
   const CloseMenu = () => {
     dispatch(updateMenu(false));
@@ -106,7 +108,9 @@ const Sidebar = ({
         </p>
         <p className="text-[1.875rem] leading-[2.0269rem] mb-[0.9375rem] font-medium">
           {/* User Greeting and converting the first letter to Uppercase and rest to lowercase */}
-          Good Morning, {user.firstname.charAt(0).toUpperCase() + user.firstname.slice(1).toLowerCase()}
+          Good Morning,{" "}
+          {user.firstname.charAt(0).toUpperCase() +
+            user.firstname.slice(1).toLowerCase()}
         </p>
         <div className="flex flex-wrap items-center">
           <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-[#525252] border border-[#525252] rounded-[0.625rem] p-[0.5rem] me-[0.625rem] mb-[0.9rem]">
@@ -118,7 +122,8 @@ const Sidebar = ({
         </div>
         <div className="flex flex-wrap items-center">
           <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-primary border border-primary mb-0 rounded-[0.625rem] p-[0.5rem]">
-            Free Plan (7 days left in your free trial) {/* this needs to be dynamic */}
+            Free Plan (7 days left in your free trial){" "}
+            {/* this needs to be dynamic */}
           </span>
         </div>
         <div className="absolute right-[1.25rem] top-[1.25rem] z-2">
@@ -134,7 +139,13 @@ const Sidebar = ({
           </Button>
           <Button
             variant="text"
-            onClick={signOut}
+            onClick={() => {
+              mixpanel.track("session_end", {
+                session_end: new Date().toISOString(),
+                email: user.email,
+              });
+              signOut();
+            }}
             className="bg-[#0C0C0C] w-[2.375rem] h-[2.375rem] rounded-[3.125rem] hover:bg-primary hover:text-[#0C0C0C] p-0"
           >
             <FiLogOut className="w-[1.25rem] h-[1.25rem]" />
@@ -170,42 +181,45 @@ const Sidebar = ({
         {/* .slice().reverse() -> slice creates a copy of the list and reverse changes the order - allowing for top to bottom viewing of the conversation history */}
         <ul className="h-full max-h-[calc(100dvh-410px)] overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&
-            (conversationList?.slice().reverse()).map((item: any) => (
-              <li
-                key={item?.id}
-                className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
-                  id === item.id && "bg-primary text-[#0C0C0C]"
-                }`}
-              >
-                <Button
-                  variant="text"
-                  onClick={() => openConversation(item)}
-                  className={`h-fit flex-col items-start text-left p-0 py-[1.25rem] pl-[1.875rem] pe-[2.75rem] w-full`}
-                >
-                  <p
-                    className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${
-                      id === item.id && "text-[#0C0C0C]"
-                    }`}
-                  >
-                    {item?.conversation_title}
-                  </p>
-                  {item?.start_date && (
-                    <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
-                      {moment(item?.start_date).format("DD MMM YYYY")}
-                    </p>
-                  )}
-                </Button>
-                <Button
-                  variant="text"
-                  onClick={() => deleteChat(item?.id)}
-                  className={`bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-                    id === item.id && "hover:text-[#0C0C0C]"
+            conversationList
+              ?.slice()
+              .reverse()
+              .map((item: any) => (
+                <li
+                  key={item?.id}
+                  className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
+                    id === item.id && "bg-primary text-[#0C0C0C]"
                   }`}
                 >
-                  <BiTrash className="w-[1.25rem] h-[1.25rem]" />
-                </Button>
-              </li>
-            ))}
+                  <Button
+                    variant="text"
+                    onClick={() => openConversation(item)}
+                    className={`h-fit flex-col items-start text-left p-0 py-[1.25rem] pl-[1.875rem] pe-[2.75rem] w-full`}
+                  >
+                    <p
+                      className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${
+                        id === item.id && "text-[#0C0C0C]"
+                      }`}
+                    >
+                      {item?.conversation_title}
+                    </p>
+                    {item?.start_date && (
+                      <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
+                        {moment(item?.start_date).format("DD MMM YYYY")}
+                      </p>
+                    )}
+                  </Button>
+                  <Button
+                    variant="text"
+                    onClick={() => deleteChat(item?.id)}
+                    className={`bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+                      id === item.id && "hover:text-[#0C0C0C]"
+                    }`}
+                  >
+                    <BiTrash className="w-[1.25rem] h-[1.25rem]" />
+                  </Button>
+                </li>
+              ))}
           {listLoader && (
             <div className="flex items-center justify-center my-8">
               <Loader className="w-8 h-8" />

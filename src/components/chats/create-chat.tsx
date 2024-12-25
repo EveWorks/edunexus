@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import ConversationTitle from "./conversation-title";
 import useUser from "@/hooks/use-user";
 import { useRouter } from "next/navigation";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 const CreateChat = () => {
   const router = useRouter();
@@ -21,8 +22,14 @@ const CreateChat = () => {
   const [limit, setLimit] = useState(20);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const mixpanel = useMixpanel();
 
   useEffect(() => {
+    mixpanel.track("page_viewed", {
+      email: user.email,
+      page: "dashboard",
+      url: window.location.href,
+    });
     dispatch(getTopicList({ limit, page }));
   }, []);
 

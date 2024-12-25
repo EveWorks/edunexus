@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
@@ -17,12 +17,14 @@ import {
   sendMessage,
 } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
   const { isMobile } = useDevice();
   const { user } = useUser();
   const { getAudio } = useAudio();
+  const mixpanel = useMixpanel();
 
   const {
     register,
@@ -56,7 +58,14 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           topicid: chatDetail?.topicid?.id,
           userid: user.id,
           conversation_id: id,
-          audioCallback: (response: string) => getAudio(response),
+          audioCallback: (response: string) => {
+            getAudio(response);
+            mixpanel.track("user_interacted_with_key_feature", {
+              conversation_id: id,
+              message: data?.message,
+              email: user.email,
+            });
+          },
         },
       };
 

@@ -10,26 +10,17 @@ const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { user } = useUser();
 
-  if (
-    !user ||
-    pathname.includes("signin") ||
-    pathname.includes("signup") ||
-    pathname.includes("settings")
-  ) {
-    return <>{children}</>;
+  if (user && (pathname.includes("chat") || pathname.includes("dashboard"))) {
+    return (
+      <DashboardLayout>
+        <MicrophoneContextProvider>
+          <DeepgramContextProvider>{children}</DeepgramContextProvider>
+        </MicrophoneContextProvider>
+      </DashboardLayout>
+    );
   }
 
-  if (pathname === "/") {
-    return <>{children}</>;
-  }
-
-  return (
-    <DashboardLayout>
-      <MicrophoneContextProvider>
-        <DeepgramContextProvider>{children}</DeepgramContextProvider>
-      </MicrophoneContextProvider>
-    </DashboardLayout>
-  );
+  return <>{children}</>;
 };
 
 export default ChatProvider;

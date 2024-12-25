@@ -24,6 +24,7 @@ import {
 import { useAudio } from "@/hooks/use-audio";
 import { Button } from "rizzui";
 import { getMLoading, setMLoading } from "@/utils/storage";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>(null);
@@ -37,6 +38,7 @@ const Chat = ({ id }: { id: string }) => {
   const isLoading = getMLoading();
   const { setupMicrophone, microphone, startMicrophone, microphoneState } =
     useMicrophone();
+  const mixpanel = useMixpanel();
 
   useEffect(() => {
     if (id && microphoneState === MicrophoneState.Ready) {
@@ -83,7 +85,14 @@ const Chat = ({ id }: { id: string }) => {
           userid: user.id,
           conversation_id: id,
           topicid: chatDetail.topicid.id,
-          audioCallback: (response: string) => getAudio(response),
+          audioCallback: (response: string) => {
+            getAudio(response);
+            mixpanel.track("user_interacted_with_key_feature", {
+              conversation_id: id,
+              message: text,
+              email: user.email,
+            });
+          },
         },
       };
 

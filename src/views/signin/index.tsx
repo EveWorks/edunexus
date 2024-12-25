@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getSession, signIn } from "next-auth/react";
 import toast from "react-hot-toast";
-import { Mixpanel } from "@/utils/mixpanel";
 import ReCAPTCHA from "react-google-recaptcha";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 type Inputs = {
   email: string;
@@ -26,13 +26,14 @@ const SignInView = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const mixpanel = useMixpanel();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!captchaToken) {
       toast.error("Please complete the reCAPTCHA!");
       return;
     }
-    
+
     setIsLoading(true);
     try {
       const response: any = await signIn("credentials", {
@@ -42,18 +43,23 @@ const SignInView = () => {
       if (response?.ok) {
         const session: any = await getSession();
         const user = session?.user?.data?.user;
-        // Mixpanel.identify(user.id);
-        // Mixpanel.track("Successful login");
-        // Mixpanel.people.set({
-        //   $first_name: user.first_name,
-        //   $last_name: user.last_name,
-        // });
+        mixpanel.track("user_logged_in", {
+          name: user.firstname + " " + user.lastname,
+          email: user.email,
+        });
+        mixpanel.track("user_logged_country", {
+          email: user.email,
+          country: user.country,
+        });
+        mixpanel.track("session_start", {
+          session_start: new Date().toISOString(),
+          email: user.email,
+        });
         router.push(routes.dashboard);
       } else {
         toast.error(response?.error);
       }
     } catch (error) {
-      // Mixpanel.track("Unsuccessful login");
       console.log("Error sign in:", error);
     }
     setIsLoading(false);
@@ -73,7 +79,8 @@ const SignInView = () => {
           ALINDA
         </h2>
         <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
-          Need a personalised experience? Are your lecturers not doing enough? Start with Alinda.
+          Need a personalised experience? Are your lecturers not doing enough?
+          Start with Alinda.
         </p>
         <form onSubmit={handleSubmit(onSubmit)} className="md:px-[50px]">
           <Input

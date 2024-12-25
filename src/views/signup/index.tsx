@@ -15,6 +15,7 @@ import countryList from "react-select-country-list";
 import getUniversities from "@/utils/getUniversities";
 import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
 import ReCAPTCHA from "react-google-recaptcha";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 //two console errors from the university search selection, doesn't affect functionality
 
@@ -55,6 +56,7 @@ const SignUpView = () => {
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const mixpanel = useMixpanel();
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -120,6 +122,24 @@ const SignUpView = () => {
         redirect: false,
       });
       if (responseSignIn?.ok) {
+        mixpanel.track("user_signup", {
+          name: response?.user.firstname + " " + response?.user.lastname,
+          email: response?.user.email,
+        });
+        mixpanel.track("user_signup_country", {
+          email: response?.user.email,
+          country: response?.user.country,
+        });
+        mixpanel.people.set({
+          name: response?.user.firstname + " " + response?.user.lastname,
+          email: response?.user.email,
+          country: response?.user.country,
+          university: response?.user.university,
+          degree: response?.user.degree,
+          year: response?.user.year,
+          age: response?.user.age,
+          gender: response?.user.gender,
+        });
         router.push(routes.dashboard);
       } else {
         toast.error(responseSignIn?.error);

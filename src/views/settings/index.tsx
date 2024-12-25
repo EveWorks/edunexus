@@ -14,6 +14,7 @@ import countryList from "react-select-country-list";
 import toast from "react-hot-toast";
 import getUniversities from "@/utils/getUniversities";
 import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
+import useMixpanel from "@/hooks/use-mixpanel";
 
 //two console errors from the university search selection, doesn't affect functionality
 
@@ -34,10 +35,13 @@ type Inputs = {
 const SettingView = () => {
   const router = useRouter();
   const { user, updateUser } = useUser();
-  const [universities, setUniversities] = useState<Array<{value: string, label: string}>>([]);
+  const [universities, setUniversities] = useState<
+    Array<{ value: string; label: string }>
+  >([]);
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState("GB");
   const [searchTerm, setSearchTerm] = useState("");
+  const mixpanel = useMixpanel();
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -54,6 +58,12 @@ const SettingView = () => {
     };
 
     loadUniversities();
+
+    mixpanel.track("page_viewed", {
+      email: user.email,
+      page: "settings",
+      url: window.location.href,
+    });
   }, []);
   //
 
@@ -125,7 +135,6 @@ const SettingView = () => {
       )
       .slice(0, 50); // Limit to 50 results
   }, [universities, searchTerm]);
-
 
   return (
     <div className="md:p-[3.125rem]">
@@ -270,7 +279,11 @@ const SettingView = () => {
                   className="w-[calc(50%-1rem/2)] md:w-[calc(50%-1rem/2)] mb-[0.625rem]"
                   selectClassName="text-[1.25rem] leading-[1.875rem] w-full h-[3.75rem] rounded-[1.25rem] px-[1.25rem] border-2 border-[#525252]"
                   value={value}
-                  placeholder={isLoadingUniversities ? "Finding Universities..." : "University"}
+                  placeholder={
+                    isLoadingUniversities
+                      ? "Finding Universities..."
+                      : "University"
+                  }
                   options={filteredUniversities}
                   onChange={({ value }: any) => setValue("university", value)}
                   displayValue={(selected: string) =>
