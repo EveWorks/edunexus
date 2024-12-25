@@ -10,6 +10,7 @@ import { useState } from "react";
 import { getSession, signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { Mixpanel } from "@/utils/mixpanel";
+import ReCAPTCHA from "react-google-recaptcha";
 
 type Inputs = {
   email: string;
@@ -24,8 +25,14 @@ const SignInView = () => {
   } = useForm<Inputs>();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (!captchaToken) {
+      toast.error("Please complete the reCAPTCHA!");
+      return;
+    }
+    
     setIsLoading(true);
     try {
       const response: any = await signIn("credentials", {
@@ -51,6 +58,11 @@ const SignInView = () => {
     }
     setIsLoading(false);
   };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
+
   return (
     <AuthLayout>
       <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
@@ -81,6 +93,12 @@ const SignInView = () => {
             })}
             error={errors?.password?.message}
           />
+          <div className="mb-[1.25rem]">
+            <ReCAPTCHA
+              sitekey="6LeekqUqAAAAAPLTKTIC9C2fF4a1PRkXzLkSA-ff" // Replace with your actual reCAPTCHA site key
+              onChange={handleCaptchaChange}
+            />
+          </div>
           <Button
             className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] mb-[1.25rem] group transition duration-300 ease-in-out"
             color="primary"
