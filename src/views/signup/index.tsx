@@ -14,6 +14,7 @@ import axios from "@/axios";
 import countryList from "react-select-country-list";
 import getUniversities from "@/utils/getUniversities";
 import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
+import ReCAPTCHA from "react-google-recaptcha";
 
 //two console errors from the university search selection, doesn't affect functionality
 
@@ -53,6 +54,7 @@ const SignUpView = () => {
   >([]);
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -81,6 +83,11 @@ const SignUpView = () => {
   }, [universities, searchTerm]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (!captchaToken) {
+      toast.error("Please complete the reCAPTCHA!");
+      return;
+    }
+
     if (data.password !== data.confirmPassword) {
       setError("confirmPassword", {
         type: "manual",
@@ -121,6 +128,10 @@ const SignUpView = () => {
       toast.error(response?.message);
     }
     setIsLoading(false);
+  };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
 
   return (
@@ -320,6 +331,12 @@ const SignUpView = () => {
             })}
             error={errors?.confirmPassword?.message}
           />
+          <div className="mb-[0.625rem]">
+            <ReCAPTCHA
+              sitekey="6LeekqUqAAAAAPLTKTIC9C2fF4a1PRkXzLkSA-ff" // Replace with your actual reCAPTCHA site key
+              onChange={handleCaptchaChange}
+            />
+          </div>
           <Button
             className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] my-[1.25rem] group transition duration-300 ease-in-out"
             color="primary"
