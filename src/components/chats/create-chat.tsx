@@ -26,7 +26,7 @@ const CreateChat = () => {
 
   useEffect(() => {
     mixpanel.track("page_viewed", {
-      email: user.email,
+      email: user?.email,
       page: "dashboard",
       url: window.location.href,
     });

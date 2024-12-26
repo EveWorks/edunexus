@@ -61,6 +61,7 @@ const DeepgramContextProvider: FunctionComponent<
    * @returns A Promise that resolves when the connection is established.
    */
   const connectToDeepgram = async (options: LiveSchema, endpoint?: string) => {
+    console.log("Connecting to Deepgram...");
     const key = await getApiKey();
     const deepgram = createClient(key);
     // let audioBuffer : any;

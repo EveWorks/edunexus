@@ -6,7 +6,7 @@ if (!mixpanelKey) {
   console.error("Mixpanel key is not defined!");
 } else {
   mixpanel.init(mixpanelKey, { debug: true });
-  console.error("Mixpanel initialized!");
+  console.log("Mixpanel initialized!");
 }
 
 interface MixpanelActions {

@@ -1,10 +1,9 @@
 "use client";
 
 import Chat from "@/components/chats";
-import { useMicrophone } from "@/context/MicrophoneContextProvider";
 import useUser from "@/hooks/use-user";
 import { getConversationDetail } from "@/store/features/chat";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -12,13 +11,9 @@ const Dashboard = () => {
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
   const dispatch = useAppDispatch();
-  const { setupMicrophone } = useMicrophone();
   const { user, token } = useUser();
 
   useEffect(() => {
-    if (id) {
-      setupMicrophone();
-    }
     dispatch(
       getConversationDetail({
         id,

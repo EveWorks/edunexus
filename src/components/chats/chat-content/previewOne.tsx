@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/hooks";
 import MarkdownRenderer from "@/components/markdown";
 import dynamic from "next/dynamic";
 // Lazy load the VisualizerComponent with no SSR
-const VisualizerComponent = dynamic(() => import('@/components/orb'), {
+const VisualizerComponent = dynamic(() => import("@/components/orb"), {
   ssr: false, // Disable server-side rendering for this component
 });
 
@@ -79,7 +79,9 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
                   : null
               }
               wrapperWidth={
-                orbRef?.current?.clientWidth ? orbRef?.current?.clientWidth : null
+                orbRef?.current?.clientWidth
+                  ? orbRef?.current?.clientWidth
+                  : null
               }
             />
           </Suspense>

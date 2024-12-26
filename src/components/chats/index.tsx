@@ -40,16 +40,24 @@ const Chat = ({ id }: { id: string }) => {
     useMicrophone();
   const mixpanel = useMixpanel();
 
+  console.log("connectionState: ", microphone);
+
+  useEffect(() => {
+    if (id) {
+      setupMicrophone();
+    }
+  }, []);
+
   useEffect(() => {
     if (id && microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
-        model: "aura-asteria-en",
+        model: "nova-2",
         smart_format: true,
         filler_words: true,
         utterance_end_ms: 3000,
         interim_results: true,
         vad_events: true,
-        endpointing: 1000,
+        endpointing: 300,
       });
     }
   }, [microphoneState]);
@@ -114,6 +122,7 @@ const Chat = ({ id }: { id: string }) => {
     const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       const transcript = data.channel.alternatives[0].transcript;
+      console.log("data", data);
 
       if (isFinal && speechFinal) {
         if (transcript !== "") {
@@ -128,7 +137,7 @@ const Chat = ({ id }: { id: string }) => {
 
     if (connectionState === LiveConnectionState.OPEN) {
       connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
-      microphone.addEventListener(MicrophoneEvents.DataAvailable, onData);
+      microphone?.addEventListener(MicrophoneEvents.DataAvailable, onData);
 
       startMicrophone();
     }
@@ -138,7 +147,7 @@ const Chat = ({ id }: { id: string }) => {
         LiveTranscriptionEvents.Transcript,
         onTranscript
       );
-      microphone.removeEventListener(MicrophoneEvents.DataAvailable, onData);
+      microphone?.removeEventListener(MicrophoneEvents.DataAvailable, onData);
       clearTimeout(captionTimeout.current);
     };
   }, [connectionState]);
