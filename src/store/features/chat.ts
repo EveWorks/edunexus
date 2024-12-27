@@ -1,5 +1,4 @@
 import axios from "@/axios";
-import { setMLoading } from "@/utils/storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
@@ -317,9 +316,7 @@ export const chats = createSlice({
       if (state?.chatDetail?.id === data?.id) {
         state.chatDetail.conversation_title = data?.chatTitle;
       }
-      setTimeout(() => {
-        setMLoading("1");
-      }, 2000);
+
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.msgLoading = false;
