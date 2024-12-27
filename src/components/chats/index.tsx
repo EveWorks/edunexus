@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ChatContent from "@/components/chats/chat-content";
 import ChatFooter from "@/components/chats/chat-footer";
 import ChatHeader from "@/components/chats/chat-header";
@@ -13,7 +13,6 @@ import {
   MicrophoneState,
   useMicrophone,
 } from "@/context/MicrophoneContextProvider";
-import axios from "@/axios";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -22,8 +21,6 @@ import {
   updateMsgLoader,
 } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
-import { Button } from "rizzui";
-import { getMLoading, setMLoading } from "@/utils/storage";
 import useMixpanel from "@/hooks/use-mixpanel";
 
 const Chat = ({ id }: { id: string }) => {
@@ -35,9 +32,19 @@ const Chat = ({ id }: { id: string }) => {
   const { getAudio } = useAudio();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
-  const isLoading = getMLoading();
-  const { setupMicrophone, microphone, startMicrophone, microphoneState } =
-    useMicrophone();
+  const loadingState = useMemo(() => {
+    return msgLoading;
+  }, [msgLoading]);
+  const chat = useMemo(() => {
+    return chatDetail;
+  }, [chatDetail]);
+  const {
+    setupMicrophone,
+    microphone,
+    startMicrophone,
+    stopMicrophone,
+    microphoneState,
+  } = useMicrophone();
   const mixpanel = useMixpanel();
 
   console.log("connectionState: ", microphone);
@@ -62,20 +69,23 @@ const Chat = ({ id }: { id: string }) => {
     }
   }, [microphoneState]);
 
-  const sendNewMessage = async (text: string) => {
-    // if (isLoading === "2") {
-    //   return;
-    // }
+  console.log("loadingState", loadingState);
 
-    if (chatDetail?.topicid?.id && !msgLoading) {
+  const sendNewMessage = async (text: string) => {
+    if (loadingState) {
+      return;
+    }
+
+    if (chat?.topicid?.id && !loadingState) {
       dispatch(updateMsgLoader(true));
+      stopMicrophone();
 
       if (preview !== "2") {
         dispatch(
           addMessage({
             message: text,
             message_type: "message",
-            topicid: chatDetail.topicid.id,
+            topicid: chat.topicid.id,
             conversation_id: id,
             userid: {
               firstname: user.firstname,
@@ -92,7 +102,7 @@ const Chat = ({ id }: { id: string }) => {
           message_type: "message",
           userid: user.id,
           conversation_id: id,
-          topicid: chatDetail.topicid.id,
+          topicid: chat.topicid.id,
           audioCallback: (response: string) => getAudio(response),
         },
       };
@@ -103,7 +113,6 @@ const Chat = ({ id }: { id: string }) => {
         email: user.email,
         text: "audio",
       });
-      setMLoading("2");
       await dispatch(sendMessage(payload));
     }
   };
@@ -114,7 +123,7 @@ const Chat = ({ id }: { id: string }) => {
     if (!connection) return;
 
     const onData = (e: BlobEvent) => {
-      if (e.data.size > 0) {
+      if (e.data.size > 0 && !loadingState) {
         connection?.send(e.data);
       }
     };
@@ -124,7 +133,7 @@ const Chat = ({ id }: { id: string }) => {
       const transcript = data.channel.alternatives[0].transcript;
       console.log("data", data);
 
-      if (isFinal && speechFinal) {
+      if (isFinal && speechFinal && !loadingState) {
         if (transcript !== "") {
           sendNewMessage(transcript);
         }
@@ -150,7 +159,7 @@ const Chat = ({ id }: { id: string }) => {
       microphone?.removeEventListener(MicrophoneEvents.DataAvailable, onData);
       clearTimeout(captionTimeout.current);
     };
-  }, [connectionState]);
+  }, [connectionState, chat]);
 
   useEffect(() => {
     if (!id) return;

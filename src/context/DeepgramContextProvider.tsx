@@ -5,9 +5,6 @@ import {
   LiveClient,
   LiveConnectionState,
   LiveTranscriptionEvents,
-  LiveTTSEvents,
-  SpeakLiveClient,
-  type SpeakSchema,
   type LiveSchema,
   type LiveTranscriptionEvent,
 } from "@deepgram/sdk";
@@ -45,10 +42,6 @@ const DeepgramContextProvider: FunctionComponent<
   DeepgramContextProviderProps
 > = ({ children }) => {
   const [connection, setConnection] = useState<LiveClient | null>(null);
-  // const [speakingConnection, setSpeakingConnection] =
-  //   useState<SpeakLiveClient | null>(null);
-  // const [speakingConnectionState, setSpeakingConnectionState] =
-  //   useState<LiveConnectionState>(LiveConnectionState.CLOSED);
   const [connectionState, setConnectionState] = useState<LiveConnectionState>(
     LiveConnectionState.CLOSED
   );
@@ -76,37 +69,7 @@ const DeepgramContextProvider: FunctionComponent<
       setConnectionState(LiveConnectionState.CLOSED);
     });
 
-    // const dgConnection = deepgram.speak.live({ model: "aura-asteria-en" });
-
-    // dgConnection.addListener(LiveTTSEvents.Open, () => {
-    //   setSpeakingConnectionState(LiveConnectionState.OPEN);
-    //   dgConnection.on(LiveTTSEvents.Metadata, (data) => {
-    //     console.dir(data, { depth: null });
-    //   });
-
-    //   dgConnection.on(LiveTTSEvents.Audio, (data) => {
-    //     console.log("Deepgram audio data received");
-    //     const buffer = Buffer.from(data);
-    //     audioBuffer = Buffer.concat([audioBuffer, buffer]);
-    //   });
-
-    //   dgConnection.on(LiveTTSEvents.Flushed, () => {
-    //     console.log("Deepgram Flushed");
-    //     const response =
-    //     // Write the buffered audio data to a file when the flush event is received
-    //   });
-
-    //   dgConnection.on(LiveTTSEvents.Error, (err) => {
-    //     console.error(err);
-    //   });
-    // });
-
-    // dgConnection.addListener(LiveTTSEvents.Close, () => {
-    //   setSpeakingConnectionState(LiveConnectionState.CLOSED);
-    // });
-
     setConnection(conn);
-    // setSpeakingConnection(dgConnection);
   };
 
   const disconnectFromDeepgram = async () => {
@@ -114,10 +77,6 @@ const DeepgramContextProvider: FunctionComponent<
       connection.requestClose();
       setConnection(null);
     }
-    // if (speakingConnection) {
-    //   speakingConnection.requestClose();
-    //   setSpeakingConnection(null);
-    // }
   };
 
   return (

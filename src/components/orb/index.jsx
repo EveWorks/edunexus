@@ -11,7 +11,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateAudio } from "@/store/features/chat";
+import { updateAudio, updateMsgLoader } from "@/store/features/chat";
 import useDevice from "@/hooks/use-device";
 import { useMicrophone } from "@/context/MicrophoneContextProvider";
 
@@ -25,11 +25,11 @@ const ThreeScene = ({
 }) => {
   let rendererOb = null;
   const mountRef = useRef(null);
-  const rendererRef = useRef(null); // Store renderer instance here
   const { audio, msgLoading } = useAppSelector((state) => state.Chat);
+  const audioUrl = useMemo(() => audio, [audio]);
   const dispatch = useAppDispatch();
   const { isMobile } = useDevice();
-  const { microphone } = useMicrophone();
+  const { startMicrophone } = useMicrophone();
 
   const cameraPosMemo = useMemo(() => cameraPosition, [cameraPosition]);
 
@@ -260,14 +260,16 @@ const ThreeScene = ({
 
     const sound = new THREE.Audio(listener);
     const audioLoader = new THREE.AudioLoader();
-    if (audio) {
-      audioLoader.load(audio, (buffer) => {
+    if (audioUrl) {
+      audioLoader.load(audioUrl, (buffer) => {
         sound.setBuffer(buffer);
         sound.setVolume(1);
         sound.play();
         const duration = buffer.duration * 1000;
         setTimeout(() => {
           dispatch(updateAudio(null));
+          dispatch(updateMsgLoader(false));
+          startMicrophone()
         }, duration);
       });
     }
@@ -310,8 +312,6 @@ const ThreeScene = ({
       }
     };
   }, [
-    audio,
-    msgLoading,
     width,
     height,
     cameraPosMemo,

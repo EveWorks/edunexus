@@ -23,8 +23,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const apiEndpoint = "/api/track-close";
-      // const apiEndpoint = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/conversation/update-personalization`;
+      // const apiEndpoint = "/api/track-close";
+      const apiEndpoint = `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/api/track-close`;
 
       const payload = JSON.stringify({
         token: token,
