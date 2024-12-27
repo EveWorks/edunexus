@@ -57,7 +57,7 @@ const Chat = ({ id }: { id: string }) => {
         utterance_end_ms: 3000,
         interim_results: true,
         vad_events: true,
-        endpointing: 300,
+        endpointing: 1000,
       });
     }
   }, [microphoneState]);
