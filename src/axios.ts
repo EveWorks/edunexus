@@ -29,21 +29,20 @@ axios.interceptors.response.use(
     return response.data;
   },
   async (error) => {
-    if (error.response && error.response.status === 401) {
-      // console.error(
-      //   error?.response?.data?.message ||
-      //     "Session expired, redirecting to signin..."
-      // );
-      // toast.error(
-      //   error?.response?.data?.message ||
-      //     "Session expired, redirecting to signin..."
-      // );
-      // const session: any = await getSession();
-      // // mixpanel.track("session_end", {
-      // //   time: new Date().toISOString(),
-      // //   email: session?.user?.data?.user?.email,
-      // // });
-      // signOut();
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error?.response?.data?.message === "Please authenticate"
+    ) {
+      console.error(
+        error?.response?.data?.message ||
+          "Session expired, redirecting to signin..."
+      );
+      toast.error(
+        error?.response?.data?.message ||
+          "Session expired, redirecting to signin..."
+      );
+      signOut();
       return error?.response?.data?.message;
     } else {
       return error.response.data;

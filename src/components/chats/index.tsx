@@ -129,7 +129,6 @@ const Chat = ({ id }: { id: string }) => {
     const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       const transcript = data.channel.alternatives[0].transcript;
-      // console.log("data", data);
       console.log("data", isFinal, !loadingState, transcript);
 
       if (isFinal && !loadingState) {
