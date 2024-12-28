@@ -26,7 +26,7 @@ import useMixpanel from "@/hooks/use-mixpanel";
 const Chat = ({ id }: { id: string }) => {
   const captionTimeout = useRef<any>(null);
   const keepAliveInterval = useRef<any>(null);
-  const [preview, setPreview] = useState<string>("1");
+  const preview = localStorage.getItem("preview") || "1";
   const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
   const { user } = useUser();
   const { getAudio } = useAudio();
@@ -69,8 +69,6 @@ const Chat = ({ id }: { id: string }) => {
     }
   }, [microphoneState]);
 
-  console.log("loadingState", loadingState);
-
   const sendNewMessage = async (text: string) => {
     if (loadingState) {
       return;
@@ -80,21 +78,21 @@ const Chat = ({ id }: { id: string }) => {
       dispatch(updateMsgLoader(true));
       stopMicrophone();
 
-      if (preview !== "2") {
-        dispatch(
-          addMessage({
-            message: text,
-            message_type: "message",
-            topicid: chat.topicid.id,
-            conversation_id: id,
-            userid: {
-              firstname: user.firstname,
-              lastname: user.lastname,
-              id: user.id,
-            },
-          })
-        );
-      }
+      // if (preview !== "2") {
+      dispatch(
+        addMessage({
+          message: text,
+          message_type: "message",
+          topicid: chat.topicid.id,
+          conversation_id: id,
+          userid: {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            id: user.id,
+          },
+        })
+      );
+      // }
 
       const payload = {
         data: {
@@ -185,8 +183,7 @@ const Chat = ({ id }: { id: string }) => {
 
   return (
     <div className="flex flex-col h-full">
-      {/* {isLoading} */}
-      <ChatHeader setPreview={setPreview} />
+      <ChatHeader preview={preview} />
       <ChatContent preview={preview} />
       <ChatFooter id={id} preview={preview} />
     </div>

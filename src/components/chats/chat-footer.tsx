@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import { Suspense, use, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
@@ -18,6 +18,12 @@ import {
 } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
 import useMixpanel from "@/hooks/use-mixpanel";
+import dynamic from "next/dynamic";
+
+// Lazy load the VisualizerComponent with no SSR
+const VisualizerComponent = dynamic(() => import("@/components/orb"), {
+  ssr: false, // Disable server-side rendering for this component
+});
 
 const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
   const textareaRef = useRef(null);
@@ -38,19 +44,26 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
     },
   });
 
-  const router = useRouter();
+  const orbRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const { startMicrophone, stopMicrophone, microphone } = useMicrophone();
   const { msgLoading, chatDetail, error }: any = useAppSelector(
     (state: any) => state.Chat
   );
+  const loadingState = useMemo(() => {
+    return msgLoading;
+  }, [msgLoading]);
 
   useEffect(() => {
     startMicrophone();
   }, []);
 
   const sendNewMessage = async (data: any) => {
-    if (data?.message && !msgLoading && chatDetail?.topicid?.id) {
+    if (loadingState) {
+      return;
+    }
+
+    if (data?.message && !loadingState && chatDetail?.topicid?.id) {
       const payload: any = {
         data: {
           message: data?.message,
@@ -83,7 +96,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
         conversation_id: id,
         message: data?.message,
         email: user.email,
-        type: "text"
+        type: "text",
       });
     }
   };
@@ -174,10 +187,30 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
           )}
         </div>
       </form>
-      <AudioLoader
-        show={preview === "2" && microphone?.state === "recording" && !isMobile}
-        size="5.9375rem"
-      />
+      {preview === "2" && !isMobile && (
+        <div
+          className={`relative transition-all duration-400 scale-[1] ms-[1rem] md:h-[6rem] md:w-[6rem]`}
+          ref={orbRef}
+        >
+          <Suspense fallback={<div>Alinda is waking up...</div>}>
+            <VisualizerComponent
+              size="sm"
+              width={150}
+              height={150}
+              wrapperHeight={
+                orbRef?.current?.clientHeight
+                  ? orbRef?.current?.clientHeight
+                  : null
+              }
+              wrapperWidth={
+                orbRef?.current?.clientWidth
+                  ? orbRef?.current?.clientWidth
+                  : null
+              }
+            />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 };
