@@ -1,5 +1,5 @@
 import { BsSoundwave } from "react-icons/bs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import useUser from "@/hooks/use-user";
@@ -13,8 +13,9 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
   const { user } = useUser();
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
-  const { messages } = useAppSelector((state: any) => state.Chat);
+  const { messages, msgLoading } = useAppSelector((state: any) => state.Chat);
   const [scrollFromBottom, setScrollFromBottom] = useState(0);
+  const loading = useMemo(() => msgLoading, [msgLoading]);
 
   const calculateScrollFromBottom = () => {
     const chatWrapper = chatWrapperRef.current;
@@ -27,24 +28,30 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
   };
 
   useEffect(() => {
-    const chatWrapper = chatWrapperRef.current;
-    if (page === 1 && messages?.length > 0 && chatEndRef?.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    } else if (chatWrapper && scrollFromBottom > 0) {
-      chatWrapper.scrollTop =
-        chatWrapper.scrollHeight - scrollFromBottom - chatWrapper.offsetHeight;
+    if (!loading) {
+      const chatWrapper = chatWrapperRef.current;
+      if (page === 1 && messages?.length > 0 && chatEndRef?.current) {
+        chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+      } else if (chatWrapper && scrollFromBottom > 0) {
+        chatWrapper.scrollTop =
+          chatWrapper.scrollHeight -
+          scrollFromBottom -
+          chatWrapper.offsetHeight;
+      }
     }
   }, [messages]);
 
   useEffect(() => {
     const handleScroll = () => {
-      const chatWrapper = chatWrapperRef.current;
-      if (chatWrapper) {
-        if (chatWrapper.scrollTop === 0) {
-          setTimeout(() => {
-            setPage((prevPage: number) => prevPage + 1);
-          }, 0);          
-          calculateScrollFromBottom();
+      if (!loading) {
+        const chatWrapper = chatWrapperRef.current;
+        if (chatWrapper) {
+          if (chatWrapper.scrollTop === 0) {
+            setTimeout(() => {
+              setPage((prevPage: number) => prevPage + 1);
+            }, 0);
+            calculateScrollFromBottom();
+          }
         }
       }
     };
@@ -94,7 +101,9 @@ const PreviewTwo = ({ page, setPage }: { page: number; setPage: any }) => {
                       className="text-primary text-[1.25rem] font-bold flex items-center justify-center w-[3.125rem] h-[3.125rem] rounded-[0.625rem] border border-[#525252]"
                       style={{ boxShadow: "0px 0px 2px 0px #FFFFFF" }}
                     >
-                      {user?.firstname?.substring(0, 1).toUpperCase() + user?.lastname?.substring(0, 1).toUpperCase()} {/* capitalize first & last letter */}
+                      {user?.firstname?.substring(0, 1).toUpperCase() +
+                        user?.lastname?.substring(0, 1).toUpperCase()}{" "}
+                      {/* capitalize first & last letter */}
                     </div>
                   </div>
                 )}

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import BgVector2 from "@/public/vc.svg";
 import BgVectorShadow from "@/public/vector.svg";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import MarkdownRenderer from "@/components/markdown";
@@ -17,8 +17,9 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   const chatWrapperRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
   const id = pathname.split("/")?.[2];
-  const { messages } = useAppSelector((state: any) => state.Chat);
+  const { messages, msgLoading } = useAppSelector((state: any) => state.Chat);
   const [scrollFromBottom, setScrollFromBottom] = useState(0);
+  const loading = useMemo(() => msgLoading, [msgLoading]);
 
   const calculateScrollFromBottom = () => {
     const chatWrapper = chatWrapperRef.current;
@@ -45,7 +46,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
   useEffect(() => {
     const handleScroll = () => {
       const chatWrapper = chatWrapperRef.current;
-      if (chatWrapper) {
+      if (chatWrapper && !loading) {
         if (chatWrapper.scrollTop === 0) {
           setPage((prevPage: number) => prevPage + 1);
           calculateScrollFromBottom();
