@@ -313,10 +313,9 @@ export const chats = createSlice({
           return item;
         });
       }
-      if (state?.chatDetail?.id === data?.id) {
+      if (state?.chatDetail?.id === data?.conversationid.id) {
         state.chatDetail.conversation_title = data?.chatTitle;
       }
-
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.msgLoading = false;

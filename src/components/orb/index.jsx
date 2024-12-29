@@ -57,7 +57,6 @@ const ThreeScene = ({
 
   const getWebGL = () => {
     if (rendererOb === null) {
-      console.log("new rendering...");
       rendererOb = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     }
     return rendererOb;
@@ -242,8 +241,8 @@ const ThreeScene = ({
 
     const mat = new THREE.ShaderMaterial({
       uniforms,
-      vertexShader,
-      fragmentShader,
+      vertexShader: vertexShader.trim(),
+      fragmentShader: fragmentShader.trim(),
     });
 
     const geo =
@@ -269,7 +268,7 @@ const ThreeScene = ({
         setTimeout(() => {
           dispatch(updateAudio(null));
           dispatch(updateMsgLoader(false));
-          startMicrophone()
+          startMicrophone();
         }, duration);
       });
     }
@@ -310,15 +309,16 @@ const ThreeScene = ({
           mountRef.current.removeChild(mountRef.current.firstChild);
         }
       }
+      if (sound) {
+        sound.pause();
+        sound.stop();
+        sound.setBuffer(null);
+      }
+      dispatch(updateAudio(null));
+      // dispatch(updateMsgLoader(false));
+      // startMicrophone();
     };
-  }, [
-    width,
-    height,
-    cameraPosMemo,
-    params,
-    wrapperHeight,
-    wrapperWidth,
-  ]);
+  }, [width, height, cameraPosMemo, params, wrapperHeight, wrapperWidth]);
 
   return <div ref={mountRef} />;
 };

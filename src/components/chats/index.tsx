@@ -24,7 +24,7 @@ import { useAudio } from "@/hooks/use-audio";
 import useMixpanel from "@/hooks/use-mixpanel";
 
 const Chat = ({ id }: { id: string }) => {
-  const captionTimeout = useRef<any>(null);
+  // const captionTimeout = useRef<any>(null);
   const keepAliveInterval = useRef<any>(null);
   const preview = localStorage.getItem("preview") || "1";
   const { msgLoading, chatDetail } = useAppSelector((state: any) => state.Chat);
@@ -32,12 +32,6 @@ const Chat = ({ id }: { id: string }) => {
   const { getAudio } = useAudio();
   const dispatch = useAppDispatch();
   const { connection, connectToDeepgram, connectionState } = useDeepgram();
-  const loadingState = useMemo(() => {
-    return msgLoading;
-  }, [msgLoading]);
-  const chat = useMemo(() => {
-    return chatDetail;
-  }, [chatDetail]);
   const {
     setupMicrophone,
     microphone,
@@ -47,7 +41,18 @@ const Chat = ({ id }: { id: string }) => {
   } = useMicrophone();
   const mixpanel = useMixpanel();
 
-  console.log("connectionState: ", microphone);
+  const loadingState = useMemo(() => {
+    return msgLoading;
+  }, [msgLoading]);
+  const chat = useMemo(() => {
+    return chatDetail;
+  }, [chatDetail]);
+  const connectionStatememoized = useMemo(() => {
+    return connectionState;
+  }, [connectionState]);
+  const microphoneStateMemoized = useMemo(() => {
+    return microphoneState;
+  }, [microphoneState]);
 
   useEffect(() => {
     if (id) {
@@ -56,18 +61,18 @@ const Chat = ({ id }: { id: string }) => {
   }, []);
 
   useEffect(() => {
-    if (id && microphoneState === MicrophoneState.Ready) {
+    if (id && microphoneStateMemoized === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
         smart_format: true,
         filler_words: true,
-        utterance_end_ms: 3000,
+        utterance_end_ms: 4000,
         interim_results: true,
         vad_events: true,
-        endpointing: 1000,
+        endpointing: 2000,
       });
     }
-  }, [microphoneState]);
+  }, [microphoneStateMemoized]);
 
   const sendNewMessage = async (text: string) => {
     if (loadingState) {
@@ -135,14 +140,14 @@ const Chat = ({ id }: { id: string }) => {
         if (transcript !== "") {
           sendNewMessage(transcript);
         }
-        clearTimeout(captionTimeout.current);
-        captionTimeout.current = setTimeout(() => {
-          clearTimeout(captionTimeout.current);
-        }, 3000);
+        // clearTimeout(captionTimeout.current);
+        // captionTimeout.current = setTimeout(() => {
+        //   clearTimeout(captionTimeout.current);
+        // }, 3000);
       }
     };
 
-    if (connectionState === LiveConnectionState.OPEN) {
+    if (connectionStatememoized === LiveConnectionState.OPEN) {
       connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
       microphone?.addEventListener(MicrophoneEvents.DataAvailable, onData);
 
@@ -150,36 +155,38 @@ const Chat = ({ id }: { id: string }) => {
     }
 
     return () => {
-      connection.removeListener(
+      console.log("data disconnecting");
+      connection?.removeListener(
         LiveTranscriptionEvents.Transcript,
         onTranscript
       );
       microphone?.removeEventListener(MicrophoneEvents.DataAvailable, onData);
-      clearTimeout(captionTimeout.current);
+      // clearTimeout(captionTimeout.current);
     };
-  }, [connectionState, chat]);
+  }, [connectionStatememoized, id]);
 
   useEffect(() => {
     if (!id) return;
     if (!connection) return;
 
     if (
-      microphoneState !== MicrophoneState.Open &&
-      connectionState === LiveConnectionState.OPEN
+      microphoneStateMemoized !== MicrophoneState.Open &&
+      connectionStatememoized === LiveConnectionState.OPEN
     ) {
       connection.keepAlive();
 
       keepAliveInterval.current = setInterval(() => {
         connection.keepAlive();
-      }, 10000);
+      }, 5000);
     } else {
       clearInterval(keepAliveInterval.current);
     }
 
     return () => {
+      console.log("data disconnecting 2");
       clearInterval(keepAliveInterval.current);
     };
-  }, [microphoneState, connectionState]);
+  }, [microphoneStateMemoized, connectionStatememoized]);
 
   return (
     <div className="flex flex-col h-full">

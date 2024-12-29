@@ -1,21 +1,15 @@
-import { Suspense, use, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";
 import { MdMicNone } from "react-icons/md";
-import { Button, Input, Textarea } from "rizzui";
+import { Button, Input } from "rizzui";
 import { FaStop } from "react-icons/fa6";
-import AudioLoader from "./audio-loader";
 import useDevice from "@/hooks/use-device";
 import { useMicrophone } from "@/context/MicrophoneContextProvider";
 import useUser from "@/hooks/use-user";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  addMessage,
-  getConversationList,
-  sendMessage,
-} from "@/store/features/chat";
+import { addMessage, sendMessage } from "@/store/features/chat";
 import { useAudio } from "@/hooks/use-audio";
 import useMixpanel from "@/hooks/use-mixpanel";
 import dynamic from "next/dynamic";
@@ -116,6 +110,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
       {microphone?.state === "recording" ? (
         <Button
           onClick={() => stopMicrophone()}
+          isLoading={loadingState}
           variant="text"
           className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]"
         >
@@ -124,6 +119,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
       ) : (
         <Button
           onClick={() => startMicrophone()}
+          isLoading={loadingState}
           variant="text"
           className="p-0 bg-[#FFC42526] hover:bg-[#FFC425] hover:text-[#0C0C0C] rounded-[15px] md:rounded-[3.125rem] h-[45px] w-[45px] md:h-[5.125rem] md:w-[5.9375rem]"
         >

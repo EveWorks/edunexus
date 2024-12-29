@@ -59,7 +59,9 @@ const Sidebar = ({
 
   const openConversation = async (item: any) => {
     CloseMenu();
-    router.push(`/chat/${item?.id}`);
+    router.refresh();
+    window.location.href = `/chat/${item?.id}`;
+    // router.push(`/chat/${item?.id}`);
   };
 
   const deleteChat = (conversationId: string) => {

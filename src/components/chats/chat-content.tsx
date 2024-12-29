@@ -5,8 +5,8 @@ import {
   getConversationDetail,
   resetChatDetail,
 } from "@/store/features/chat";
-import { useAppDispatch } from "@/store/hooks";
-import { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import axios from "@/axios";
 import useUser from "@/hooks/use-user";
@@ -18,6 +18,8 @@ const ChatContent = ({ preview }: { preview: string }) => {
   const id = pathname.split("/")?.[2];
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  const { msgLoading } = useAppSelector((state: any) => state.Chat);
+  const loading = useMemo(() => msgLoading, [msgLoading]);
 
   const updatePersonalization = async () => {
     const payload = {
@@ -28,13 +30,15 @@ const ChatContent = ({ preview }: { preview: string }) => {
   };
 
   useEffect(() => {
-    dispatch(
-      fetchMessages({
-        id,
-        limit,
-        page,
-      })
-    );
+    if (!loading) {
+      dispatch(
+        fetchMessages({
+          id,
+          limit,
+          page,
+        })
+      );
+    }
   }, [page]);
 
   useEffect(() => {
