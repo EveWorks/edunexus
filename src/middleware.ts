@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { pagesOptions } from "@/app/api/auth/[...nextauth]/pages-option";
 
 export default async function middleware(req: NextRequest) {
-  const AUTH_ROUTES = ["/dashboard", "/chat"];
+  const AUTH_ROUTES = ["/dashboard", "/chat", "/verify", "/plan"];
   const path = `/${req.nextUrl.pathname.split("/")?.[1]}`;
   const token = await getToken({
     req,
@@ -12,12 +12,18 @@ export default async function middleware(req: NextRequest) {
     secret: process.env.NEXT_AUTH_SECRET_KEY,
   });
   const isAuthenticated = !!token;
+  const user = (token as any)?.user?.user;
+  const subscription = (token as any)?.user?.subscription;
 
   if (
     (path.startsWith("/signin") || path.startsWith("/signup")) &&
     isAuthenticated
   ) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
+  }
+
+  if (!path.startsWith("/verify") && !user?.isEmailVerified && isAuthenticated) {
+    return NextResponse.redirect(new URL("/verify", req.url));
   }
 
   if (AUTH_ROUTES.includes(path) && !isAuthenticated) {
@@ -34,5 +40,7 @@ export default async function middleware(req: NextRequest) {
 
 // config to match all pages
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
+  matcher: [
+    "/((?!api|_next/static|sw.js|sw.js.map|favicon.ico|workbox-*|_next/image|.*\\.png$).*)",
+  ],
 };
