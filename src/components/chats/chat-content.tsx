@@ -16,7 +16,7 @@ const ChatContent = ({ preview }: { preview: string }) => {
   const pathname = usePathname();
   const { user } = useUser();
   const id = pathname.split("/")?.[2];
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(1000);
   const [page, setPage] = useState(1);
   const { msgLoading } = useAppSelector((state: any) => state.Chat);
   const loading = useMemo(() => msgLoading, [msgLoading]);
