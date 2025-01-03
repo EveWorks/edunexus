@@ -76,7 +76,13 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
       <img
         src={src}
         alt={alt}
-        style={{ margin: "20px 0", maxWidth: "100%", height: "auto" }}
+        style={{
+          margin: "20px 0",
+          maxWidth: "100%",
+          height: "auto",
+          aspectRatio: "1/1",
+          objectFit: "contain",
+        }}
       />
     );
   };
