@@ -1,15 +1,13 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function POST(req: NextRequest) {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
       apiVersion: "2024-12-18.acacia",
     });
-    const { email, name } = req.body;
+    const body = await req.json(); // Parse the JSON body
+    const { email, name } = body;
 
     const customer = await stripe.customers.create({
       email,
@@ -19,15 +17,12 @@ export default async function handler(
     // Optional but recommended
     // Save the customer object or ID to your database
 
-    res.status(200).json({
-      code: "customer_created",
-      customer,
-    });
-  } catch (e) {
+    return NextResponse.json({ status: true, data: customer }, { status: 200 });
+  } catch (e: any) {
     console.error(e);
-    res.status(400).json({
-      code: "customer_creation_failed",
-      error: e,
-    });
+    return NextResponse.json(
+      { status: false, message: e.message },
+      { status: 500 }
+    );
   }
 }

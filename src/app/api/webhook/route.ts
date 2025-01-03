@@ -1,28 +1,30 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function POST(req: NextRequest) {
   let event: Stripe.Event;
-
+  const request = await req.json();
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
-      req.headers["stripe-signature"] as string,
+      request,
+      request.headers["stripe-signature"] as string,
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
   } catch (e) {
     console.error(e);
-    return res
-      .status(400)
-      .send(
-        `Webhook Error: ${e instanceof Error ? e.message : "Unknown Error"}`
-      );
+    return NextResponse.json(
+      {
+        status: false,
+        message: `Webhook Error: ${
+          e instanceof Error ? e.message : "Unknown Error"
+        }`,
+      },
+      { status: 400 }
+    );
   }
 
   switch (event.type) {
@@ -83,5 +85,11 @@ export default async function handler(
     }
   }
 
-  res.status(200);
+  return NextResponse.json(
+    {
+      status: true,
+      message: "Success",
+    },
+    { status: 200 }
+  );
 }
