@@ -88,17 +88,8 @@ const ChatHeader = ({ preview }: { preview?: string }) => {
               {user?.lastname?.substring(0, 1)}
             </Button>
           </div>
-          <div className="w-[50%] text-center text-[20px] leading-[21px] flex items-center mt-[15px]">
+          <div className="w-full text-center text-[20px] leading-[21px] flex justify-center items-center mt-[15px]">
             <span className="chat-title">{chatDetail?.conversation_title}</span>
-            {/* <TbEdit className="ml-[5px] w-[1.125rem] h-[1.125rem] text-[#525252]" /> */}
-          </div>
-          <div className="w-[50%] flex justify-end mt-[15px]">
-            {/* <Select
-              className="w-fit font-medium"
-              suffixClassName="text-[#151515]"
-              selectClassName="text-[12px] leading-[1.875rem] min-w-[92px] w-fit h-[22px] rounded-[10px] py-[7px] px-[10px] border border-primary bg-primary"
-              placeholder="Course"
-            /> */}
           </div>
         </div>
       )}

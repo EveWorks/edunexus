@@ -145,7 +145,7 @@ const SignUpView = () => {
           session_start: new Date().toISOString(),
           email: response?.user.email,
         });
-        router.push(routes.verify);
+        router.push(routes.dashboard);
       } else {
         toast.error(responseSignIn?.error);
       }

@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
         subscription_data: {
           trial_period_days: 7, // Set the trial period to 7 days
         },
-        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/failed`,
       });
       sessionId = session.id;
       console.log("FREE TRAIL CUSTOMER", session);
@@ -46,8 +46,8 @@ export async function POST(req: NextRequest) {
         payment_method_types: ["card"],
         line_items: [{ price: priceId, quantity: 1 }],
         mode: "subscription",
-        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+        success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/failed`,
       });
       sessionId = session.id;
       console.log("PAID CUSTOMER", session);

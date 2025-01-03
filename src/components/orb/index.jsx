@@ -314,7 +314,7 @@ const ThreeScene = ({
         sound.stop();
         sound.setBuffer(null);
       }
-      dispatch(updateAudio(null));
+      // dispatch(updateAudio(null));
     };
   }, [width, height, cameraPosMemo, params, wrapperHeight, wrapperWidth]);
 

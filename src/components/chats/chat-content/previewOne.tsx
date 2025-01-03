@@ -87,7 +87,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
             />
           </Suspense>
         </div>
-        <div className="h-[50%] ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
+        <div className="h-[50%] ps-[1.25rem] md:ps-[2.6875rem] pr-[1.25rem] pb-[2.6875rem] relative fadeBox">
           <ul
             ref={chatWrapperRef}
             className="h-full overflow-y-auto no-scrollbar chat-list"
@@ -111,7 +111,7 @@ const PreviewOne = ({ page, setPage }: { page: number; setPage: any }) => {
 const Message = ({ content }: { content: string }) => {
   return (
     <li className="flex justify-center mb-[2rem]">
-      <div className="mb-[1.25rem] text-[1.2625rem] leading-[1.4375rem] text-center">
+      <div className="mb-[1.25rem] text-[1.2625rem] leading-[1.4375rem] text-center w-full">
         <MarkdownRenderer markdown={content} />
       </div>
     </li>

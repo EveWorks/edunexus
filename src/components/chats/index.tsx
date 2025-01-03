@@ -69,7 +69,7 @@ const Chat = ({ id }: { id: string }) => {
         utterance_end_ms: 4000,
         interim_results: true,
         vad_events: true,
-        endpointing: 2000,
+        endpointing: 3000,
       });
     }
   }, [microphoneStateMemoized]);
@@ -134,7 +134,7 @@ const Chat = ({ id }: { id: string }) => {
     const onTranscript = async (data: LiveTranscriptionEvent) => {
       const { is_final: isFinal, speech_final: speechFinal } = data;
       const transcript = data.channel.alternatives[0].transcript;
-      console.log("data", isFinal, !loadingState, transcript);
+      console.log("data", isFinal, !loadingState, speechFinal, transcript);
 
       if (isFinal && !loadingState) {
         if (transcript !== "") {

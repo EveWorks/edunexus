@@ -22,9 +22,9 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  if (!path.startsWith("/verify") && !user?.isEmailVerified && isAuthenticated) {
-    return NextResponse.redirect(new URL("/verify", req.url));
-  }
+  // if (!path.startsWith("/verify") && !user?.isEmailVerified && isAuthenticated) {
+  //   return NextResponse.redirect(new URL("/verify", req.url));
+  // }
 
   if (AUTH_ROUTES.includes(path) && !isAuthenticated) {
     return await withAuth(req as NextRequestWithAuth, {
