@@ -26,8 +26,14 @@ export default async function handler(
   }
 
   switch (event.type) {
+    case "checkout.session.completed": {
+      const subscription = event.data;
+      console.log("subscription", subscription);
+      break;
+    }
     case "customer.subscription.created": {
       const subscription = event.data.object as Stripe.Subscription;
+      console.log("subscription create", subscription);
       // You can use this to detect changes in the subscription
       // subscription.status will return the current status of the subscription
       //
@@ -52,6 +58,7 @@ export default async function handler(
 
     case "invoice.paid": {
       const invoice = event.data.object as Stripe.Invoice;
+      console.log("invoice paid", invoice);
       // If you have trials, this event is triggered when the trial ended and the user was charged for continued access
       // Things you can do:
       // 1. Notify the user of the charge
