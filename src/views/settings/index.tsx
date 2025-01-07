@@ -9,14 +9,12 @@ import { useRouter } from "next/navigation";
 import useUser from "@/hooks/use-user";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMemo, useState, useEffect } from "react";
-import axios from "@/axios";
+import axios from "axios";
 import countryList from "react-select-country-list";
 import toast from "react-hot-toast";
 import getUniversities from "@/utils/getUniversities";
 import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
 import useMixpanel from "@/hooks/use-mixpanel";
-
-//two console errors from the university search selection, doesn't affect functionality
 
 type Inputs = {
   firstname: string;
@@ -34,14 +32,30 @@ type Inputs = {
 
 const SettingView = () => {
   const router = useRouter();
-  const { user, updateUser } = useUser();
+  const { user, updateUser, subscription } = useUser();
   const [universities, setUniversities] = useState<
     Array<{ value: string; label: string }>
   >([]);
   const [isLoadingUniversities, setIsLoadingUniversities] = useState(true);
-  const [selectedCountry, setSelectedCountry] = useState("GB");
+  const [currentSubscription, setCurrentSubscription] = useState<any>({});
+  const [subscriptionLoading, setSubscriptionLoading] =
+    useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState("");
   const mixpanel = useMixpanel();
+
+  const getCurrentSubscription = async () => {
+    setSubscriptionLoading(true);
+    const response: any = await axios.post(
+      "/api/payment/subscription/current",
+      {
+        id: subscription?.subscriptionId,
+      }
+    );
+    if (response.data.status) {
+      setCurrentSubscription(response.data.data);
+    }
+    setSubscriptionLoading(false);
+  };
 
   useEffect(() => {
     const loadUniversities = async () => {
@@ -58,6 +72,7 @@ const SettingView = () => {
     };
 
     loadUniversities();
+    getCurrentSubscription();
 
     mixpanel.track("page_viewed", {
       email: user.email,
@@ -65,7 +80,17 @@ const SettingView = () => {
       url: window.location.href,
     });
   }, []);
-  //
+
+  function getRemainingDays(timestamp: any) {
+    const targetDate: any = new Date(timestamp * 1000);
+    const currentDate: any = new Date();
+
+    const timeDifference = targetDate - currentDate;
+
+    const remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+    return remainingDays > 0 ? remainingDays : null;
+  }
 
   const countries = useMemo(() => countryList().getData(), []);
 
@@ -360,69 +385,77 @@ const SettingView = () => {
             />
           </div>
         </div>
-        <div className="mb-[0.625rem] bg-[#141414] rounded-[3.125rem] p-[1.25rem] md:p-[3.125rem] relative md:flex items-center">
-          <div className="md:w-1/2 md:px-3 flex justify-center md:mb-0 mb-[0.625rem]">
-            <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
-              <span className="text-[0.9375rem] leading-[1.875rem] px-[3.125rem] py-[0.9375rem] bg-[#FFFFFF15] rounded-[3.125rem] text-center">
-                #Free Plan
-              </span>
-              <h2 className="text-[3.125rem] leading-[4.375rem] text-center font-medium mt-[3.125rem]">
-                Free Plan
-              </h2>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                1 Week Trial
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                Limited usage{" "}
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                Hyper-personalised experience
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
-                Full Access
-              </p>
-              <Button
-                className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] mb-[1.25rem] group transition duration-300 ease-in-out border border-primary"
-                color="primary"
-                variant="text"
-                type="submit"
-              >
-                7 days left for your trial
-              </Button>
-            </div>
+        {!subscriptionLoading && (
+          <div className="mb-[0.625rem] bg-[#141414] rounded-[3.125rem] p-[1.25rem] md:p-[3.125rem] relative md:flex items-center">
+            {currentSubscription?.type === "trialing" ? (
+              <div className="md:w-1/2 md:px-3 flex justify-center md:mb-0 mb-[0.625rem]">
+                <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
+                  <span className="text-[0.9375rem] leading-[1.875rem] px-[3.125rem] py-[0.9375rem] bg-[#FFFFFF15] rounded-[3.125rem] text-center">
+                    #Free Plan
+                  </span>
+                  <h2 className="text-[3.125rem] leading-[4.375rem] text-center font-medium mt-[3.125rem]">
+                    Free Plan
+                  </h2>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    1 Week Trial
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    Limited usage{" "}
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    Hyper-personalised experience
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
+                    Full Access
+                  </p>
+                  <Button
+                    className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] mb-[1.25rem] group transition duration-300 ease-in-out border border-primary"
+                    color="primary"
+                    variant="text"
+                    type="submit"
+                    onClick={() => {}}
+                  >
+                    {getRemainingDays(currentSubscription?.renewDate)} days left
+                    for your trial
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="md:w-1/2 md:px-3 flex justify-center">
+                <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
+                  <span className="text-[0.9375rem] leading-[1.875rem] px-[3.125rem] py-[0.9375rem] bg-[#FFFFFF15] rounded-[3.125rem] text-center">
+                    #Paid Plan
+                  </span>
+                  <h2 className="text-[3.125rem] leading-[4.375rem] text-center font-medium mt-[3.125rem]">
+                    Pro Plan - {subscription?.price} {subscription?.currency}
+                  </h2>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    Monthly access
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    Unlimited usage
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
+                    Hyper-personalised experience
+                  </p>
+                  <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
+                    No limits
+                  </p>
+                  <Button
+                    className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] mb-[1.25rem] group transition duration-300 ease-in-out"
+                    color="primary"
+                    variant="solid"
+                    type="submit"
+                    onClick={() => {}}
+                  >
+                    Choose this Package
+                    <FaArrowRight className="ml-[0.6769rem] w-[15px] h-[15px] transition-transform duration-300 ease-in-out group-hover:ml-[1rem] group-hover:translate-x-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="md:w-1/2 md:px-3 flex justify-center">
-            <div className="md:p-[3.125rem] py-[1.875rem] px-[1.25rem] rounded-[3.125rem] gradient-border max-w-[37.5rem] w-full text-center">
-              <span className="text-[0.9375rem] leading-[1.875rem] px-[3.125rem] py-[0.9375rem] bg-[#FFFFFF15] rounded-[3.125rem] text-center">
-                #Paid Plan
-              </span>
-              <h2 className="text-[3.125rem] leading-[4.375rem] text-center font-medium mt-[3.125rem]">
-                Pro Plan - £9.99
-              </h2>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                Monthly access
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                Unlimited usage
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
-                Hyper-personalised experience
-              </p>
-              <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-[3.1875rem]">
-                No limits
-              </p>
-              <Button
-                className="w-full text-[1.25rem] leading-[1.875rem] h-[3.75rem] rounded-[1.25rem] mb-[1.25rem] group transition duration-300 ease-in-out"
-                color="primary"
-                variant="solid"
-                type="submit"
-              >
-                Choose this Package
-                <FaArrowRight className="ml-[0.6769rem] w-[15px] h-[15px] transition-transform duration-300 ease-in-out group-hover:ml-[1rem] group-hover:translate-x-1" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        )}
       </form>
     </div>
   );

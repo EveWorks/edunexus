@@ -24,5 +24,5 @@ export default function useUser() {
     });
   };
 
-  return { user, token, updateUser, updateSubscription };
+  return { user, token, subscription, updateUser, updateSubscription };
 }
