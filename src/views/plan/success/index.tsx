@@ -21,14 +21,15 @@ const PaymentSuccess = () => {
     if (response?.status) {
       await updateSubscription(response?.data?.data);
       setTimeout(() => {
-        router.replace(routes.dashboard)
+        router.replace(routes.dashboard);
       }, 5000);
     }
   };
-  
 
   useEffect(() => {
-    sessionId && getSubscription(sessionId);
+    if (sessionId) {
+      getSubscription(sessionId);
+    }
   }, [sessionId]);
 
   return (
