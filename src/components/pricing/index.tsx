@@ -53,7 +53,7 @@ const Pricing = () => {
               #Paid Plan
             </span>
             <h2 className="text-[30px] leading-[70px] md:text-[3.125rem] md:leading-[4.375rem] text-center font-medium mt-[3.125rem]">
-              Pro Plan - £9.99
+              Pro Plan - £12.99
             </h2>
             <p className="text-[1.25rem] leading-[1.25rem] text-[#A0A0A0] mb-0">
               Monthly access
