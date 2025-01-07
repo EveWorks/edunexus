@@ -17,7 +17,7 @@ const Footer = () => {
           <FadeUpComponent className="md:text-left text-center text-[30px] md:text-[inherit] leading-[45px] md:leading-[inherit] md:mt-0 mt-[134px] font-semibold">
             <p> &#169; ALINDA&#174; 2024</p>
             <p className="text-[1.25rem] leading-[1.3513rem]">
-              Alinda@alinda.com
+              hello@alinda.com
             </p>
           </FadeUpComponent>
           <FadeUpComponent
@@ -139,7 +139,7 @@ const Footer = () => {
                 LINKEDIN
               </div>
             </div>
-            Alinda@alinda.com
+            hello@alinda.com
           </FadeUpComponent>
         </div>
       )}
