@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import * as THREE from "three";
+import { Howl } from "howler";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
@@ -257,23 +258,70 @@ const ThreeScene = ({
     const listener = new THREE.AudioListener();
     camera.add(listener);
 
-    const sound = new THREE.Audio(listener);
-    const audioLoader = new THREE.AudioLoader();
+    // const sound = new THREE.Audio(listener);
+    // const audioLoader = new THREE.AudioLoader();
+    // if (audioUrl) {
+    //   audioLoader.load(audioUrl, (buffer) => {
+    //     if (buffer) {
+    //       if (sound.isPlaying) {
+    //         sound.stop();
+    //       }
+    //       sound.setBuffer(buffer);
+    //       sound.setVolume(1);
+    //       sound.play();
+    //       const duration = buffer.duration * 1000;
+    //       setTimeout(() => {
+    //         dispatch(updateAudio(null));
+    //         dispatch(updateMsgLoader(false));
+    //         startMicrophone();
+    //       }, duration);
+    //     }
+    //   });
+    // }
+
+    // const analyser = new THREE.AudioAnalyser(sound, 32);
+
+    let sound;
+
     if (audioUrl) {
-      audioLoader.load(audioUrl, (buffer) => {
-        sound.setBuffer(buffer);
-        sound.setVolume(1);
-        sound.play();
-        const duration = buffer.duration * 1000;
-        setTimeout(() => {
-          dispatch(updateAudio(null));
-          dispatch(updateMsgLoader(false));
-          startMicrophone();
-        }, duration);
+      sound = new Howl({
+        src: [audioUrl], 
+        volume: 1, 
+        autoplay: true, 
+        onend: () => {
+          console.log("Audio playback ended...");
+          setTimeout(() => {
+            dispatch(updateAudio(null));
+            dispatch(updateMsgLoader(false));
+            startMicrophone();
+          }, 1000);
+        },
+        onloaderror: (id, error) => {
+          console.error("Howler.js load error:", error);
+        },
+        onplayerror: (id, error) => {
+          console.error("Howler.js play error:", error);
+          sound.once("unlock", () => {
+            sound.play(); 
+          });
+        },
       });
     }
 
-    const analyser = new THREE.AudioAnalyser(sound, 32);
+    // Add audio analysis
+    const analyser = new THREE.AudioAnalyser(new THREE.Audio(listener), 32);
+
+    // Use the Howler.js sound to get values for visualization or analysis
+    const updateAudioVisualization = () => {
+      const frequencyData = analyser.getFrequencyData();
+
+      // Continuously update visualization while audio is playing
+      if (sound && audioUrl && sound?.playing()) {
+        requestAnimationFrame(updateAudioVisualization);
+      }
+    };
+
+    updateAudioVisualization();
 
     const clock = new THREE.Clock();
     function animateOrb() {
@@ -312,7 +360,7 @@ const ThreeScene = ({
       if (sound) {
         sound.pause();
         sound.stop();
-        sound.setBuffer(null);
+        // sound.setBuffer(null);
       }
       // dispatch(updateAudio(null));
     };
