@@ -6,9 +6,11 @@ import { Button } from "rizzui";
 import AuthLayout from "@/components/layout/auth-layout";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
+import useUser from "@/hooks/use-user";
 
 const PlanView = () => {
   const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
   const handleSubmit = async (type: any) => {
     setLoading(true);
@@ -18,6 +20,8 @@ const PlanView = () => {
     const response = await axios.post("/api/payment/subscription/create", {
       priceId: "price_1QbpAqE0xQQIJDSe8TmcnUyC",
       freeTrial: type === "free",
+      email: user?.email,
+      name: user?.firstname + " " + user?.lastname,
     });
     setLoading(false);
     await stripe.redirectToCheckout({ sessionId: response.data.id });

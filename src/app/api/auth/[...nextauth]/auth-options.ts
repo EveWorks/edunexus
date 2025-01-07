@@ -66,6 +66,7 @@ export const authOptions: NextAuthOptions = {
             device_token: "swsw",
           };
           const response: any = await axios.post("/users/login", payload);
+          console.log(response);
           if (response?.user) {
             return response;
           } else {

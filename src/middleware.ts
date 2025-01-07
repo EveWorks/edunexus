@@ -22,9 +22,23 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // if (!path.startsWith("/verify") && !user?.isEmailVerified && isAuthenticated) {
-  //   return NextResponse.redirect(new URL("/verify", req.url));
-  // }
+  if (
+    !path.startsWith("/verify") &&
+    !user?.isEmailVerified &&
+    isAuthenticated
+  ) {
+    return NextResponse.redirect(new URL("/verify", req.url));
+  }
+
+  if (
+    !path.startsWith("/plan") &&
+    !path.startsWith("/verify") &&
+    !path.startsWith("/payment") &&
+    (!subscription || new Date(subscription?.renewDate) < new Date()) &&
+    isAuthenticated
+  ) {
+    return NextResponse.redirect(new URL("/plan", req.url));
+  }
 
   if (AUTH_ROUTES.includes(path) && !isAuthenticated) {
     return await withAuth(req as NextRequestWithAuth, {

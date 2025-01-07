@@ -1,9 +1,7 @@
-const PaymentSuccess = () => {
-  return (
-    <div>
-      <h1>Payment Success</h1>
-    </div>
-  );
+import PaymentSuccess from "@/views/plan/success";
+
+const Success = () => {
+  return <PaymentSuccess />;
 };
 
-export default PaymentSuccess;
+export default Success;

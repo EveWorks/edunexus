@@ -8,12 +8,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 interface CreateSubscriptionBody {
   priceId: string;
   freeTrial?: boolean;
+  email: string;
+  name: string;
 }
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json(); // Parse the JSON body
-    const { priceId, freeTrial }: CreateSubscriptionBody = body;
+    const { name, email, priceId, freeTrial }: CreateSubscriptionBody = body;
 
     if (!priceId) {
       return NextResponse.json(
@@ -22,11 +24,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let customerId;
+
+    if (email) {
+      const customers: any = await stripe.customers.list({ email });
+      if (customers.data.length > 0) {
+        customerId = customers?.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email,
+          name,
+        });
+        console.log("customers", customer);
+        customerId = customer.id;
+      }
+    }
+
     let sessionId;
     if (freeTrial) {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "subscription",
+        customer: customerId,
         line_items: [
           {
             price: priceId, // Use the price ID for the product with a subscription
@@ -40,17 +59,16 @@ export async function POST(req: NextRequest) {
         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/failed`,
       });
       sessionId = session.id;
-      console.log("FREE TRAIL CUSTOMER", session);
     } else {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         line_items: [{ price: priceId, quantity: 1 }],
         mode: "subscription",
+        customer: customerId,
         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/failed`,
       });
       sessionId = session.id;
-      console.log("PAID CUSTOMER", session);
     }
 
     return NextResponse.json({ id: sessionId }, { status: 200 });

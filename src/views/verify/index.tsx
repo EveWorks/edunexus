@@ -58,11 +58,11 @@ const VerifyView = () => {
     };
     try {
       const response: any = await axios.post("/users/verify-otp", payload);
-      if (response?.status) {
-        toast.success(<Text>{response?.message}</Text>);
+      if (response?.user) {
+        toast.success(<Text>{response?.message || "Verification Complete"}</Text>);
         await updateUser({
           ...user,
-          emailVerified: true,
+          isEmailVerified: true,
         });
         router.push(routes.plan);
       } else {
