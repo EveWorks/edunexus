@@ -25,6 +25,7 @@ const PaymentSuccess = () => {
       }, 5000);
     }
   };
+  
 
   useEffect(() => {
     sessionId && getSubscription(sessionId);
