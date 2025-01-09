@@ -157,7 +157,7 @@ const Sidebar = ({
 
       <nav className="bg-[#141414] rounded-[3.125rem] py-[2rem] px-[0.625rem] relative grow">
         <p className="pl-[1.25rem] text-[1.25rem] leading-[1.3313rem] mb-[1.4375rem] text-[#525252]">
-          Notification
+          History
         </p>
 
         <div className="absolute right-[1.25rem] top-[1.25rem] z-2">
@@ -202,7 +202,11 @@ const Sidebar = ({
                   >
                     {item?.conversation_title}
                   </p>
-                  {item?.start_date && (
+                  {item?.updatedAt ? (
+                    <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
+                      {moment(item?.updatedAt).format("DD MMM YYYY")}
+                    </p>
+                  ) : (
                     <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
                       {moment(item?.start_date).format("DD MMM YYYY")}
                     </p>

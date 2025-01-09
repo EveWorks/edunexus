@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { BsFillSendFill } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";
 import { MdMicNone } from "react-icons/md";
-import { Button, Input } from "rizzui";
+import { Button, Input, Textarea } from "rizzui";
 import { FaStop } from "react-icons/fa6";
 import useDevice from "@/hooks/use-device";
 import { useMicrophone } from "@/context/MicrophoneContextProvider";
@@ -95,13 +95,9 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
     }
   };
 
-  const handleInput = () => {
-    const textarea: any = textareaRef.current;
-
-    if (textarea) {
-      textarea.style.height = "auto";
-
-      textarea.style.height = Math.min(textarea.scrollHeight, 250) + "px";
+  const handleInput = (event: any) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      handleSubmit(sendNewMessage)();
     }
   };
 
@@ -145,7 +141,7 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
               {errors?.message?.message}
             </p>
           )}
-          <Input
+          <Textarea
             {...register("message", {
               maxLength: {
                 value: 5000,
@@ -154,14 +150,14 @@ const ChatFooter = ({ id, preview }: { id?: string; preview: string }) => {
             })}
             placeholder="Type anything here"
             className="w-full transition-all duration-400 "
-            onInput={handleInput}
+            onKeyDown={handleInput}
             style={{
               overflow: "hidden",
               // maxHeight: '250px',
               resize: "none",
             }}
             disabled={msgLoading}
-            inputClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
+            textareaClassName="ml-[0.625rem] border-2 border-[#525252] md:border-0 bg-[#0C0C0C] text-[15px] md:text-[1.25rem] leading-[30px] md:leading-[0.9375rem] rounded-[15px] md:rounded-[1.5625rem] h-[45px] md:h-[5.125rem] !py-[5px] md:!py-[2.125rem] md:pl-[1.25rem] md:pr-[2.5rem] px-[15px]"
           />
           <Button
             type="submit"

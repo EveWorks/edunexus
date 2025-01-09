@@ -258,70 +258,74 @@ const ThreeScene = ({
     const listener = new THREE.AudioListener();
     camera.add(listener);
 
-    // const sound = new THREE.Audio(listener);
-    // const audioLoader = new THREE.AudioLoader();
-    // if (audioUrl) {
-    //   audioLoader.load(audioUrl, (buffer) => {
-    //     if (buffer) {
-    //       if (sound.isPlaying) {
-    //         sound.stop();
-    //       }
-    //       sound.setBuffer(buffer);
-    //       sound.setVolume(1);
-    //       sound.play();
-    //       const duration = buffer.duration * 1000;
-    //       setTimeout(() => {
-    //         dispatch(updateAudio(null));
-    //         dispatch(updateMsgLoader(false));
-    //         startMicrophone();
-    //       }, duration);
-    //     }
-    //   });
-    // }
-
-    // const analyser = new THREE.AudioAnalyser(sound, 32);
-
-    let sound;
-
+    const sound = new THREE.Audio(listener);
+    const audioLoader = new THREE.AudioLoader();
     if (audioUrl) {
-      sound = new Howl({
-        src: [audioUrl], 
-        volume: 1, 
-        autoplay: true, 
-        onend: () => {
-          console.log("Audio playback ended...");
+      audioLoader.load(audioUrl, (buffer) => {
+        if (buffer) {
+          if (sound.isPlaying) {
+            sound.stop();
+          }
+          sound.setBuffer(buffer);
+          sound.setVolume(1);
+          sound.play();
+          const duration = buffer.duration * 1000;
           setTimeout(() => {
             dispatch(updateAudio(null));
             dispatch(updateMsgLoader(false));
             startMicrophone();
-          }, 1000);
-        },
-        onloaderror: (id, error) => {
-          console.error("Howler.js load error:", error);
-        },
-        onplayerror: (id, error) => {
-          console.error("Howler.js play error:", error);
-          sound.once("unlock", () => {
-            sound.play(); 
-          });
-        },
+          }, duration);
+        }
       });
     }
 
-    // Add audio analysis
-    const analyser = new THREE.AudioAnalyser(new THREE.Audio(listener), 32);
+    const analyser = new THREE.AudioAnalyser(sound, 32);
 
-    // Use the Howler.js sound to get values for visualization or analysis
-    const updateAudioVisualization = () => {
-      const frequencyData = analyser.getFrequencyData();
+    // let sound;
 
-      // Continuously update visualization while audio is playing
-      if (sound && audioUrl && sound?.playing()) {
-        requestAnimationFrame(updateAudioVisualization);
-      }
-    };
+    // // Use the Howler.js sound to get values for visualization or analysis
 
-    updateAudioVisualization();
+    // const updateAudioVisualization = () => {
+    //   const frequencyData = analyser.getFrequencyData();
+    //   console.log("Frequency data:", sound, sound?.playing());
+    //   // Continuously update visualization while audio is playing
+    //   if (audioUrl) {
+    //     requestAnimationFrame(updateAudioVisualization);
+    //   }
+    // };
+
+    // if (audioUrl) {
+    //   sound = new Howl({
+    //     src: [audioUrl],
+    //     volume: 1,
+    //     autoplay: true,
+    //     onend: () => {
+    //       console.log("Audio playback ended...");
+    //       setTimeout(() => {
+    //         dispatch(updateAudio(null));
+    //         dispatch(updateMsgLoader(false));
+    //         startMicrophone();
+    //       }, 1000);
+    //     },
+    //     onplaying: () => {
+    //       updateAudioVisualization();
+    //     },
+    //     onloaderror: (id, error) => {
+    //       console.error("Howler.js load error:", error);
+    //     },
+    //     onplayerror: (id, error) => {
+    //       console.error("Howler.js play error:", error);
+    //       sound.once("unlock", () => {
+    //         sound.play();
+    //       });
+    //     },
+    //   });
+    // }
+
+    // // Add audio analysis
+    // const analyser = new THREE.AudioAnalyser(new THREE.Audio(listener), 32);
+
+    // updateAudioVisualization();
 
     const clock = new THREE.Clock();
     function animateOrb() {
