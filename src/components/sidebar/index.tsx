@@ -183,45 +183,42 @@ const Sidebar = ({
         {/* .slice().reverse() -> slice creates a copy of the list and reverse changes the order - allowing for top to bottom viewing of the conversation history */}
         <ul className="h-full max-h-[calc(100dvh-410px)] overflow-y-auto custom-scrollbar">
           {conversationListCount > 0 &&
-            conversationList
-              ?.slice()
-              .reverse()
-              .map((item: any) => (
-                <li
-                  key={item?.id}
-                  className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
-                    id === item.id && "bg-primary text-[#0C0C0C]"
-                  }`}
+            conversationList?.map((item: any) => (
+              <li
+                key={item?.id}
+                className={`mb-[0.625rem] bg-[#0C0C0C] rounded-[1.5625rem] mx-auto relative group ${
+                  id === item.id && "bg-primary text-[#0C0C0C]"
+                }`}
+              >
+                <Button
+                  variant="text"
+                  onClick={() => openConversation(item)}
+                  className={`h-fit flex-col items-start text-left p-0 py-[1.25rem] pl-[1.875rem] pe-[2.75rem] w-full`}
                 >
-                  <Button
-                    variant="text"
-                    onClick={() => openConversation(item)}
-                    className={`h-fit flex-col items-start text-left p-0 py-[1.25rem] pl-[1.875rem] pe-[2.75rem] w-full`}
-                  >
-                    <p
-                      className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${
-                        id === item.id && "text-[#0C0C0C]"
-                      }`}
-                    >
-                      {item?.conversation_title}
-                    </p>
-                    {item?.start_date && (
-                      <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
-                        {moment(item?.start_date).format("DD MMM YYYY")}
-                      </p>
-                    )}
-                  </Button>
-                  <Button
-                    variant="text"
-                    onClick={() => deleteChat(item?.id)}
-                    className={`bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
-                      id === item.id && "hover:text-[#0C0C0C]"
+                  <p
+                    className={`text-[1.675rem] leading-[2.0269rem] mb-[0.625rem] ${
+                      id === item.id && "text-[#0C0C0C]"
                     }`}
                   >
-                    <BiTrash className="w-[1.25rem] h-[1.25rem]" />
-                  </Button>
-                </li>
-              ))}
+                    {item?.conversation_title}
+                  </p>
+                  {item?.start_date && (
+                    <p className="text-[1.25rem] leading-[0.9375rem] text-[#525252] mb-[0.325rem]">
+                      {moment(item?.start_date).format("DD MMM YYYY")}
+                    </p>
+                  )}
+                </Button>
+                <Button
+                  variant="text"
+                  onClick={() => deleteChat(item?.id)}
+                  className={`bg-transparent p-0 absolute right-[10px] top-[13px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${
+                    id === item.id && "hover:text-[#0C0C0C]"
+                  }`}
+                >
+                  <BiTrash className="w-[1.25rem] h-[1.25rem]" />
+                </Button>
+              </li>
+            ))}
           {listLoader && (
             <div className="flex items-center justify-center my-8">
               <Loader className="w-8 h-8" />
