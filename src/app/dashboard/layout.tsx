@@ -18,5 +18,5 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 export default DashboardLayout;
 
-// bilal has updates and dependencies and more adds
+// bilal has updates and dependencies and more added
 
