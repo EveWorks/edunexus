@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const subscription: any = await stripe.subscriptions.retrieve(id);
-
+    console.log("subscription", subscription);
     if (subscription) {
       const data = {
         price: subscription.plan.amount,

@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateMenu } from "@/store/features/settings";
 import { IoClose, IoCreateOutline } from "react-icons/io5";
 import useDevice from "@/hooks/use-device";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   clearconversationList,
   deleteConversation,
@@ -24,6 +24,8 @@ import { signOut } from "next-auth/react";
 import moment from "moment";
 import { BiTrash } from "react-icons/bi";
 import useMixpanel from "@/hooks/use-mixpanel";
+import { getRemainingDays } from "@/utils/date";
+import axios from "axios";
 
 const Sidebar = ({
   open,
@@ -40,22 +42,29 @@ const Sidebar = ({
   const settings = useAppSelector((state: any) => state.Settings);
   const { conversationList, conversationListCount, listLoader } =
     useAppSelector((state: any) => state.Chat);
-  const { user } = useUser();
+  const { user, subscription } = useUser();
   const mixpanel = useMixpanel();
+  const [currentSubscription, setCurrentSubscription] = useState<any>({});
+  const [subscriptionLoading, setSubscriptionLoading] =
+    useState<boolean>(false);
 
   const CloseMenu = () => {
     dispatch(updateMenu(false));
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch(clearconversationList({}));
-    };
-  }, []);
-
-  useEffect(() => {
-    dispatch(getConversationList({ userId: user.id }));
-  }, []);
+  const getCurrentSubscription = async () => {
+    setSubscriptionLoading(true);
+    const response: any = await axios.post(
+      "/api/payment/subscription/current",
+      {
+        id: subscription?.subscriptionId,
+      }
+    );
+    if (response?.data?.status) {
+      setCurrentSubscription(response.data.data);
+    }
+    setSubscriptionLoading(false);
+  };
 
   const openConversation = async (item: any) => {
     CloseMenu();
@@ -78,6 +87,20 @@ const Sidebar = ({
     dispatch(deleteConversation(payload));
     CloseMenu();
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearconversationList({}));
+    };
+  }, []);
+
+  useEffect(() => {
+    dispatch(getConversationList({ userId: user.id }));
+
+    if (subscription?.subscriptionId) {
+      getCurrentSubscription();
+    }
+  }, []);
 
   return (
     <aside
@@ -124,8 +147,14 @@ const Sidebar = ({
         </div>
         <div className="flex flex-wrap items-center">
           <span className="text-[1.25rem] leading-[0.9375rem] font-medium text-primary border border-primary mb-0 rounded-[0.625rem] p-[0.5rem]">
-            Free Plan (7 days left in your free trial){" "}
-            {/* this needs to be dynamic */}
+            {currentSubscription?.type === "trialing" ? (
+              <>
+                Free Plan ({getRemainingDays(currentSubscription?.renewDate)}{" "}
+                days left in your free trial) {/* this needs to be dynamic */}
+              </>
+            ) : (
+              <>Pro Plan</>
+            )}
           </span>
         </div>
         <div className="absolute right-[1.25rem] top-[1.25rem] z-2">

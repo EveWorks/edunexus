@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import getUniversities from "@/utils/getUniversities";
 import { ageGroup, degree, gender, yearGroup } from "@/utils/constants";
 import useMixpanel from "@/hooks/use-mixpanel";
+import { getRemainingDays } from "@/utils/date";
 
 type Inputs = {
   firstname: string;
@@ -80,17 +81,6 @@ const SettingView = () => {
       url: window.location.href,
     });
   }, []);
-
-  function getRemainingDays(timestamp: any) {
-    const targetDate: any = new Date(timestamp * 1000);
-    const currentDate: any = new Date();
-
-    const timeDifference = targetDate - currentDate;
-
-    const remainingDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
-    return remainingDays > 0 ? remainingDays : null;
-  }
 
   const countries = useMemo(() => countryList().getData(), []);
 
